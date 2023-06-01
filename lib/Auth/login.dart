@@ -75,108 +75,114 @@ class _LoginPageState extends State<LoginPage> {
         home: Scaffold(
             body: ListView (
                 children: [
-                  Padding(padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 6),
-                    child: Container(
-                      height: 400,
-                      child: Image.asset('images/KE_Nina_Cafe_logo.jpg'),
-                    )
-                  ),
-
-                  const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 32, vertical: 10),
-                    child: Text('Welcome to KE Nina Café !', textAlign: TextAlign.center, style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),),
-                  ),
-
-                  const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 350, vertical: 6),
-                    child: Row(
+                  Padding(padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 0),
+                    child: Column(
                       children: [
-                        Text('Email', style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),),
-                        Text(' *', style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold, color: Colors.red),),
-                      ]
-                    )
-                  ),
+                        Container(
+                          height: 400,
+                          child: Image.asset('images/KE_Nina_Cafe_logo.jpg'),
+                        ),
+                        const Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 32, vertical: 10),
+                          child: Text('Welcome to KE Nina Café !', textAlign: TextAlign.center, style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),),
+                        ),
 
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 350, vertical: 6),
-                      child:
-                        TextField(
-                          controller: emailController,
-                          decoration: const InputDecoration(
-                            border: OutlineInputBorder(),
-                            hintText: 'Please enter your email',
+                        const Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 32, vertical: 6),
+                            child: Row(
+                                children: [
+                                  Text('Email', style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),),
+                                  Text(' *', style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold, color: Colors.red),),
+                                ]
+                            )
+                        ),
+
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 6),
+                          child:
+                          TextField(
+                            controller: emailController,
+                            decoration: const InputDecoration(
+                              border: OutlineInputBorder(),
+                              hintText: 'Please enter your email',
+                            ),
                           ),
                         ),
-                  ),
 
-                  const Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 350, vertical: 6),
-                      child: Row(
-                          children: [
-                            Text('Password', style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),),
-                            Text(' *', style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold, color: Colors.red),),
-                          ]
-                      )
-                  ),
-
-                  Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 350, vertical: 6),
-                      child:
-                      TextField(
-                        controller: passwordController,
-                        obscureText: true,
-                        enableSuggestions: false,
-                        decoration: const InputDecoration(
-                          border: OutlineInputBorder(),
-                          hintText: 'Please enter your password',
+                        const Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 32, vertical: 6),
+                            child: Row(
+                                children: [
+                                  Text('Password', style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),),
+                                  Text(' *', style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold, color: Colors.red),),
+                                ]
+                            )
                         ),
-                      )
+
+                        Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 6),
+                            child:
+                            TextField(
+                              controller: passwordController,
+                              obscureText: true,
+                              enableSuggestions: false,
+                              decoration: const InputDecoration(
+                                border: OutlineInputBorder(),
+                                hintText: 'Please enter your password',
+                              ),
+                            )
+                        ),
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 32),
+                            child:
+                            FilledButton(onPressed: () async {
+                              var (userFoundAsync, err_code) = await _submitLoginDetails(emailController, passwordController);
+                              setState(() {
+                                userFound = userFoundAsync;
+                                submittedOnce = true;
+                                if (!userFound) {
+                                  passwordController.text = '';
+                                  if (err_code == ErrorCodes.LOGIN_FAIL_NO_USER) {
+                                    showDialog(context: context, builder: (
+                                        BuildContext context) =>
+                                        AlertDialog(
+                                          title: const Text('Details Mismatch'),
+                                          content: Text(
+                                              'Wrong combination of email and password. Please check your details.\n\nError Code: $err_code'),
+                                          actions: <Widget>[
+                                            TextButton(onPressed: () =>
+                                                Navigator.pop(context, 'Ok'),
+                                                child: const Text('Ok')),
+                                          ],
+                                        ),
+                                    );
+                                  } else {
+                                    showDialog(context: context, builder: (
+                                        BuildContext context) =>
+                                        AlertDialog(
+                                          title: const Text('Connection Error'),
+                                          content: Text(
+                                              'Unable to establish connection to our services. Please make sure you have an internet connection.\n\nError Code: $err_code'),
+                                          actions: <Widget>[
+                                            TextButton(onPressed: () =>
+                                                Navigator.pop(context, 'Ok'),
+                                                child: const Text('Ok')),
+                                          ],
+                                        ),
+                                    );
+                                  }
+                                }
+                              });
+                            }, child: const Text('Login', textAlign: TextAlign.center)
+                            ),
+                          ),
+                        ),
+                        pleaseRegister()
+                      ],
+                    )
                   ),
-                  Padding(
-                      padding: const EdgeInsets.fromLTRB(350, 6, 1100, 6),
-                      child:
-                      FilledButton(onPressed: () async {
-                        var (userFoundAsync, err_code) = await _submitLoginDetails(emailController, passwordController);
-                        setState(() {
-                          userFound = userFoundAsync;
-                          submittedOnce = true;
-                          if (!userFound) {
-                            passwordController.text = '';
-                            if (err_code == ErrorCodes.LOGIN_FAIL_NO_USER) {
-                              showDialog(context: context, builder: (
-                                  BuildContext context) =>
-                                  AlertDialog(
-                                    title: const Text('Details Mismatch'),
-                                    content: Text(
-                                        'Wrong combination of email and password. Please check your details.\n\nError Code: $err_code'),
-                                    actions: <Widget>[
-                                      TextButton(onPressed: () =>
-                                          Navigator.pop(context, 'Ok'),
-                                          child: const Text('Ok')),
-                                    ],
-                                  ),
-                              );
-                            } else {
-                              showDialog(context: context, builder: (
-                                  BuildContext context) =>
-                                  AlertDialog(
-                                    title: const Text('Connection Error'),
-                                    content: Text(
-                                        'Unable to establish connection to our services. Please make sure you have an internet connection.\n\nError Code: $err_code'),
-                                    actions: <Widget>[
-                                      TextButton(onPressed: () =>
-                                          Navigator.pop(context, 'Ok'),
-                                          child: const Text('Ok')),
-                                    ],
-                                  ),
-                              );
-                            }
-                          }
-                        });
-                      }, child: const Text('Login', textAlign: TextAlign.center)
-                      ),
-                  ),
-                  pleaseRegister()
                 ]
             )
         )
