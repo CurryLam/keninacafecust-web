@@ -63,9 +63,9 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterPageState extends State<RegisterPage> {
-  // final _formKey = GlobalKey<FormState>();
   final nameController = TextEditingController();
   final emailController = TextEditingController();
+  final phoneNumberController = TextEditingController();
   final passwordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
   final dateOfBirthController = TextEditingController();
@@ -80,6 +80,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
   @override
   Widget build(BuildContext context) {
+    enterFullScreen();
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: PreferredSize( //wrap with PreferredSize
@@ -172,6 +173,48 @@ class _RegisterPageState extends State<RegisterPage> {
                           ),
 
                           const SizedBox(height: 13,),
+
+                          const Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 32, vertical: 6),
+                              child: Row(
+                                  children: [
+                                    Text('Phone Number', style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),),
+                                    Text(' *', style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold, color: Colors.red),),
+                                  ]
+                              )
+                          ),
+
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 6),
+                            child:
+                            TextField(
+                              controller: phoneNumberController,
+                              decoration: const InputDecoration(
+                                border: OutlineInputBorder(),
+                                hintText: 'Please enter your phone number',
+                              ),
+                            ),
+                          ),
+
+                          const SizedBox(height: 13,),
+
+                          // Padding(
+                          //   padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 6),
+                          //   child: IntlPhoneField(
+                          //     autofocus: true,
+                          //     decoration: const InputDecoration(
+                          //       labelText: 'Phone Number',
+                          //       border: OutlineInputBorder(
+                          //         borderSide: BorderSide(),
+                          //       ),
+                          //     ),
+                          //     initialCountryCode: initialCountryCode,
+                          //     onChanged: (phone) {
+                          //       // print(phone.completeNumber);
+                          //     },
+                          //     onCountryChanged: (country) => _country = country,
+                          //   ),
+                          // ),
 
                           const Padding(
                               padding: EdgeInsets.symmetric(horizontal: 32, vertical: 6),
@@ -301,15 +344,15 @@ class _RegisterPageState extends State<RegisterPage> {
                       padding: const EdgeInsets.symmetric(horizontal: 300, vertical: 6),
                       child: Container(
                         padding: const EdgeInsets.only(top: 3,left: 3),
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(40),
-                            border: const Border(
-                                bottom: BorderSide(color: Colors.black),
-                                top: BorderSide(color: Colors.black),
-                                right: BorderSide(color: Colors.black),
-                                left: BorderSide(color: Colors.black)
-                            )
-                        ),
+                        // decoration: BoxDecoration(
+                        //     borderRadius: BorderRadius.circular(40),
+                        //     border: const Border(
+                        //         bottom: BorderSide(color: Colors.black),
+                        //         top: BorderSide(color: Colors.black),
+                        //         right: BorderSide(color: Colors.black),
+                        //         left: BorderSide(color: Colors.black)
+                        //     )
+                        // ),
                         child: MaterialButton(
                           minWidth: double.infinity,
                           height:60,
