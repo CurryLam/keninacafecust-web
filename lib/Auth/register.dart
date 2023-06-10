@@ -1,8 +1,15 @@
+import 'dart:convert';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:http/http.dart' as http;
 import 'package:flutter/services.dart';
 import 'package:flutter/gestures.dart';
 import 'package:keninacafecust_web/Auth/login.dart';
+import 'package:keninacafecust_web/Utils/error_codes.dart';
+
+import '../Entity/User.dart';
 
 void main() {
   runApp(const MyApp());
@@ -70,7 +77,7 @@ class _RegisterPageState extends State<RegisterPage> {
   final confirmPasswordController = TextEditingController();
   final dateOfBirthController = TextEditingController();
   final dateInput = TextEditingController();
-  String? gender;
+  late String gender;
 
   @override
   void initState() {
@@ -106,273 +113,268 @@ class _RegisterPageState extends State<RegisterPage> {
           child: SizedBox(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        const SizedBox(height: 20,),
-                        Text("Create an Account to get more benefits !",style: TextStyle(
-                          fontSize: 15,
-                          color: Colors.grey[700],
-                        ),),
-                        const SizedBox(height: 30,)
-                      ],
-                    ),
+                    const SizedBox(height: 20,),
+                    Text("Create an Account to get more benefits !",style: TextStyle(
+                      fontSize: 15,
+                      color: Colors.grey[700],
+                    ),),
+                    const SizedBox(height: 30,)
+                  ],
+                ),
 
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 60,
-                      ),
-                      // child: Expanded(
-                      child: Column(
-                        children: [
-                          const Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 32, vertical: 6),
-                              child: Row(
-                                  children: [
-                                    Text('Full Name', style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),),
-                                    Text(' *', style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold, color: Colors.red),),
-                                  ]
-                              )
-                          ),
-
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 6),
-                            child:
-                            TextField(
-                              controller: nameController,
-                              decoration: const InputDecoration(
-                                border: OutlineInputBorder(),
-                                hintText: 'Please enter your full name',
-                              ),
-                            ),
-                          ),
-
-                          const SizedBox(height: 13,),
-
-                          const Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 32, vertical: 6),
-                              child: Row(
-                                  children: [
-                                    Text('Email', style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),),
-                                    Text(' *', style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold, color: Colors.red),),
-                                  ]
-                              )
-                          ),
-
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 6),
-                            child:
-                            TextField(
-                              controller: emailController,
-                              decoration: const InputDecoration(
-                                border: OutlineInputBorder(),
-                                hintText: 'Please enter your email',
-                              ),
-                            ),
-                          ),
-
-                          const SizedBox(height: 13,),
-
-                          const Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 32, vertical: 6),
-                              child: Row(
-                                  children: [
-                                    Text('Phone Number', style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),),
-                                    Text(' *', style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold, color: Colors.red),),
-                                  ]
-                              )
-                          ),
-
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 6),
-                            child:
-                            TextField(
-                              controller: phoneNumberController,
-                              decoration: const InputDecoration(
-                                border: OutlineInputBorder(),
-                                hintText: 'Please enter your phone number',
-                              ),
-                            ),
-                          ),
-
-                          const SizedBox(height: 13,),
-
-                          // Padding(
-                          //   padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 6),
-                          //   child: IntlPhoneField(
-                          //     autofocus: true,
-                          //     decoration: const InputDecoration(
-                          //       labelText: 'Phone Number',
-                          //       border: OutlineInputBorder(
-                          //         borderSide: BorderSide(),
-                          //       ),
-                          //     ),
-                          //     initialCountryCode: initialCountryCode,
-                          //     onChanged: (phone) {
-                          //       // print(phone.completeNumber);
-                          //     },
-                          //     onCountryChanged: (country) => _country = country,
-                          //   ),
-                          // ),
-
-                          const Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 32, vertical: 6),
-                              child: Row(
-                                  children: [
-                                    Text('Password', style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),),
-                                    Text(' *', style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold, color: Colors.red),),
-                                  ]
-                              )
-                          ),
-
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 6),
-                            child:
-                            TextField(
-                              controller: passwordController,
-                              decoration: const InputDecoration(
-                                border: OutlineInputBorder(),
-                                hintText: 'Please enter your password',
-                              ),
-                            ),
-                          ),
-
-                          const SizedBox(height: 13,),
-
-                          const Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 32, vertical: 6),
-                              child: Row(
-                                  children: [
-                                    Text('Confirm Password', style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),),
-                                    Text(' *', style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold, color: Colors.red),),
-                                  ]
-                              )
-                          ),
-
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 6),
-                            child:
-                            TextField(
-                              controller: confirmPasswordController,
-                              decoration: const InputDecoration(
-                                border: OutlineInputBorder(),
-                                hintText: 'Please enter the password again',
-                              ),
-                            ),
-                          ),
-
-                          const SizedBox(height: 13,),
-
-                          const Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 32, vertical: 6),
-                            child: Row(
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 60,
+                  ),
+                  // child: Expanded(
+                  child: Column(
+                    children: [
+                      const Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 32, vertical: 6),
+                          child: Row(
                               children: [
-                               Text("What is your gender?", style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),),
-                               Text(' *', style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold, color: Colors.red),),
-                              ],
+                                Text('Full Name', style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),),
+                                Text(' *', style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold, color: Colors.red),),
+                              ]
+                          )
+                      ),
+
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 6),
+                        child:
+                        TextField(
+                          controller: nameController,
+                          decoration: const InputDecoration(
+                            border: OutlineInputBorder(),
+                            hintText: 'Please enter your full name',
+                          ),
+                        ),
+                      ),
+
+                      const SizedBox(height: 13,),
+
+                      const Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 32, vertical: 6),
+                          child: Row(
+                              children: [
+                                Text('Email', style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),),
+                                Text(' *', style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold, color: Colors.red),),
+                              ]
+                          )
+                      ),
+
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 6),
+                        child:
+                        TextField(
+                          controller: emailController,
+                          decoration: const InputDecoration(
+                            border: OutlineInputBorder(),
+                            hintText: 'Please enter your email',
+                          ),
+                        ),
+                      ),
+
+                      const SizedBox(height: 13,),
+
+                      const Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 32, vertical: 6),
+                          child: Row(
+                              children: [
+                                Text('Phone Number', style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),),
+                                Text(' *', style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold, color: Colors.red),),
+                              ]
+                          )
+                      ),
+
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 6),
+                        child:
+                        TextField(
+                          controller: phoneNumberController,
+                          decoration: const InputDecoration(
+                            border: OutlineInputBorder(),
+                            hintText: 'Please enter your phone number',
+                          ),
+                        ),
+                      ),
+
+                      const SizedBox(height: 13,),
+
+                      // Padding(
+                      //   padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 6),
+                      //   child: IntlPhoneField(
+                      //     autofocus: true,
+                      //     decoration: const InputDecoration(
+                      //       labelText: 'Phone Number',
+                      //       border: OutlineInputBorder(
+                      //         borderSide: BorderSide(),
+                      //       ),
+                      //     ),
+                      //     initialCountryCode: initialCountryCode,
+                      //     onChanged: (phone) {
+                      //       // print(phone.completeNumber);
+                      //     },
+                      //     onCountryChanged: (country) => _country = country,
+                      //   ),
+                      // ),
+
+                      const Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 32, vertical: 6),
+                          child: Row(
+                              children: [
+                                Text('Password', style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),),
+                                Text(' *', style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold, color: Colors.red),),
+                              ]
+                          )
+                      ),
+
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 6),
+                        child:
+                        TextField(
+                          controller: passwordController,
+                          decoration: const InputDecoration(
+                            border: OutlineInputBorder(),
+                            hintText: 'Please enter your password',
+                          ),
+                        ),
+                      ),
+
+                      const SizedBox(height: 13,),
+
+                      const Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 32, vertical: 6),
+                          child: Row(
+                              children: [
+                                Text('Confirm Password', style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),),
+                                Text(' *', style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold, color: Colors.red),),
+                              ]
+                          )
+                      ),
+
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 6),
+                        child:
+                        TextField(
+                          controller: confirmPasswordController,
+                          decoration: const InputDecoration(
+                            border: OutlineInputBorder(),
+                            hintText: 'Please enter the password again',
+                          ),
+                        ),
+                      ),
+
+                      const SizedBox(height: 13,),
+
+                      const Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 32, vertical: 6),
+                        child: Row(
+                          children: [
+                           Text("What is your gender?", style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),),
+                           Text(' *', style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold, color: Colors.red),),
+                          ],
+                        ),
+                      ),
+
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 6),
+                        child: Column(
+                          children: [
+                            RadioListTile(
+                              title: const Text("Male"),
+                              value: "male",
+                              groupValue: gender,
+                              onChanged: (value){
+                                setState(() {
+                                  gender = value.toString();
+                                });
+                              },
+                            ),
+                            RadioListTile(
+                              title: const Text("Female"),
+                              value: "female",
+                              groupValue: gender,
+                              onChanged: (value){
+                                setState(() {
+                                  gender = value.toString();
+                                });
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 6),
+                          child:TextField(
+                            controller: dateInput, //editing controller of this TextField
+                            decoration: const InputDecoration(
+                                icon: Icon(Icons.calendar_today), //icon of text field
+                                labelText: "Date Of Birth" //label text of field
+                            ),
+                            readOnly: true,  //set it true, so that user will not able to edit text
+                            onTap: () async {
+                              var pickedDate = await showDatePicker(
+                                  context: context, initialDate: DateTime.now(),
+                                  firstDate: DateTime(2000), //DateTime.now() - not to allow to choose before today.
+                                  lastDate: DateTime(2101)
+                              );
+
+                              if(pickedDate != null ){
+                                // print(pickedDate);  //pickedDate output format => 2021-03-10 00:00:00.000
+                                String formattedDate = DateFormat('yyyy-MM-dd').format(pickedDate);
+                                // print(formattedDate); //formatted date output using intl package =>  2021-03-16
+                                //you can implement different kind of Date Format here according to your requirement
+
+                                setState(() {
+                                  dateInput.text = formattedDate; //set output date to TextField value.
+                                });
+                              }else{
+                                // print("Date is not selected");
+                              }
+                            },
+                          )
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 6),
+                        child: Container(
+                          padding: const EdgeInsets.only(top: 3,left: 3),
+                          // decoration: BoxDecoration(
+                          //     borderRadius: BorderRadius.circular(40),
+                          //     border: const Border(
+                          //         bottom: BorderSide(color: Colors.black),
+                          //         top: BorderSide(color: Colors.black),
+                          //         right: BorderSide(color: Colors.black),
+                          //         left: BorderSide(color: Colors.black)
+                          //     )
+                          // ),
+                          child: MaterialButton(
+                            minWidth: double.infinity,
+                            height:60,
+                            onPressed: (){},
+                            color: Colors.redAccent,
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(40)
+                            ),
+                            child: const Text(
+                              "Sign Up",
+                              style: TextStyle(
+                                fontWeight: FontWeight.w600,fontSize: 16,
+                              ),
                             ),
                           ),
-
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 6),
-                          child: Column(
-                            children: [
-                              RadioListTile(
-                                title: const Text("Male"),
-                                value: "male",
-                                groupValue: gender,
-                                onChanged: (value){
-                                  setState(() {
-                                    gender = value.toString();
-                                  });
-                                },
-                              ),
-                              RadioListTile(
-                                title: const Text("Female"),
-                                value: "female",
-                                groupValue: gender,
-                                onChanged: (value){
-                                  setState(() {
-                                    gender = value.toString();
-                                  });
-                                },
-                              ),
-                            ],
-                          ),
-                        ),
-
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 6),
-                            child:TextField(
-                              controller: dateInput, //editing controller of this TextField
-                              decoration: const InputDecoration(
-                                  icon: Icon(Icons.calendar_today), //icon of text field
-                                  labelText: "Date Of Birth" //label text of field
-                              ),
-                              readOnly: true,  //set it true, so that user will not able to edit text
-                              onTap: () async {
-                                var pickedDate = await showDatePicker(
-                                    context: context, initialDate: DateTime.now(),
-                                    firstDate: DateTime(2000), //DateTime.now() - not to allow to choose before today.
-                                    lastDate: DateTime(2101)
-                                );
-
-                                if(pickedDate != null ){
-                                  // print(pickedDate);  //pickedDate output format => 2021-03-10 00:00:00.000
-                                  String formattedDate = DateFormat('yyyy-MM-dd').format(pickedDate);
-                                  // print(formattedDate); //formatted date output using intl package =>  2021-03-16
-                                  //you can implement different kind of Date Format here according to your requirement
-
-                                  setState(() {
-                                    dateInput.text = formattedDate; //set output date to TextField value.
-                                  });
-                                }else{
-                                  // print("Date is not selected");
-                                }
-                              },
-                            )
-                        ),
-                        ],
-
-                      ),
-                    ),
-
-                    // const SizedBox(height: 13,),
-
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 300, vertical: 6),
-                      child: Container(
-                        padding: const EdgeInsets.only(top: 3,left: 3),
-                        // decoration: BoxDecoration(
-                        //     borderRadius: BorderRadius.circular(40),
-                        //     border: const Border(
-                        //         bottom: BorderSide(color: Colors.black),
-                        //         top: BorderSide(color: Colors.black),
-                        //         right: BorderSide(color: Colors.black),
-                        //         left: BorderSide(color: Colors.black)
-                        //     )
-                        // ),
-                        child: MaterialButton(
-                          minWidth: double.infinity,
-                          height:60,
-                          onPressed: (){},
-                          color: Colors.redAccent,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(40)
-                          ),
-                          child: const Text("Sign Up",style: TextStyle(
-                            fontWeight: FontWeight.w600,fontSize: 16,
-
-                          ),),
                         ),
                       ),
-                    ),
 
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 300, vertical: 6),
-                      child: Text.rich(
-                        TextSpan(
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 6),
+                        child: Text.rich(
+                          TextSpan(
                             children: [
                               const TextSpan(
                                   text: 'Already have an account?  ',
@@ -394,25 +396,91 @@ class _RegisterPageState extends State<RegisterPage> {
                                   decorationColor: Colors.blue,
                                 ),
                                 recognizer: TapGestureRecognizer()
-                                  ..onTap = () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => const LoginPage(),
-                                      ),
-                                    );
-                                  },
+                                ..onTap = () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => const LoginPage(),
+                                    ),
+                                  );
+                                },
                               ),
                             ]
+                          ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
+                ),
+              ],
             ),
           ),
         ),
       ),
     );
+  }
+
+  Future<(bool, String)> _submitRegisterDetails() async {
+    String name = nameController.text;
+    String email = emailController.text;
+    String phone = phoneNumberController.text;
+    String password = passwordController.text;
+    String confirmPw = confirmPasswordController.text;
+    String gender = this.gender;
+    DateTime dob = DateTime.parse(dateOfBirthController.text);
+
+    if (kDebugMode) {
+      print('name: $name');
+      print('email: $email');
+      print('phone: $phone');
+      print('password: $password');
+      print('confirmPw: $confirmPw');
+      print('gender: $gender');
+      print('dob: $dob');
+    }
+    var (thisUser, err_code) = await createUser(name, email, phone, password, gender, dob);
+    if (thisUser.uid == -1) {
+      if (kDebugMode) {
+        print("Failed to retrieve User data.");
+      }
+      return (false, err_code);
+    }
+    return (true, err_code);
+  }
+
+  Future<(User, String)> createUser(String name, String email, String phone, String password, String gender, DateTime dob) async {
+    try {
+      final response = await http.post(
+        Uri.parse('http://localhost:8000/users/login'),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(<String, String> {
+          'name': name,
+          'email': email,
+          'phone': phone,
+          'password': password,
+          'gender': gender,
+          'dob': dob.toString(),
+        }),
+      );
+
+      if (response.statusCode == 201) {
+        var jsonResp = jsonDecode(response.body);
+        var jwtToken = jsonResp['token'];
+        return (User.fromJWT(jwtToken), (ErrorCodes.OPERATION_OK));
+      } else {
+        if (kDebugMode) {
+          print('User exist.');
+        }
+        return (User(uid: -1, name: '', email: '', address: '', gender: '', dob: DateTime.now()), (ErrorCodes.LOGIN_FAIL_NO_USER));
+      }
+    } on Exception catch (e) {
+      if (kDebugMode) {
+        print('API Connection Error. $e');
+      }
+      return (User(uid: -1, name: '', email: '', address: '', gender: '', dob: DateTime.now()), (ErrorCodes.LOGIN_FAIL_API_CONNECTION));
+    }
   }
 }
 
