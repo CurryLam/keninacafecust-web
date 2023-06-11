@@ -199,6 +199,19 @@ class _LoginPageState extends State<LoginPage> {
                                                       );
                                                     }
                                                   } else {
+                                                    showDialog(context: context, builder: (
+                                                        BuildContext context) =>
+                                                        AlertDialog(
+                                                          title: const Text('Login Successful'),
+                                                          content: Text(
+                                                              'Welcome back, ${emailController.text}!'),
+                                                          actions: <Widget>[
+                                                            TextButton(onPressed: () =>
+                                                                Navigator.pop(context, 'Ok'),
+                                                                child: const Text('Ok')),
+                                                          ],
+                                                        ),
+                                                      );
                                                     // Navigator.push(
                                                     //   context,
                                                     //   MaterialPageRoute(
@@ -240,6 +253,9 @@ class _LoginPageState extends State<LoginPage> {
       print('Password: $password');
     }
     String enc_pw = Encryptor().encryptPassword(password);
+    if (kDebugMode) {
+      print(enc_pw);
+    }
     var (thisUser, err_code) = await createUser(email, enc_pw);
     if (thisUser.uid == -1) {
       if (kDebugMode) {
@@ -253,31 +269,35 @@ class _LoginPageState extends State<LoginPage> {
   Future<(User, String)> createUser(String email, String enc_pw) async {
     try {
       final response = await http.post(
-        Uri.parse('http://localhost:8080/users/login'),
+        Uri.parse('http://localhost:8000/users/login'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
         body: jsonEncode(<String, String>{
           'email': email,
-          'enc_pw': enc_pw,
+          'password': enc_pw,
         }),
       );
 
-      if (response.statusCode == 201) {
+      if (response.statusCode == 201 || response.statusCode == 200) {
         var jsonResp = jsonDecode(response.body);
         var jwtToken = jsonResp['token'];
+        if (kDebugMode) {
+          print('User found.');
+          print('JWT Token: $jwtToken');
+        }
         return (User.fromJWT(jwtToken), (ErrorCodes.OPERATION_OK));
       } else {
         if (kDebugMode) {
           print('No User found.');
         }
-        return (User(uid: -1, name: '', email: '', gender: '', dob: DateTime.now()), (ErrorCodes.LOGIN_FAIL_NO_USER));
+        return (User(uid: -1, name: '', email: '', gender: '', dob: DateTime.now(), phone: ''), (ErrorCodes.LOGIN_FAIL_NO_USER));
       }
     } on Exception catch (e) {
       if (kDebugMode) {
         print('API Connection Error. $e');
       }
-      return (User(uid: -1, name: '', email: '', gender: '', dob: DateTime.now()), (ErrorCodes.LOGIN_FAIL_API_CONNECTION));
+      return (User(uid: -1, name: '', email: '', gender: '', dob: DateTime.now(), phone: ''), (ErrorCodes.LOGIN_FAIL_API_CONNECTION));
     }
   }
 

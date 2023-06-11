@@ -536,13 +536,18 @@ class _RegisterPageState extends State<RegisterPage> {
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
-        body: jsonEncode(<String, String> {
+        body: jsonEncode(<String, dynamic> {
+          'image': null,
+          'is_staff': false,
+          'staff_type': null,
           'name': name,
           'email': email,
-          'phone': phone,
           'password': enc_pw,
+          'address': null,
+          'phone': phone,
           'gender': gender,
           'dob': dob.toString(),
+          'ic': null,
         }),
       );
 
@@ -552,13 +557,13 @@ class _RegisterPageState extends State<RegisterPage> {
         if (kDebugMode) {
           print('User exist in system.');
         }
-        return (User(uid: -1, name: '', email: '', gender: '', dob: DateTime.now()), (ErrorCodes.REGISTER_FAIL_USER_EXISTS));
+        return (User(uid: -1, name: '', email: '', gender: '', dob: DateTime.now(), phone: ''), (ErrorCodes.REGISTER_FAIL_USER_EXISTS));
       }
     } on Exception catch (e) {
       if (kDebugMode) {
         print('API Connection Error. $e');
       }
-      return (User(uid: -1, name: '', email: '', gender: '', dob: DateTime.now()), (ErrorCodes.REGISTER_FAIL_API_CONNECTION));
+      return (User(uid: -1, name: '', email: '', gender: '', dob: DateTime.now(), phone: ''), (ErrorCodes.REGISTER_FAIL_API_CONNECTION));
     }
   }
 }
