@@ -7,10 +7,11 @@ class User {
   final int uid;
   final String name;
   final String email;
+  final String phone;
   final String gender;
   final DateTime dob;
 
-  const User({required this.uid, required this.name, required this.email, required this.gender, required this.dob});
+  const User({required this.uid, required this.name, required this.email, required this.phone, required this.gender, required this.dob});
 
   factory User.fromJson(Map<String, dynamic> json) {
     if (kDebugMode) {
@@ -20,6 +21,7 @@ class User {
       uid: json['uid'],
       name: json['name'],
       email: json['email'],
+      phone: json['phone'],
       gender: json['gender'],
       dob: DateTime.parse(json['dob'])
     );
@@ -28,11 +30,12 @@ class User {
   factory User.fromJWT(String jwtToken) {
     Map<String, dynamic> jwtDecodedToken = JwtDecoder.decode(jwtToken);
     return User(
-      uid: jwtDecodedToken['id'],
+      uid: jwtDecodedToken['uid'],
       name: jwtDecodedToken['name'],
       email: jwtDecodedToken['email'],
+      phone: jwtDecodedToken['phone'],
       gender: jwtDecodedToken['gender'],
-      dob: jwtDecodedToken['dob']
+      dob: DateTime.parse(jwtDecodedToken['dob']),
     );
   }
 }
