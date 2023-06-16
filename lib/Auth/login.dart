@@ -269,7 +269,7 @@ class _LoginPageState extends State<LoginPage> {
   Future<(User, String)> createUser(String email, String enc_pw) async {
     try {
       final response = await http.post(
-        Uri.parse('http://localhost:7000/users/login'),
+        Uri.parse('http://localhost:8000/users/login'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
