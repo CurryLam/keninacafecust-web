@@ -58,10 +58,17 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
+  bool securePasswordText = true;
   bool userFound = false;
   bool submittedOnce = false;
 
   final _formKey = GlobalKey<FormState>();
+
+  void _togglePasswordView() {
+    setState(() {
+      securePasswordText = !securePasswordText;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -140,6 +147,7 @@ class _LoginPageState extends State<LoginPage> {
                                           padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 6),
                                           child:
                                           TextFormField(
+                                            obscureText: securePasswordText,
                                             controller: passwordController,
                                             validator: (value) {
                                               if (value == null || value.isEmpty) {
@@ -147,10 +155,13 @@ class _LoginPageState extends State<LoginPage> {
                                               }
                                               return null;
                                             },
-                                            obscureText: true,
                                             enableSuggestions: false,
-                                            decoration: const InputDecoration(
-                                              border: OutlineInputBorder(),
+                                            decoration: InputDecoration(
+                                              border: const OutlineInputBorder(),
+                                              suffix: InkWell(
+                                                onTap: _togglePasswordView,
+                                                child: const Icon( Icons.visibility),
+                                              ),
                                               hintText: 'Please enter your password',
                                             ),
                                           )
@@ -269,7 +280,7 @@ class _LoginPageState extends State<LoginPage> {
   Future<(User, String)> createUser(String email, String enc_pw) async {
     try {
       final response = await http.post(
-        Uri.parse('http://localhost:7000/users/login'),
+        Uri.parse('http://localhost:8000/users/login'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
@@ -291,13 +302,13 @@ class _LoginPageState extends State<LoginPage> {
         if (kDebugMode) {
           print('No User found.');
         }
-        return (User(uid: -1, name: '', email: '', gender: '', dob: DateTime.now(), phone: ''), (ErrorCodes.LOGIN_FAIL_NO_USER));
+        return (User(uid: -1, name: '', is_active: false, email: '', gender: '', dob: DateTime.now(), phone: '', points: 0), (ErrorCodes.LOGIN_FAIL_NO_USER));
       }
     } on Exception catch (e) {
       if (kDebugMode) {
         print('API Connection Error. $e');
       }
-      return (User(uid: -1, name: '', email: '', gender: '', dob: DateTime.now(), phone: ''), (ErrorCodes.LOGIN_FAIL_API_CONNECTION));
+      return (User(uid: -1, name: '', is_active: false, email: '', gender: '', dob: DateTime.now(), phone: '', points: 0), (ErrorCodes.LOGIN_FAIL_API_CONNECTION));
     }
   }
 

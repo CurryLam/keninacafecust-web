@@ -23,6 +23,7 @@ void enterFullScreen() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
+
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
@@ -78,6 +79,8 @@ class _RegisterPageState extends State<RegisterPage> {
   final confirmPasswordController = TextEditingController();
   final dateOfBirthController = TextEditingController();
   final dateInput = TextEditingController();
+  bool securePasswordText = true;
+  bool secureConfirmPasswordText = true;
   String gender = "";
   bool userRegistered = false;
 
@@ -87,6 +90,18 @@ class _RegisterPageState extends State<RegisterPage> {
   void initState() {
     dateInput.text = ""; //set the initial value of text field
     super.initState();
+  }
+
+  void _togglePasswordView() {
+    setState(() {
+      securePasswordText = !securePasswordText;
+    });
+  }
+
+  void _toggleConfirmPasswordView() {
+    setState(() {
+      secureConfirmPasswordText = !secureConfirmPasswordText;
+    });
   }
 
   @override
@@ -187,6 +202,11 @@ class _RegisterPageState extends State<RegisterPage> {
                               if (value == null || value.isEmpty) {
                                 return 'Please enter your email';
                               }
+                              final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+
+                              if (!emailRegex.hasMatch(value)) {
+                                return 'Please enter a valid email address';
+                              }
                               return null;
                             },
                             decoration: const InputDecoration(
@@ -240,15 +260,27 @@ class _RegisterPageState extends State<RegisterPage> {
                           padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 6),
                           child:
                           TextFormField(
+                            obscureText: securePasswordText,
                             controller: passwordController,
                             validator: (value) {
                               if (value == null || value.isEmpty) {
                                 return 'Please enter your password';
                               }
+                              final passwordRegex =
+                              RegExp(r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#&*~]).{8,}$');
+
+                              if (!passwordRegex.hasMatch(value)) {
+                                return 'Please enter a valid password with at least one capital letter, one small letter, one number, and one symbol from '
+                                    '!, @, #, &, * or ~';
+                              }
                               return null;
                             },
-                            decoration: const InputDecoration(
-                              border: OutlineInputBorder(),
+                            decoration: InputDecoration(
+                              border: const OutlineInputBorder(),
+                              suffix: InkWell(
+                                onTap: _togglePasswordView,
+                                child: const Icon( Icons.visibility),
+                              ),
                               hintText: 'Please enter your password',
                             ),
                           ),
@@ -270,14 +302,22 @@ class _RegisterPageState extends State<RegisterPage> {
                           padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 6),
                           child:
                           TextFormField(
+                            obscureText: secureConfirmPasswordText,
                             controller: confirmPasswordController,
                             validator: (value) {
                               if (value != passwordController.text) {
                                 return 'Passwords do not match!';
+                              } else if (value == null || value.isEmpty) {
+                                return 'Please enter your password';
                               }
+                              return null;
                             },
-                            decoration: const InputDecoration(
-                              border: OutlineInputBorder(),
+                            decoration: InputDecoration(
+                              border: const OutlineInputBorder(),
+                              suffix: InkWell(
+                                onTap: _toggleConfirmPasswordView,
+                                child: const Icon( Icons.visibility),
+                              ),
                               hintText: 'Please enter the password again',
                             ),
                           ),
@@ -532,13 +572,14 @@ class _RegisterPageState extends State<RegisterPage> {
   Future<(User, String)> createUser(String name, String email, String phone, String enc_pw, String gender, DateTime dob) async {
     try {
       final response = await http.post(
-        Uri.parse('http://localhost:7000/users/register'),
+        Uri.parse('http://localhost:8000/users/register'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
         body: jsonEncode(<String, dynamic> {
           'image': null,
           'is_staff': false,
+          'is_active': true,
           'staff_type': null,
           'name': name,
           'email': email,
@@ -548,22 +589,25 @@ class _RegisterPageState extends State<RegisterPage> {
           'gender': gender,
           'dob': dob.toString(),
           'ic': null,
+          'points': 0,
         }),
       );
 
-      if (response.statusCode == 201) {
-        return (User.fromJson(jsonDecode(response.body)), (ErrorCodes.OPERATION_OK));
+      if (response.statusCode == 201 || response.statusCode == 200) {
+        var jsonResp = jsonDecode(response.body);
+        var jwtToken = jsonResp['token'];
+        return (User.fromJWT(jwtToken), (ErrorCodes.OPERATION_OK));
       } else {
         if (kDebugMode) {
           print('User exist in system.');
         }
-        return (User(uid: -1, name: '', email: '', gender: '', dob: DateTime.now(), phone: ''), (ErrorCodes.REGISTER_FAIL_USER_EXISTS));
+        return (User(uid: -1, name: '', is_active: false, email: '', gender: '', dob: DateTime.now(), phone: '', points: 0), (ErrorCodes.REGISTER_FAIL_USER_EXISTS));
       }
     } on Exception catch (e) {
       if (kDebugMode) {
         print('API Connection Error. $e');
       }
-      return (User(uid: -1, name: '', email: '', gender: '', dob: DateTime.now(), phone: ''), (ErrorCodes.REGISTER_FAIL_API_CONNECTION));
+      return (User(uid: -1, name: '', is_active: false, email: '', gender: '', dob: DateTime.now(), phone: '', points: 0), (ErrorCodes.REGISTER_FAIL_API_CONNECTION));
     }
   }
 }
