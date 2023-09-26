@@ -6,10 +6,12 @@ import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/services.dart';
 import 'package:flutter/gestures.dart';
+import 'package:keninacafecust_web/AppsBar.dart';
 import 'package:keninacafecust_web/Auth/login.dart';
 import 'package:keninacafecust_web/Security/Encryptor.dart';
 import 'package:keninacafecust_web/Utils/error_codes.dart';
 
+import 'package:keninacafecust_web/AppsBar.dart';
 import '../Entity/User.dart';
 
 void main() {
@@ -109,23 +111,7 @@ class _RegisterPageState extends State<RegisterPage> {
     enterFullScreen();
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: PreferredSize( //wrap with PreferredSize
-        preferredSize: const Size.fromHeight(80),
-        child: AppBar(
-          elevation: 0,
-          toolbarHeight: 100,
-          title: const Text('Sign Up', style: TextStyle(
-            fontWeight: FontWeight.bold,
-          ),),
-          backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-          centerTitle: true,
-          leading:
-            IconButton( onPressed: (){
-              Navigator.of(context).push(
-                MaterialPageRoute(builder: (context) => const LoginPage()));
-            },icon: const Icon(Icons.arrow_back_ios,size: 20,color: Colors.black,)),
-        ),
-      ),
+      appBar: AppsBarState().buildAppBar(context, "Sign Up"),
 
       body: SafeArea(
         child: SingleChildScrollView(
@@ -141,20 +127,20 @@ class _RegisterPageState extends State<RegisterPage> {
                       fontSize: 15,
                       color: Colors.grey[700],
                     ),),
-                    const SizedBox(height: 30,)
+                    const SizedBox(height: 20,)
                   ],
                 ),
 
                 Padding(
                   padding: const EdgeInsets.symmetric(
-                    horizontal: 60,
+                    horizontal: 20,
                   ),
                   child: Form(
                     key: _formKey,
                     child: Column(
                       children: [
                         const Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 32, vertical: 6),
+                            padding: EdgeInsets.symmetric(horizontal: 25, vertical: 6),
                             child: Row(
                                 children: [
                                   Text('Full Name', style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),),
@@ -164,7 +150,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         ),
 
                         Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 6),
+                          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 6),
                           child:
                           TextFormField(
                             controller: nameController,
@@ -184,7 +170,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         const SizedBox(height: 13,),
 
                         const Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 32, vertical: 6),
+                            padding: EdgeInsets.symmetric(horizontal: 25, vertical: 6),
                             child: Row(
                                 children: [
                                   Text('Email', style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),),
@@ -194,7 +180,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         ),
 
                         Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 6),
+                          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 6),
                           child:
                           TextFormField(
                             controller: emailController,
@@ -219,7 +205,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         const SizedBox(height: 13,),
 
                         const Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 32, vertical: 6),
+                            padding: EdgeInsets.symmetric(horizontal: 25, vertical: 6),
                             child: Row(
                                 children: [
                                   Text('Phone Number', style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),),
@@ -229,7 +215,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         ),
 
                         Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 6),
+                          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 6),
                           child:
                           TextFormField(
                             controller: phoneNumberController,
@@ -246,8 +232,10 @@ class _RegisterPageState extends State<RegisterPage> {
                           ),
                         ),
 
+                        const SizedBox(height: 13,),
+
                         const Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 32, vertical: 6),
+                            padding: EdgeInsets.symmetric(horizontal: 25, vertical: 6),
                             child: Row(
                                 children: [
                                   Text('Password', style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),),
@@ -257,7 +245,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         ),
 
                         Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 6),
+                          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 6),
                           child:
                           TextFormField(
                             obscureText: securePasswordText,
@@ -270,7 +258,7 @@ class _RegisterPageState extends State<RegisterPage> {
                               RegExp(r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#&*~]).{8,}$');
 
                               if (!passwordRegex.hasMatch(value)) {
-                                return 'Please enter a valid password with at least one capital letter, one small letter, one number, and one symbol from '
+                                return 'Please enter a valid password with at least one\ncapital letter, one small letter, one number, and\none symbol from '
                                     '!, @, #, &, * or ~';
                               }
                               return null;
@@ -289,7 +277,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         const SizedBox(height: 13,),
 
                         const Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 32, vertical: 6),
+                            padding: EdgeInsets.symmetric(horizontal: 25, vertical: 6),
                             child: Row(
                                 children: [
                                   Text('Confirm Password', style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),),
@@ -299,7 +287,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         ),
 
                         Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 6),
+                          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 6),
                           child:
                           TextFormField(
                             obscureText: secureConfirmPasswordText,
@@ -326,7 +314,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         const SizedBox(height: 13,),
 
                         const Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 32, vertical: 6),
+                          padding: EdgeInsets.symmetric(horizontal: 25, vertical: 6),
                           child: Row(
                             children: [
                              Text("What is your gender?", style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),),
@@ -336,7 +324,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         ),
 
                         Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 6),
+                          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 6),
                           child: Column(
                             children: [
                               RadioListTile(
@@ -364,7 +352,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         ),
 
                         Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 6),
+                          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 6),
                           child:TextFormField(
                             validator: (value) {
                               if (value == null || value.isEmpty) {
@@ -402,7 +390,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         ),
 
                         Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 6),
+                          padding: const EdgeInsets.symmetric(horizontal: 60, vertical: 6),
                           child: Container(
                             padding: const EdgeInsets.only(top: 3,left: 3),
                             // decoration: BoxDecoration(
@@ -416,7 +404,7 @@ class _RegisterPageState extends State<RegisterPage> {
                             // ),
                             child: MaterialButton(
                               minWidth: double.infinity,
-                              height:60,
+                              height:50,
                               onPressed: () async {
                                 if (_formKey.currentState!.validate()) {
                                   var (userRegisteredAsync, err_code) = await _submitRegisterDetails();
@@ -476,14 +464,15 @@ class _RegisterPageState extends State<RegisterPage> {
                                 }
                                   // Navigator.push(context, MaterialPageRoute(builder: (context) => const LoginPage()));
                               },
-                              color: Colors.redAccent,
+                              color: Colors.black,
                               shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(40)
                               ),
                               child: const Text(
                                 "Sign Up",
                                 style: TextStyle(
-                                  fontWeight: FontWeight.w600,fontSize: 16,
+                                  fontWeight: FontWeight.w600,fontSize: 18,
+                                  color: Colors.white
                                 ),
                               ),
                             ),
@@ -572,7 +561,8 @@ class _RegisterPageState extends State<RegisterPage> {
   Future<(User, String)> createUser(String name, String email, String phone, String enc_pw, String gender, DateTime dob) async {
     try {
       final response = await http.post(
-        Uri.parse('http://localhost:8000/users/register'),
+        Uri.parse('http://10.0.2.2:8000/users/register'),  // For phone
+        // Uri.parse('http://localhost:8000/users/register'),  // For website
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
