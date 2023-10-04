@@ -111,7 +111,7 @@ class _RegisterPageState extends State<RegisterPage> {
     enterFullScreen();
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppsBarState().buildAppBar(context, "Sign Up"),
+      appBar: AppsBarState().buildSignUpAppBar(context, "Sign Up"),
 
       body: SafeArea(
         child: SingleChildScrollView(

@@ -11,6 +11,7 @@ import 'package:keninacafecust_web/Security/Encryptor.dart';
 import 'package:keninacafecust_web/Utils/error_codes.dart';
 
 import '../Entity/User.dart';
+import '../Menu/menuHome.dart';
 
 void main() {
   runApp(const MyApp());
@@ -320,9 +321,13 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
                                         content: Text(
                                             'Welcome back, ${currentUser.name}!'),
                                         actions: <Widget>[
-                                          TextButton(onPressed: () =>
-                                              Navigator.pop(context, 'Ok'),
-                                              child: const Text('Ok')),
+                                          TextButton(
+                                            onPressed: () {
+                                              Navigator.of(context).pop();
+                                              Navigator.push(context, MaterialPageRoute(builder: (context) => MenuHomePage(user: currentUser)));
+                                            },
+                                            child: const Text('Ok'),
+                                          ),
                                         ],
                                       ),
                                   );
