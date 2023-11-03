@@ -6,11 +6,14 @@ import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:keninacafecust_web/AppsBar.dart';
 import 'package:flutter/material.dart';
+import 'package:keninacafecust_web/Entity/Cart.dart';
+import 'package:keninacafecust_web/Menu/viewCart.dart';
 // import 'package:flutter_search_bar/flutter_search_bar.dart';
 
 import '../Entity/ItemCategory.dart';
 import '../Entity/MenuItem.dart';
 import '../Entity/User.dart';
+import 'menuItemDetails.dart';
 
 void main() {
   runApp(const MyApp());
@@ -30,17 +33,17 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
-        tabBarTheme: TabBarTheme(labelColor: Colors.black),
       ),
-      home: const MenuHomePage(user: null),
+      home: const MenuHomePage(user: null, cart: null),
     );
   }
 }
 
 class MenuHomePage extends StatefulWidget {
-  const MenuHomePage({super.key, this.user});
+  const MenuHomePage({super.key, this.user, this.cart});
 
   final User? user;
+  final Cart? cart;
 
   @override
   State<MenuHomePage> createState() => _MenuHomePageState();
@@ -48,7 +51,7 @@ class MenuHomePage extends StatefulWidget {
 
 class _MenuHomePageState extends State<MenuHomePage> with SingleTickerProviderStateMixin{
   int selectedTabIndex = 0;
-  int numItemCategory = 4;
+  int numItemCategory = 6;
   bool searchBoolean = false;
   List<MenuItem>? menuItem;
   List<String> bestSeller = ['Best Seller For Foods', 'Best Seller For Drinks'];
@@ -56,11 +59,17 @@ class _MenuHomePageState extends State<MenuHomePage> with SingleTickerProviderSt
   String? tempCategoryName;
   List<int> _searchIndexList = [];
   List<MenuItem>? searchMenuItem = [];
-  // List<String> _list = ['English Textbook', 'Japanese Textbook', 'English Vocabulary', 'Japanese Vocabulary'];
+  int itemCount = 0;
+  double totalPrice = 0.0;
+  bool isMenuHomePage = true;
 
 
   User? getUser() {
     return widget.user;
+  }
+
+  Cart? getCart() {
+    return widget.cart;
   }
 
   @override
@@ -68,6 +77,7 @@ class _MenuHomePageState extends State<MenuHomePage> with SingleTickerProviderSt
     enterFullScreen();
 
     User? currentUser = getUser();
+    Cart? currentCart = getCart();
 
     return Container(
       constraints: const BoxConstraints.expand(), // Make the container cover the entire screen
@@ -91,7 +101,7 @@ class _MenuHomePageState extends State<MenuHomePage> with SingleTickerProviderSt
                 fontSize: 25.0,
               ),
             ) : searchTextField(currentUser!),
-            backgroundColor: Colors.blueAccent,
+            backgroundColor: Colors.orange.shade500,
             // centerTitle: true,
             actions: !searchBoolean
                 ?[
@@ -149,24 +159,17 @@ class _MenuHomePageState extends State<MenuHomePage> with SingleTickerProviderSt
                                 selectedTabIndex = value;
                               });
                             },
-                            overlayColor: MaterialStateProperty.resolveWith<Color?>(
-                                  (Set<MaterialState> states) {
-                                if (states.contains(MaterialState.hovered))
-                                  return Colors.grey.shade200;
-                                return null;
-                              },
-                            ),
-
                             tabs: buildItemCategoryList(snapshot.data, currentUser),
                             isScrollable: true,
                             // indicatorSize: TabBarIndicatorSize.label,
                             labelPadding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
                             // Space between tabs
                             indicator: BoxDecoration(
-                              color: Colors.green.shade800,
+                              color: Colors.orange.shade500,
                             ),
                             unselectedLabelColor: Colors.grey.shade600,
-                            labelColor: Colors.green.shade800,
+                            labelColor: Colors.orange.shade500,
+
                           );
                         } else {
                           if (snapshot.hasError) {
@@ -181,36 +184,142 @@ class _MenuHomePageState extends State<MenuHomePage> with SingleTickerProviderSt
               ),
             ),
           ),
-          drawer: AppsBarState().buildDrawer(context),
-          body: !searchBoolean ? _defaultListView(currentUser!) : _searchListView()
-          // body: Padding(
-          //   padding: const EdgeInsets.symmetric(vertical: 5),
-          //   child: FutureBuilder<List<MenuItem>>(
-          //     future: getMenuItemList(),
-          //     builder: (BuildContext context, AsyncSnapshot<List<MenuItem>> snapshot) {
-          //       if (snapshot.hasData) {
-          //         return TabBarView(
-          //           children: buildMenuItemList(snapshot.data, currentUser),
-          //         );
-          //       } else {
-          //         if (snapshot.hasError) {
-          //           return Center(child: Text('Error: ${snapshot.error}'));
-          //         } else {
-          //           return const Center(child: Text('Loading....'));
-          //         }
-          //       }
-          //     }
-          //   ),
-          // ),
+          drawer: AppsBarState().buildDrawer(context, currentUser!, currentCart!, isMenuHomePage),
+          body: !searchBoolean ? _defaultListView(currentUser!, currentCart!) : _searchListView(currentUser!, currentCart!),
+          // bottomNavigationBar:
+          floatingActionButton: currentCart.getMenuItemList().isEmpty
+          ? Stack(
+            children: [
+              Positioned(
+                // bottom: 25.0,
+                // right: 16.0,
+                child: FloatingActionButton(
+                  backgroundColor: Colors.orange.shade500,
+                  onPressed: () async {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => ViewCartPage(user: currentUser, cart: currentCart))
+                    );
+                  },
+                  child: const Icon(
+                    Icons.shopping_cart_outlined,
+                    size: 35,
+                  ),
+                ),
+              ),
+            ],
+          ) : Container(height: 0,),
+          bottomNavigationBar: Container(
+            decoration: const BoxDecoration(
+              color: Colors.transparent,
+            ),
+            child: currentCart.getMenuItemList().isNotEmpty
+              ? Padding(
+                padding: const EdgeInsets.fromLTRB(20, 5, 20, 15),
+                child: Container(
+                  padding: const EdgeInsets.only(top: 3,left: 3),
+                  child: MaterialButton(
+                    minWidth: double.infinity,
+                    height:50,
+                    onPressed: () async {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) => ViewCartPage(user: currentUser, cart: currentCart))
+                      );
+                    },
+                    color: Colors.orange.shade500,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15)
+                    ),
+                    child: Stack(
+                      alignment: Alignment.topLeft,
+                      children: [
+                        FloatingActionButton(
+                          onPressed: () {
+                            // Handle the shopping cart button tap.
+                          },
+                          backgroundColor: Colors.orange.shade500,
+                          elevation: 0.0,
+                          child: const Icon(
+                            Icons.shopping_cart_outlined,
+                            size: 35,
+                          ),
+                        ),
+                        Positioned(
+                          top: 3,
+                          left: 35,
+                          child: Container(
+                            padding: const EdgeInsets.all(5),
+                            decoration: const BoxDecoration(
+                              color: Colors.white,
+                              shape: BoxShape.circle,
+                            ),
+                            child: Text(
+                              currentCart.getNumMenuItemOrder().toString(),
+                              style: TextStyle(
+                                color: Colors.orange.shade500,
+                                fontSize: 12,
+                              ),
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(70, 18, 0, 0),
+                          child: Row(
+                            // mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                'RM ${currentCart.getGrandTotal().toStringAsFixed(2)}', // Replace with the actual total price.
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16.5,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const Padding(
+                          padding: EdgeInsets.fromLTRB(207, 18, 0, 0),
+                          child: Row(
+                            // mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                'CHECKOUT', // Replace with the actual total price.
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                  fontSize: 16.5,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const Padding(
+                          padding: EdgeInsets.fromLTRB(297, 16, 0, 0),
+                          child: Row(
+                            // mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                Icons.arrow_forward_ios_sharp,
+                                size: 20,
+                                color: Colors.white,
+                              )
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+            ) : Container(height: 0,)
+          ),
         ),
       ),
-     );
+    );
   }
 
   List<Widget> buildItemCategoryList(List<MenuItem>? listItemCategory, User? currentUser) {
     List<Widget> tabs = [];
     numItemCategory = listItemCategory!.length + 2;
-    print(listItemCategory);
 
     for (int i = 0; i < bestSeller.length; i++) {
       tabs.add(
@@ -240,7 +349,7 @@ class _MenuHomePageState extends State<MenuHomePage> with SingleTickerProviderSt
                               CircleAvatar(
                                 // backgroundColor: Colors.grey.shade500,
                                 backgroundColor: selectedTabIndex == i
-                                    ? Colors.green // Selected tab color
+                                    ? Colors.orange.shade500 // Selected tab color
                                     : Colors.grey.shade500,
                                 radius: 30.0,
                                 child: Padding(
@@ -308,7 +417,7 @@ class _MenuHomePageState extends State<MenuHomePage> with SingleTickerProviderSt
                                 // backgroundColor: Colors.grey.shade500,
 
                                 backgroundColor: selectedTabIndex == i + 2
-                                    ? Colors.green // Selected tab color
+                                    ? Colors.orange.shade500 // Selected tab color
                                     : Colors.grey.shade500,
                                 radius: 30.0,
                                 child: Padding(
@@ -349,27 +458,28 @@ class _MenuHomePageState extends State<MenuHomePage> with SingleTickerProviderSt
     return tabs;
   }
 
-  List<Widget> buildMenuItemList(List<MenuItem>? listMenuItem, User? currentUser) {
+  List<Widget> buildMenuItemList(List<MenuItem>? listMenuItem, User? currentUser, Cart currentCart) {
     List<Widget> tabBarView = [];
     tabBarView.add(
       SingleChildScrollView(
-        child: FoodTypeCollapsible(foodType: 'Best Seller For Foods', foods: [
+        child: MenuCategory(currentUser: currentUser!, currentCart: currentCart, menuCategoryName: 'Best Seller For Foods', menuItem: [
           for (int i = 0; i < listMenuItem!.length; i++)
             // if (listMenuItem[i].isOutOfStock)
-              FoodItem(name: listMenuItem[i].name, price: listMenuItem[i].price),
+            //   FoodItem(name: listMenuItem[i].name, price: listMenuItem[i].price),
+            listMenuItem[i],
         ]),
       ),
     );
     tabBarView.add(
       SingleChildScrollView(
-        child: FoodTypeCollapsible(foodType: 'Best Seller For Drinks', foods: [
+        child: MenuCategory(currentUser: currentUser, currentCart: currentCart, menuCategoryName: 'Best Seller For Drinks', menuItem: [
           for (int i = 0; i < listMenuItem.length; i++)
             // if (listMenuItem[i].isOutOfStock == false)
-              FoodItem(name: listMenuItem[i].name, price: listMenuItem[i].price),
+            //   FoodItem(name: listMenuItem[i].name, price: listMenuItem[i].price),
+            listMenuItem[i],
         ]),
       ),
     );
-    print('I am here');
     for (int i = 0; i < listMenuItem.length; i++) {
       searchMenuItem?.add(listMenuItem[i]);
       categoryName = listMenuItem[i].category_name;
@@ -377,10 +487,11 @@ class _MenuHomePageState extends State<MenuHomePage> with SingleTickerProviderSt
           tempCategoryName = categoryName;
           tabBarView.add(
             SingleChildScrollView(
-              child: FoodTypeCollapsible(foodType: listMenuItem[i].category_name, foods: [
+              child: MenuCategory(currentUser: currentUser, currentCart: currentCart, menuCategoryName: listMenuItem[i].category_name, menuItem: [
                 for (int j = i; j < listMenuItem.length; j++)
                   if (listMenuItem[j].category_name == tempCategoryName)
-                    FoodItem(name: listMenuItem[j].name, price: listMenuItem[j].price),
+                    // FoodItem(name: listMenuItem[j].name, price: listMenuItem[j].price),
+                    listMenuItem[j],
               ]),
             ),
           );
@@ -459,17 +570,18 @@ class _MenuHomePageState extends State<MenuHomePage> with SingleTickerProviderSt
     );
   }
 
-  Widget _searchListView() {
-    final List<FoodItem> foodItems = _searchIndexList.map((index) {
-      return FoodItem(name: searchMenuItem![index].name, price: searchMenuItem![index].price);
+  Widget _searchListView(User currentUser, Cart currentCart) {
+    final List<MenuItem> menuItems = _searchIndexList.map((index) {
+      // return MenuItem(name: searchMenuItem![index].name, price: searchMenuItem![index].price);
+      return searchMenuItem![index];
     }).toList();
 
     return SingleChildScrollView(
-      child: FoodTypeCollapsible(foodType: 'Item Search', foods: foodItems),
+      child: MenuCategory(menuCategoryName: 'Item Search', menuItem: menuItems, currentUser: currentUser, currentCart: currentCart,),
     );
   }
 
-  Widget _defaultListView(User currentUser) {
+  Widget _defaultListView(User currentUser, Cart currentCart) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 5),
       child: FutureBuilder<List<MenuItem>>(
@@ -477,7 +589,7 @@ class _MenuHomePageState extends State<MenuHomePage> with SingleTickerProviderSt
         builder: (BuildContext context, AsyncSnapshot<List<MenuItem>> snapshot) {
           if (snapshot.hasData) {
             return TabBarView(
-              children: buildMenuItemList(snapshot.data, currentUser),
+              children: buildMenuItemList(snapshot.data, currentUser, currentCart),
             );
           } else {
             if (snapshot.hasError) {
@@ -495,7 +607,7 @@ class _MenuHomePageState extends State<MenuHomePage> with SingleTickerProviderSt
     try {
       final response = await http.get(
         Uri.parse('http://10.0.2.2:8000/menu/request_menu_item_list'),
-        // Uri.parse('http://localhost:8000/users/login'),
+        // Uri.parse('http://localhost:8000/menu/request_menu_item_list'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
@@ -515,7 +627,7 @@ class _MenuHomePageState extends State<MenuHomePage> with SingleTickerProviderSt
     try {
       final response = await http.get(
         Uri.parse('http://10.0.2.2:8000/menu/request_item_category_list'),
-        // Uri.parse('http://localhost:8000/users/login'),
+        // Uri.parse('http://localhost:8000/menu/request_item_category_list'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
@@ -532,32 +644,45 @@ class _MenuHomePageState extends State<MenuHomePage> with SingleTickerProviderSt
   }
 }
 
-class FoodTypeCollapsible extends StatefulWidget {
-  final String foodType;
-  final List<FoodItem> foods;
+class MenuCategory extends StatefulWidget {
+  final String menuCategoryName;
+  final List<MenuItem> menuItem;
+  final User currentUser;
+  final Cart currentCart;
 
-  FoodTypeCollapsible({required this.foodType, required this.foods});
+  const MenuCategory({super.key, required this.menuCategoryName, required this.menuItem, required this.currentUser, required this.currentCart});
 
   @override
-  _FoodTypeCollapsibleState createState() => _FoodTypeCollapsibleState();
+  _MenuCategoryState createState() => _MenuCategoryState();
 }
 
-class _FoodTypeCollapsibleState extends State<FoodTypeCollapsible> {
-  bool _isExpanded = false;
+class _MenuCategoryState extends State<MenuCategory> {
+  Widget? image;
+  String base64Image = "";
 
-  String? getFoodType() {
-    return widget.foodType;
+  User? getUser() {
+    return widget.currentUser;
   }
 
-  List<FoodItem>? getFoods(){
-    return widget.foods;
+  String? getFoodType() {
+    return widget.menuCategoryName;
+  }
+
+  List<MenuItem>? getFoods(){
+    return widget.menuItem;
+  }
+
+  Cart? getCart() {
+    return widget.currentCart;
   }
 
   @override
   Widget build(BuildContext context) {
 
     String? foodType = getFoodType();
-    List<FoodItem>? foods = getFoods();
+    List<MenuItem>? foods = getFoods();
+    User? currentUser = getUser();
+    Cart? currentCart = getCart();
 
     return Column(
       children: [
@@ -580,12 +705,12 @@ class _FoodTypeCollapsibleState extends State<FoodTypeCollapsible> {
             children: [
               Expanded(
                 child: i < foods.length
-                    ? buildFoodItemCard(foods[i])
+                    ? buildMenuItemCard(foods[i], currentUser!, currentCart!)
                     : const SizedBox.shrink(),
               ),
               Expanded(
                 child: (i + 1) < foods.length
-                    ? buildFoodItemCard(foods[i + 1])
+                    ? buildMenuItemCard(foods[i + 1], currentUser!, currentCart!)
                     : const SizedBox.shrink(),
               ),
             ],
@@ -643,147 +768,258 @@ class _FoodTypeCollapsibleState extends State<FoodTypeCollapsible> {
     // );
   }
 
-  Widget buildFoodItemCard(FoodItem food) {
+  Widget buildMenuItemCard(MenuItem currentMenuItem, User currentUser, Cart currentCart) {
 
-    return Card(
-      elevation: 2.0,
-      margin: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(1.5, 2, 1.5, 10.0),
-        child: Column(
-          // crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Hero(
-              tag: food.name,
-              child: ClipRRect(
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(3.0), // Adjust the radius for the top left corner
-                  topRight: Radius.circular(3.0), // Adjust the radius for the top right corner
-                ),
-                child: Image.asset(
-                  'images/KE_Nina_Cafe_logo.jpg',
-                  fit: BoxFit.cover,
+    if (base64Image == "") {
+      base64Image = currentMenuItem!.image;
+      if (base64Image == "") {
+        image = Image.asset('images/KE_Nina_Cafe_logo.jpg');
+        print("nothing in base64");
+      } else {
+        image = Image.memory(base64Decode(base64Image), fit: BoxFit.cover);
+      }
+    } else {
+      image = Image.memory(base64Decode(base64Image), fit: BoxFit.cover);
+    }
+
+    return SizedBox(
+      height: 310,
+      child: Card(
+        elevation: 2.0,
+        margin: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(1.5, 2, 1.5, 10.0),
+          child: Column(
+            // crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Hero(
+                tag: currentMenuItem.name,
+                child: ClipRRect(
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(3.0), // Adjust the radius for the top left corner
+                    topRight: Radius.circular(3.0), // Adjust the radius for the top right corner
+                  ),
+                  // child: Image.asset(
+                  //   'images/KE_Nina_Cafe_logo.jpg',
+                  //   fit: BoxFit.cover,
+                  // ),
+                  child: image,
                 ),
               ),
-            ),
 
-            const SizedBox(height: 5.0,),
 
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 0),
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  food.name,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 17.0,
-                    fontFamily: 'Itim',
+                // const SizedBox(height: 5.0,),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(10, 5, 10, 0),
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    currentMenuItem.name,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 17.0,
+                      fontFamily: 'Itim',
+                    ),
                   ),
                 ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  'RM ${food.price.toStringAsFixed(2)}',
-                  style: const TextStyle(
-                    fontSize: 14.0,
-                    fontFamily: "Itim"
+
+              const Spacer(),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    'RM ${currentMenuItem.price.toStringAsFixed(2)}',
+                    style: const TextStyle(
+                      fontSize: 14.0,
+                      fontFamily: "Itim"
+                    ),
                   ),
                 ),
               ),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(3),
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(5),
-                      color: Colors.green.shade700,
-                  ),
-                  child: Row(
-                    children: [
-                      Container(
-                        margin: const EdgeInsets.symmetric(horizontal: 50),
-                        padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 2),
-                        child: InkWell(
-                          onTap: () {},
-                          child: const Row(
-                            children: [
-                              Text(
-                                'Add',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
+
+              const Spacer(),
+              // GestureDetector(
+              //   onTap: () {
+              //     Navigator.push(context,
+              //       MaterialPageRoute(
+              //         builder: (context) => MenuItemDetailsPage(user: currentUser, menuItem: currentMenuItem, cart: currentCart)),
+              //     );
+              //     setState(() {
+              //       currentMenuItem.numOrder = 0;
+              //       currentMenuItem.sizeChosen = "";
+              //       currentMenuItem.variantChosen = "";
+              //       currentMenuItem.remarks = "";
+              //     });
+              //   },
+              //   child: Hero(
+              //     tag: currentMenuItem.name,
+              //     child: ClipRRect(
+              //       borderRadius: const BorderRadius.only(
+              //         topLeft: Radius.circular(3.0), // Adjust the radius for the top left corner
+              //         topRight: Radius.circular(3.0), // Adjust the radius for the top right corner
+              //       ),
+              //       child: Image.asset(
+              //         'images/KE_Nina_Cafe_logo.jpg',
+              //         fit: BoxFit.cover,
+              //       ),
+              //     ),
+              //   ),
+              // ),
+              //
+              //   // const SizedBox(height: 5.0,),
+              // GestureDetector(
+              //   onTap: () {
+              //     Navigator.push(context,
+              //       MaterialPageRoute(
+              //           builder: (context) => MenuItemDetailsPage(user: currentUser, menuItem: currentMenuItem, cart: currentCart)),
+              //     );
+              //     setState(() {
+              //       currentMenuItem.numOrder = 0;
+              //       currentMenuItem.sizeChosen = "";
+              //       currentMenuItem.variantChosen = "";
+              //       currentMenuItem.remarks = "";
+              //     });
+              //   },
+              //   child: Padding(
+              //     padding: const EdgeInsets.fromLTRB(0, 15, 0, 10),
+              //     child: Align(
+              //       alignment: Alignment.centerLeft,
+              //       child: Text(
+              //         currentMenuItem.name,
+              //         style: const TextStyle(
+              //           fontWeight: FontWeight.bold,
+              //           fontSize: 17.0,
+              //           fontFamily: 'Itim',
+              //         ),
+              //       ),
+              //     ),
+              //   ),
+              // ),
+              // GestureDetector(
+              //   onTap: () {
+              //     Navigator.push(context,
+              //       MaterialPageRoute(
+              //           builder: (context) => MenuItemDetailsPage(user: currentUser, menuItem: currentMenuItem, cart: currentCart)),
+              //     );
+              //     setState(() {
+              //       currentMenuItem.numOrder = 0;
+              //       currentMenuItem.sizeChosen = "";
+              //       currentMenuItem.variantChosen = "";
+              //       currentMenuItem.remarks = "";
+              //     });
+              //   },
+              //   child: const Spacer(),
+              // ),
+              // GestureDetector(
+              //   onTap: () {
+              //     Navigator.push(context,
+              //       MaterialPageRoute(
+              //           builder: (context) => MenuItemDetailsPage(user: currentUser, menuItem: currentMenuItem, cart: currentCart)),
+              //     );
+              //     setState(() {
+              //       currentMenuItem.numOrder = 0;
+              //       currentMenuItem.sizeChosen = "";
+              //       currentMenuItem.variantChosen = "";
+              //       currentMenuItem.remarks = "";
+              //     });
+              //   },
+              //   child: Padding(
+              //     padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
+              //     child: Align(
+              //       alignment: Alignment.centerLeft,
+              //       child: Text(
+              //         'RM ${currentMenuItem.price.toStringAsFixed(2)}',
+              //         style: const TextStyle(
+              //           fontSize: 14.0,
+              //           fontFamily: "Itim"
+              //         ),
+              //       ),
+              //     ),
+              //   ),
+              // ),
+              // GestureDetector(
+              //   onTap: () {
+              //     Navigator.push(context,
+              //       MaterialPageRoute(
+              //           builder: (context) => MenuItemDetailsPage(user: currentUser, menuItem: currentMenuItem, cart: currentCart)),
+              //     );
+              //     setState(() {
+              //       currentMenuItem.numOrder = 0;
+              //       currentMenuItem.sizeChosen = "";
+              //       currentMenuItem.variantChosen = "";
+              //       currentMenuItem.remarks = "";
+              //     });
+              //   },
+              //   child: const Spacer(),
+              // ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(3),
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(5),
+                        color: Colors.green.shade700,
+                    ),
+                    child: Row(
+                      children: [
+                        Container(
+                          margin: const EdgeInsets.symmetric(horizontal: 50),
+                          padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 2),
+                          child: GestureDetector(
+                            onTap: () async {
+                              Navigator.push(context,
+                                  MaterialPageRoute(builder: (context) => MenuItemDetailsPage(user: currentUser, menuItem: currentMenuItem, cart: currentCart))
+                              );
+                              setState(() {
+                                currentMenuItem.numOrder = 0;
+                                currentMenuItem.sizeChosen = "";
+                                currentMenuItem.variantChosen = "";
+                                currentMenuItem.remarks = "";
+                              });
+                              // if (currentMenuItem.hasSize == false && currentMenuItem.hasVariant == false) {
+                              //   currentCart.addToCart(1, currentMenuItem);
+                              // }
+                            },
+                            child: const Row(
+                              children: [
+                                Text(
+                                  'Add',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
-                              ),
-                              SizedBox(width: 4),
-                              Icon(
-                                Icons.add,
-                                color: Colors.white,
-                                size: 16,
-                              ),
-                            ],
+                                SizedBox(width: 4),
+                                Icon(
+                                  Icons.add,
+                                  color: Colors.white,
+                                  size: 16,
+                                ),
+                              ],
+                            ),
                           ),
                         ),
-                      ),
-                      // Container(
-                      //   margin: const EdgeInsets.symmetric(horizontal: 13),
-                      //   padding: const EdgeInsets.symmetric(horizontal: 3, vertical: 2),
-                      //   child: InkWell(
-                      //     onTap: () {},
-                      //     child: const Icon(
-                      //       Icons.remove,
-                      //       color: Colors.white,
-                      //       size: 16,
-                      //     )
-                      //   ),
-                      // ),
-                      // Container(
-                      //   margin: const EdgeInsets.symmetric(horizontal: 3),
-                      //   padding: const EdgeInsets.symmetric(horizontal: 23, vertical: 0),
-                      //   decoration: BoxDecoration(
-                      //     borderRadius: BorderRadius.circular(3),
-                      //     color: Colors.white
-                      //   ),
-                      //   child: const Text(
-                      //     '0',
-                      //     style: TextStyle(color: Colors.black, fontSize: 15),
-                      //   ),
-                      // ),
-                      // Container(
-                      //   margin: const EdgeInsets.symmetric(horizontal: 13),
-                      //   padding: const EdgeInsets.symmetric(horizontal: 3, vertical: 2),
-                      //   child: InkWell(
-                      //     onTap: () {},
-                      //     child: const Icon(
-                      //       Icons.add,
-                      //       color: Colors.white,
-                      //       size: 16,
-                      //     )
-                      //   ),
-                      // ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-              ],
-            ),
-          ],
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 }
 
-class FoodItem {
-  final String name;
-  final double price;
-
-  FoodItem({required this.name, required this.price});
-}
+// class FoodItem {
+//   final String name;
+//   final double price;
+//
+//   FoodItem({required this.name, required this.price});
+// }
 
 

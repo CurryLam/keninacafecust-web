@@ -40,6 +40,10 @@ dependencies:
   http: ^1.0.0
   json_annotation: ^4.8.1
   dart_jsonwebtoken: ^2.8.0
+  carousel_slider: ^4.2.1
+  coupon_uikit: ^0.2.0
+  badges: ^3.1.2
+  font_awesome_flutter: 10.6.0
 
 dev_dependencies:
   flutter_test:
@@ -69,6 +73,12 @@ flutter:
     - images/registration_Header.png
     - images/login_background.png
     - images/menuBackground.png
+    - images/emptyCart.png
+    - images/orderConfirmation.png
+    - images/voucherGift.png
+    - images/voucherIcon.png
+    - images/orderSummary.png
+    - images/enjoyMeal.png
 
   fonts:
     - family: AsapCondensed
@@ -89,9 +99,18 @@ flutter:
         - asset: fonts/AsapCondensed-Regular.ttf
         - asset: fonts/AsapCondensed-SemiBold.ttf
         - asset: fonts/AsapCondensed-SemiBoldItalic.ttf
+    - family: BebasNeue
+      fonts:
+        - asset: fonts/BebasNeue-Regular.ttf
+    - family: Gabarito
+      fonts:
+        - asset: fonts/Gabarito-VariableFont_wght.ttf
     - family: Itim
       fonts:
         - asset: fonts/Itim-Regular.ttf
+    - family: LilitaOne
+      fonts:
+        - asset: fonts/LilitaOne-Regular.ttf
     - family: Rajdhani
       fonts:
         - asset: fonts/Rajdhani-Bold.ttf
@@ -102,6 +121,12 @@ flutter:
     - family: YanoneKaffeesatz
       fonts:
         - asset: fonts/YanoneKaffeesatz-VariableFont_wght.ttf
+    - family: BreeSerif
+      fonts:
+        - asset: fonts/BreeSerif-Regular.ttf
+    - family: YoungSerif
+      fonts:
+        - asset: fonts/YoungSerif-Regular.ttf
   # To add assets to your application, add an assets section, like this:
   # assets:
   #   - images/a_dot_burr.jpeg

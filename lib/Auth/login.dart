@@ -10,6 +10,7 @@ import 'package:keninacafecust_web/Auth/register.dart';
 import 'package:keninacafecust_web/Security/Encryptor.dart';
 import 'package:keninacafecust_web/Utils/error_codes.dart';
 
+import '../Entity/Cart.dart';
 import '../Entity/User.dart';
 import '../Menu/menuHome.dart';
 
@@ -78,6 +79,8 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
       securePasswordText = !securePasswordText;
     });
   }
+
+  Cart currentCart = Cart(id: 0, menuItem: [], numMenuItemOrder: 0, grandTotalBeforeDiscount: 0, grandTotalAfterDiscount: 0);
 
   @override
   Widget build(BuildContext context) {
@@ -324,7 +327,7 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
                                           TextButton(
                                             onPressed: () {
                                               Navigator.of(context).pop();
-                                              Navigator.push(context, MaterialPageRoute(builder: (context) => MenuHomePage(user: currentUser)));
+                                              Navigator.push(context, MaterialPageRoute(builder: (context) => MenuHomePage(user: currentUser, cart: currentCart)));
                                             },
                                             child: const Text('Ok'),
                                           ),

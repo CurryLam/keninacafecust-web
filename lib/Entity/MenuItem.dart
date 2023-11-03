@@ -20,8 +20,13 @@ class MenuItem {
   final String category_name;
   final String user_created_name;
   final String user_updated_name;
+  int numOrder; // Cart and Order purpose
+  // double priceNumOrder; // Cart and Order purpose
+  String sizeChosen; // Cart and Order purpose
+  String variantChosen; // Cart and Order purpose
+  String remarks; // Cart and Order purpose
 
-  const MenuItem({
+  MenuItem({
     required this.id,
     required this.itemClass,
     required this.image,
@@ -36,12 +41,17 @@ class MenuItem {
     required this.category_name,
     required this.user_created_name,
     required this.user_updated_name,
+    required this.numOrder, // Cart and Order purpose
+    // required this.priceNumOrder, // Cart and Order purpose
+    required this.sizeChosen, // Cart and Order purpose
+    required this.variantChosen, // Cart and Order purpose
+    required this.remarks, // Cart and Order purpose
   });
 
   factory MenuItem.fromJson(Map<String, dynamic> json) {
-    if (kDebugMode) {
-      print('MenuItem.fromJson: $json');
-    }
+    // if (kDebugMode) {
+    //   print('MenuItem.fromJson: $json');
+    // }
     return MenuItem(
       id: json['id'],
       itemClass: json['itemClass'],
@@ -57,8 +67,53 @@ class MenuItem {
       category_name: json['category_name'],
       user_created_name: json['user_created_name'] != null ? json['user_created_name'] : '',
       user_updated_name: json['user_updated_name'] != null ? json['user_updated_name'] : '',
+      numOrder: 0, // Cart and Order purpose
+      // priceNumOrder: 0, // Cart and Order purpose
+      sizeChosen: "", // Cart and Order purpose
+      variantChosen: "", // Cart and Order purpose
+      remarks: "", // Cart and Order purpose
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'itemClass': itemClass,
+      'image': image,
+      'name': name,
+      'price': price,
+      'description': description,
+      'isOutOfStock': isOutOfStock,
+      'hasVariant': hasVariant,
+      'variants': variants,
+      'hasSize': hasSize,
+      'sizes': sizes,
+      'category_name': category_name,
+      'numOrder': numOrder, // Cart and Order purpose
+      'sizeChosen': sizeChosen, // Cart and Order purpose
+      'variantChosen': variantChosen, // Cart and Order purpose
+      'remarks': remarks, // Cart and Order purpose
+    };
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (other is! MenuItem) return false;
+    if (name == other.name && sizeChosen == other.sizeChosen && variantChosen == other.variantChosen && remarks == other.remarks) return true;
+    return false;
+  }
+
+  @override
+  int get hashCode => id.hashCode;
+
+  // @override
+  // int get hashCode {
+  //   var result = 17;
+  //   result = 37 * result + color.hashCode;
+  //   result = 37 * result + make.hashCode;
+  //   result = 37 * result + year.hashCode;
+  //   return result;
+  // }
 
   static List<MenuItem> getMenuItemDataList(Map<String, dynamic> json) {
     List<MenuItem> menuItemDataList = [];
@@ -71,13 +126,11 @@ class MenuItem {
 
   static List<MenuItem> getItemCategoryExistMenuItemList(Map<String, dynamic> json) {
     List<MenuItem> itemCategoryExistMenuItemList = [];
-    print(json['data']);
     for (Map<String,dynamic> itemCategoryExistMenuItem in json['data']) {
-      print(itemCategoryExistMenuItem);
       MenuItem oneitemCategoryExistMenuItem = MenuItem.fromJson(itemCategoryExistMenuItem);
       itemCategoryExistMenuItemList.add(oneitemCategoryExistMenuItem);
     }
-    print(itemCategoryExistMenuItemList);
     return itemCategoryExistMenuItemList;
   }
+
 }
