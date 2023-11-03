@@ -2,9 +2,14 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import 'Auth/login.dart';
+import 'Entity/Cart.dart';
 import 'Entity/User.dart';
+import 'Menu/menuHome.dart';
+import 'Menu/viewCart.dart';
+import 'Order/orderHistory.dart';
 
 
 void main() {
@@ -69,176 +74,336 @@ class AppsBarState extends State<AppsBar> {
         ),
         backgroundColor: Colors.blueAccent,
         centerTitle: true,
-        // actions: [
-        //   Padding(
-        //     padding: const EdgeInsets.symmetric(horizontal: 28),
-        //     child: IconButton(
-        //       onPressed: () {
-        //         // Navigator.of(context).push(
-        //         //     MaterialPageRoute(builder: (context) => CreateAnnouncementPage(user: currentUser))
-        //         // );
-        //       },
-        //       icon: const Icon(Icons.login, size: 35,),
-        //     ),
-        //   ),
-        //   // IconButton(
-        //   //   onPressed: () {
-        //   //     Navigator.of(context).push(
-        //   //         MaterialPageRoute(builder: (context) => ViewPersonalProfilePage(user: currentUser))
-        //   //     );
-        //   //   },
-        //   //   icon: const Icon(Icons.account_circle_rounded, size: 35,),
-        // ],
       ),
     );
   }
 
   @override
-  PreferredSizeWidget buildFoodMenuAppBar(BuildContext context, String title, bool searchBoolean) {
+  PreferredSizeWidget buildCartAppBar(BuildContext context, String title, User currentUser, Cart currentCart) {
 
-    return PreferredSize(
+    return PreferredSize( //wrap with PreferredSize
       preferredSize: const Size.fromHeight(80),
       child: AppBar(
-        elevation: 0,
-        toolbarHeight: 100,
-        title: Text(title,
-          style: const TextStyle(
-            // fontWeight: FontWeight.bold,
-            fontSize: 25.0,
+        leading: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 0),
+          child: IconButton(
+            icon: const Icon(
+              Icons.arrow_back_ios_rounded,
+              size: 30.0,
+              color: Colors.white,
+            ),
+            onPressed: () {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => MenuHomePage(user: currentUser, cart: currentCart))
+              );
+            },
           ),
         ),
-        backgroundColor: Colors.blueAccent,
-        // centerTitle: true,
-        actions: !searchBoolean
-          ?[
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 22),
-              child: IconButton(
-                onPressed: () {
-                  setState(() { //add
-                    searchBoolean = true;
-                  });
-                },
-                icon: const Icon(Icons.search, size: 35,),
+        elevation: 0,
+        toolbarHeight: 100,
+        title: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 45),
+          child: Row(
+            children: [
+              const Icon(
+                Icons.shopping_cart_outlined,
+                size: 35.0,
+                color: Colors.white,
               ),
-            ),
-          ]
-          :[
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 22),
-            child: IconButton(
-              onPressed: () {
-                setState(() { //add
-                  searchBoolean = false;
-                });
-              },
-              icon: const Icon(Icons.clear, size: 35,),
-            ),
+              const SizedBox(width: 8.0,),
+              Text(
+                title,
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 27.0,
+                  fontFamily: 'BreeSerif',
+                  color: Colors.white,
+                ),
+              ),
+            ],
           ),
-        ],
+        ),
+        backgroundColor: Colors.orange.shade500,
+        centerTitle: true,
       ),
     );
   }
 
-  // @override
-  // PreferredSizeWidget buildMenuAppBar(BuildContext context, String title) {
-  //
-  //   return PreferredSize( //wrap with PreferredSize
-  //     preferredSize: const Size.fromHeight(80),
-  //     child: Padding(
-  //         padding: EdgeInsets.symmetric(vertical: 15, horizontal: 15),
-  //         child: Row(
-  //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  //           children: [
-  //             InkWell(
-  //               onTap: () {
-  //                 Scaffold.of(context).openDrawer();
-  //               },
-  //               child: Container(
-  //                 padding: EdgeInsets.all(8),
-  //                 decoration: BoxDecoration(
-  //                     color: Colors.black,
-  //                     borderRadius: BorderRadius.circular(20),
-  //                     boxShadow: [
-  //                       BoxShadow(
-  //                         color: Colors.grey[600]!,
-  //                         spreadRadius: 1,
-  //                         blurRadius: 6,
-  //                       )
-  //                     ]),
-  //                 child: Icon(
-  //                   CupertinoIcons.bars,
-  //                   color: Colors.amber,
-  //                   // color:Colors.white
-  //                 ),
-  //               ),
-  //             ),
-  //             InkWell(
-  //                 onTap: () {},
-  //                 child: Container(
-  //                   padding: EdgeInsets.all(8),
-  //                   decoration: BoxDecoration(
-  //                       color: Colors.black,
-  //                       borderRadius: BorderRadius.circular(20),
-  //                       boxShadow: [
-  //                         BoxShadow(
-  //                           color: Colors.grey[600]!,
-  //                           spreadRadius: 1,
-  //                           blurRadius: 6,
-  //                         )
-  //                       ]),
-  //                   child: Icon(
-  //                     Icons.notifications,
-  //                     color: Colors.amber,
-  //                   ),
-  //                 ))
-  //           ],
-  //         )),
-  //   );
-  // }
+  @override
+  PreferredSizeWidget buildOrderHistoryAppBar(BuildContext context, String title, User currentUser, Cart currentCart) {
 
-  Widget buildDrawer(BuildContext context) {
+    return PreferredSize( //wrap with PreferredSize
+      preferredSize: const Size.fromHeight(80),
+      child: AppBar(
+        iconTheme: const IconThemeData(color: Colors.white, size: 25.0),
+        elevation: 0,
+        toolbarHeight: 100,
+        title: Row(
+          children: [
+            const Icon(
+              Icons.history,
+              size: 35.0,
+              color: Colors.white,
+            ),
+            const SizedBox(width: 8.0,),
+            Text(
+              title,
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 27.0,
+                fontFamily: 'BreeSerif',
+                color: Colors.white,
+              ),
+            ),
+          ],
+        ),
+        backgroundColor: Colors.orange.shade500,
+        centerTitle: true,
+      ),
+    );
+  }
+
+  @override
+  PreferredSizeWidget buildOrderHistoryDetailsAppBar(BuildContext context, String title, User currentUser, Cart currentCart) {
+
+    return PreferredSize(
+      preferredSize: const Size.fromHeight(80),
+      child: AppBar(
+        leading: IconButton(
+          onPressed: () => Navigator.pop(context),
+          icon: const Icon(Icons.arrow_back_ios_rounded, color: Colors.white),
+        ),
+        // iconTheme: const IconThemeData(color: Colors.white, size: 25.0),
+        elevation: 0,
+        toolbarHeight: 100,
+        title: Row(
+          children: [
+            const Icon(
+              Icons.history,
+              size: 35.0,
+              color: Colors.white,
+            ),
+            const SizedBox(width: 8.0,),
+            Text(
+              title,
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 27.0,
+                fontFamily: 'BreeSerif',
+                color: Colors.white,
+              ),
+            ),
+          ],
+        ),
+        backgroundColor: Colors.orange.shade500,
+        centerTitle: true,
+      ),
+    );
+  }
+
+  @override
+  PreferredSizeWidget buildEditOrderHistoryDetailsAppBar(BuildContext context, String title, User currentUser, Cart currentCart) {
+
+    return PreferredSize(
+      preferredSize: const Size.fromHeight(80),
+      child: AppBar(
+        leading: IconButton(
+          onPressed: () => Navigator.pop(context),
+          icon: const Icon(Icons.arrow_back_ios_rounded, color: Colors.white),
+        ),
+        // iconTheme: const IconThemeData(color: Colors.white, size: 25.0),
+        elevation: 0,
+        toolbarHeight: 100,
+        title: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 25.0, vertical: 0),
+          child: Row(
+            children: [
+              const Icon(
+                Icons.edit,
+                size: 35.0,
+                color: Colors.white,
+              ),
+              const SizedBox(width: 8.0,),
+              Text(
+                title,
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 27.0,
+                  fontFamily: 'BreeSerif',
+                  color: Colors.white,
+                ),
+              ),
+            ],
+          ),
+        ),
+        backgroundColor: Colors.orange.shade500,
+        centerTitle: true,
+      ),
+    );
+  }
+
+  @override
+  PreferredSizeWidget buildMenuItemDetailsAppsBar(BuildContext context) {
+    return AppBar(
+      backgroundColor: Colors.white,
+      elevation: 0,
+      leading: IconButton(
+        onPressed: () => Navigator.pop(context),
+        icon: const Icon(Icons.arrow_back, color: Colors.black),
+      ),
+    );
+  }
+
+  Widget buildDrawer(BuildContext context, User currentUser, Cart currentCart, bool isMenuHomePage) {
     enterFullScreen();
     return Drawer(
       child: ListView(
         padding: EdgeInsets.zero,
         children: <Widget>[
-          const DrawerHeader(
-            decoration: BoxDecoration(
-                color: Colors.green,
-                // image: DecorationImage(
-                //     fit: BoxFit.fill,
-                //     image: AssetImage('images/KE_Nina_Cafe_appsbar.jpg'))
+          // const DrawerHeader(
+          //   decoration: BoxDecoration(
+          //       color: Colors.green,
+          //       // image: DecorationImage(
+          //       //     fit: BoxFit.fill,
+          //       //     image: AssetImage('images/KE_Nina_Cafe_appsbar.jpg'))
+          //   ),
+          //   child: Text(
+          //     'Side menu',
+          //     style: TextStyle(color: Colors.white, fontSize: 25),
+          //   ),
+          // ),
+          Container(
+            color: Colors.transparent,
+            padding: const EdgeInsets.fromLTRB(0, 30, 0, 20),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                CircleAvatar(
+                  backgroundColor: Colors.orange.shade500,
+                  radius: 45,
+                  child: Padding(
+                    padding: const EdgeInsets.all(5.0), // Border radius
+                    child: ClipOval(child: Image.asset('images/KE_Nina_Cafe_logo.jpg')),
+                  ),
+                ),
+                const SizedBox(width: 20.0,),
+                Text(
+                  'Food Ordering',
+                  style: TextStyle(color: Colors.deepOrangeAccent.shade700, fontSize: 23, fontWeight: FontWeight.bold),
+                ),
+              ]
             ),
+          ),
+          Divider(color: Colors.deepOrangeAccent.shade700, thickness: 3.0,),
+          if (isMenuHomePage == false)
+            ListTile(
+              leading: Icon(
+                Icons.menu_book_outlined,
+                color: Colors.deepOrangeAccent.shade700,
+              ),
+              title: Text(
+                'Menu',
+                style: TextStyle(
+                  color: Colors.deepOrangeAccent.shade700,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 17.0,
+                ),
+              ),
+              onTap: () => {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => MenuHomePage(user: currentUser, cart: currentCart))
+                ),
+              },
+            ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(15, 18, 15, 10),
             child: Text(
-              'Side menu',
-              style: TextStyle(color: Colors.white, fontSize: 25),
+              'My Account',
+              style: TextStyle(color: Colors.grey.shade600, fontSize: 19, fontWeight: FontWeight.bold),
             ),
           ),
           ListTile(
-            leading: const Icon(Icons.input),
-            title: const Text('Welcome'),
+            leading: FaIcon(
+              FontAwesomeIcons.user,
+              color: Colors.deepOrangeAccent.shade700,
+            ),
+            title: Text(
+              'My Profile',
+              style: TextStyle(
+                color: Colors.deepOrangeAccent.shade700,
+                fontWeight: FontWeight.bold,
+                fontSize: 17.0,
+              ),
+            ),
             onTap: () => {},
           ),
           ListTile(
-            leading: const Icon(Icons.verified_user),
-            title: const Text('Profile'),
-            onTap: () => {Navigator.of(context).pop()},
+            leading: Icon(
+                Icons.shopping_cart_outlined,
+                color: Colors.deepOrangeAccent.shade700
+            ),
+            title: Text(
+              'My Cart',
+              style: TextStyle(
+                color: Colors.deepOrangeAccent.shade700,
+                fontWeight: FontWeight.bold,
+                fontSize: 17.0,
+              ),
+            ),
+            onTap: () => {
+              Navigator.push(context,
+                MaterialPageRoute(builder: (context) => ViewCartPage(user: currentUser, cart: currentCart))
+              ),
+            },
           ),
           ListTile(
-            leading: const Icon(Icons.settings),
-            title: const Text('Settings'),
-            onTap: () => {Navigator.of(context).pop()},
+            leading: Icon(
+                Icons.receipt_outlined,
+                color: Colors.deepOrangeAccent.shade700,
+            ),
+            title: Text(
+              'My Order History',
+              style: TextStyle(
+                color: Colors.deepOrangeAccent.shade700,
+                fontWeight: FontWeight.bold,
+                fontSize: 17.0,
+              ),
+            ),
+            onTap: () => {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => OrderHistoryPage(user: currentUser, cart: currentCart))
+              ),
+            },
           ),
           ListTile(
-            leading: const Icon(Icons.border_color),
-            title: const Text('Feedback'),
-            onTap: () => {Navigator.of(context).pop()},
+            leading: Icon(
+                Icons.card_giftcard,
+                color: Colors.deepOrangeAccent.shade700
+            ),
+            title: Text(
+              'My Voucher(s)',
+              style: TextStyle(
+                color: Colors.deepOrangeAccent.shade700,
+                fontWeight: FontWeight.bold,
+                fontSize: 17.0,
+              ),
+            ),
+            onTap: () => {},
           ),
           ListTile(
-            leading: const Icon(Icons.exit_to_app),
-            title: const Text('Logout'),
-            onTap: () => {Navigator.of(context).pop()},
+            leading: Icon(
+                Icons.exit_to_app,
+                color: Colors.deepOrangeAccent.shade700
+            ),
+            title: Text(
+              'Log Out',
+              style: TextStyle(
+                color: Colors.deepOrangeAccent.shade700,
+                fontWeight: FontWeight.bold,
+                fontSize: 17.0,
+              ),
+            ),
+            onTap: () => {},
           ),
         ],
       ),

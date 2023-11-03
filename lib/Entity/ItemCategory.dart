@@ -29,9 +29,7 @@ class ItemCategory {
 
   static List<ItemCategory> getItemCategoryDataList(Map<String, dynamic> json) {
     List<ItemCategory> itemCategoryDataList = [];
-    print(json['data']);
     for (Map<String,dynamic> itemCategoryData in json['data']) {
-      print(itemCategoryData);
       ItemCategory oneItemCategoryData = ItemCategory.fromJson(itemCategoryData);
       itemCategoryDataList.add(oneItemCategoryData);
     }
