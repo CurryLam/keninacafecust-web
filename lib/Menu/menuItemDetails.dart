@@ -54,6 +54,7 @@ class _MenuItemDetailsPageState extends State<MenuItemDetailsPage> {
   List<String> sizeList = [];
   List<String> variantList = [];
   bool hasText = false;
+  bool isButtonEnabled = true;
   int numText = 0;
   int maxNumText = 200;
   TextEditingController remarkController = TextEditingController();
@@ -68,6 +69,14 @@ class _MenuItemDetailsPageState extends State<MenuItemDetailsPage> {
 
   Cart? getCart() {
     return widget.cart;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    if (getMenuItem()!.hasSize || getMenuItem()!.hasVariant) {
+      isButtonEnabled = false;
+    }
   }
 
   @override
@@ -98,7 +107,6 @@ class _MenuItemDetailsPageState extends State<MenuItemDetailsPage> {
 
     remarkController.addListener(() {
       if (remarkController.text.length > 200) {
-        // If the text length exceeds the limit, truncate the text to 200 characters
         remarkController.text = remarkController.text.substring(0, 200);
         remarkController.selection = TextSelection.fromPosition(
           TextPosition(offset: remarkController.text.length),
@@ -178,14 +186,24 @@ class _MenuItemDetailsPageState extends State<MenuItemDetailsPage> {
                               overflow: TextOverflow.clip,
                             ),
                           ),
-                          Text(
-                            'RM ${currentMenuItem.price.toStringAsFixed(2)}',
-                            style: const TextStyle(
-                              fontSize: 20.0,
-                              fontFamily: 'Gabarito',
-                              fontWeight: FontWeight.bold,
+                          if (selectedSize == "Standard" || selectedSize == "")
+                            Text(
+                              'RM ${currentMenuItem.price_standard.toStringAsFixed(2)}',
+                              style: const TextStyle(
+                                fontSize: 20.0,
+                                fontFamily: 'Gabarito',
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
-                          ),
+                          if (selectedSize == "Large")
+                            Text(
+                              'RM ${currentMenuItem.price_large.toStringAsFixed(2)}',
+                              style: const TextStyle(
+                                fontSize: 20.0,
+                                fontFamily: 'Gabarito',
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                         ],
                       ),
                       const SizedBox(height: 5),
@@ -319,7 +337,7 @@ class _MenuItemDetailsPageState extends State<MenuItemDetailsPage> {
                                               // elevation: 3.0, // Add elevation to simulate a border
                                                 shape: RoundedRectangleBorder(
                                                   side: BorderSide(
-                                                    color: Colors.grey.shade300, // Border color
+                                                    color: Colors.grey.shade700, // Border color
                                                     width: 2.0, // Border width
                                                   ),
                                                   borderRadius: BorderRadius.circular(200), // Apply border radius if needed
@@ -358,6 +376,13 @@ class _MenuItemDetailsPageState extends State<MenuItemDetailsPage> {
                                       setState(() {
                                         selectedVariant = value.toString();
                                         currentMenuItem.variantChosen = selectedVariant;
+                                        if (currentMenuItem.hasSize && selectedSize != "") {
+                                          isButtonEnabled = true;
+                                        } else if (currentMenuItem.hasSize && selectedSize == "") {
+                                          isButtonEnabled = false;
+                                        } else if (!currentMenuItem.hasSize) {
+                                          isButtonEnabled = true;
+                                        }
                                       });
                                     },
                                   ),
@@ -379,6 +404,13 @@ class _MenuItemDetailsPageState extends State<MenuItemDetailsPage> {
                                       setState(() {
                                         selectedVariant = value.toString();
                                         currentMenuItem.variantChosen = selectedVariant;
+                                        if (currentMenuItem.hasSize && selectedSize != "") {
+                                          isButtonEnabled = true;
+                                        } else if (currentMenuItem.hasSize && selectedSize == "") {
+                                          isButtonEnabled = false;
+                                        } else if (!currentMenuItem.hasSize) {
+                                          isButtonEnabled = true;
+                                        }
                                       });
                                     },
                                   ),
@@ -452,7 +484,7 @@ class _MenuItemDetailsPageState extends State<MenuItemDetailsPage> {
                                             // elevation: 3.0, // Add elevation to simulate a border
                                             shape: RoundedRectangleBorder(
                                               side: BorderSide(
-                                                color: Colors.grey.shade300, // Border color
+                                                color: Colors.grey.shade700, // Border color
                                                 width: 2.0, // Border width
                                               ),
                                               borderRadius: BorderRadius.circular(200), // Apply border radius if needed
@@ -491,6 +523,13 @@ class _MenuItemDetailsPageState extends State<MenuItemDetailsPage> {
                                     setState(() {
                                       selectedSize = value.toString();
                                       currentMenuItem.sizeChosen = value.toString();
+                                      if (currentMenuItem.hasVariant && selectedVariant != "") {
+                                        isButtonEnabled = true;
+                                      } else if (currentMenuItem.hasVariant && selectedVariant == "") {
+                                        isButtonEnabled = false;
+                                      } else if (!currentMenuItem.hasVariant) {
+                                        isButtonEnabled = true;
+                                      }
                                     });
                                   },
                                 ),
@@ -512,6 +551,13 @@ class _MenuItemDetailsPageState extends State<MenuItemDetailsPage> {
                                     setState(() {
                                       selectedSize = value.toString();
                                       currentMenuItem.sizeChosen = value.toString();
+                                      if (currentMenuItem.hasVariant && selectedVariant != "") {
+                                        isButtonEnabled = true;
+                                      } else if (currentMenuItem.hasVariant && selectedVariant == "") {
+                                        isButtonEnabled = false;
+                                      } else if (!currentMenuItem.hasVariant) {
+                                        isButtonEnabled = true;
+                                      }
                                     });
                                   },
                                 ),
@@ -567,7 +613,7 @@ class _MenuItemDetailsPageState extends State<MenuItemDetailsPage> {
                               borderRadius: BorderRadius.circular(12.0),
                             ),
                             focusedBorder: OutlineInputBorder(
-                              borderSide: BorderSide(color: Colors.black, width: 1.0),
+                              borderSide: const BorderSide(color: Colors.black, width: 1.0),
                               borderRadius: BorderRadius.circular(12.0),
                             ),
                             // errorBorder: OutlineInputBorder( // Border style for error state
@@ -677,18 +723,17 @@ class _MenuItemDetailsPageState extends State<MenuItemDetailsPage> {
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                child: SizedBox(
+                child: Container(
                   width: 220,
                   height: 45,
                   child: ElevatedButton(
-                    onPressed: () {
-                      setState(() {
-                        currentCart!.addToCart(itemCount, currentMenuItem);
-                      });
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (context) => MenuHomePage(user: currentUser, cart: currentCart))
-                      );
-                    },
+                    onPressed: isButtonEnabled ? () {
+                      currentCart!.addToCart(itemCount, currentMenuItem);
+                      Navigator.pop(context);
+                      // Navigator.push(context,
+                      //     MaterialPageRoute(builder: (context) => MenuHomePage(user: currentUser, cart: currentCart))
+                      // );
+                    } : null,
                     child: const Text(
                       "Add to cart",
                       style: TextStyle(

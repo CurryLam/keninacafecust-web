@@ -10,7 +10,8 @@ class MenuItem {
   final String itemClass;
   final String image;
   final String name;
-  final double price;
+  final double price_standard;
+  final double price_large;
   final String description;
   final bool isOutOfStock;
   final bool hasVariant;
@@ -31,7 +32,8 @@ class MenuItem {
     required this.itemClass,
     required this.image,
     required this.name,
-    required this.price,
+    required this.price_standard,
+    required this.price_large,
     required this.description,
     required this.isOutOfStock,
     required this.hasVariant,
@@ -57,7 +59,8 @@ class MenuItem {
       itemClass: json['itemClass'],
       image: json['image'] ?? '',
       name: json['name'],
-      price: json['price'],
+      price_standard: json['price_standard'],
+      price_large: json['price_large'] ?? 0,
       description: json['description'] ?? '',
       isOutOfStock: json['isOutOfStock'],
       hasVariant: json['hasVariant'],
@@ -81,7 +84,7 @@ class MenuItem {
       'itemClass': itemClass,
       'image': image,
       'name': name,
-      'price': price,
+      'price_standard': price_standard,
       'description': description,
       'isOutOfStock': isOutOfStock,
       'hasVariant': hasVariant,

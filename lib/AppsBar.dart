@@ -10,6 +10,7 @@ import 'Entity/User.dart';
 import 'Menu/menuHome.dart';
 import 'Menu/viewCart.dart';
 import 'Order/orderHistory.dart';
+import 'Voucher/VoucherList.dart';
 
 
 void main() {
@@ -93,6 +94,7 @@ class AppsBarState extends State<AppsBar> {
               color: Colors.white,
             ),
             onPressed: () {
+              // Navigator.pop(context);
               Navigator.push(context,
                   MaterialPageRoute(builder: (context) => MenuHomePage(user: currentUser, cart: currentCart))
               );
@@ -243,6 +245,124 @@ class AppsBarState extends State<AppsBar> {
   }
 
   @override
+  PreferredSizeWidget buildVoucherListAppBar(BuildContext context, String title, User currentUser, Cart currentCart) {
+
+    return PreferredSize(
+      preferredSize: const Size.fromHeight(80),
+      child: AppBar(
+        leading: IconButton(
+          onPressed: () => Navigator.pop(context),
+          icon: const Icon(Icons.arrow_back_ios_rounded, color: Colors.white),
+        ),
+        // iconTheme: const IconThemeData(color: Colors.white, size: 25.0),
+        elevation: 0,
+        toolbarHeight: 100,
+        title: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 25.0, vertical: 0),
+          child: Row(
+            children: [
+              const Icon(
+                Icons.card_giftcard,
+                size: 35.0,
+                color: Colors.white,
+              ),
+              const SizedBox(width: 8.0,),
+              Text(
+                title,
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 27.0,
+                  fontFamily: 'BreeSerif',
+                  color: Colors.white,
+                ),
+              ),
+            ],
+          ),
+        ),
+        backgroundColor: Colors.orange.shade500,
+        centerTitle: true,
+      ),
+    );
+  }
+
+  @override
+  PreferredSizeWidget buildRedeemVoucherAppBar(BuildContext context, String title, User currentUser, Cart currentCart) {
+
+    return PreferredSize(
+      preferredSize: const Size.fromHeight(80),
+      child: AppBar(
+        leading: IconButton(
+          onPressed: () => Navigator.pop(context),
+          icon: const Icon(Icons.arrow_back_ios_rounded, color: Colors.white),
+        ),
+        // iconTheme: const IconThemeData(color: Colors.white, size: 25.0),
+        elevation: 0,
+        toolbarHeight: 100,
+        title: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 28.0, vertical: 0),
+          child: Row(
+            children: [
+              Text(
+                title,
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 27.0,
+                  fontFamily: 'BreeSerif',
+                  color: Colors.white,
+                ),
+              ),
+            ],
+          ),
+        ),
+        backgroundColor: Colors.orange.shade500,
+        centerTitle: true,
+      ),
+    );
+  }
+
+  @override
+  PreferredSizeWidget buildApplyVoucherAppBar(BuildContext context, String title, User currentUser, Cart currentCart) {
+
+    return PreferredSize( //wrap with PreferredSize
+      preferredSize: const Size.fromHeight(80),
+      child: AppBar(
+        leading: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 0),
+          child: IconButton(
+            icon: const Icon(
+              Icons.arrow_back_ios_rounded,
+              size: 25.0,
+              color: Colors.white,
+            ),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
+        ),
+        elevation: 0,
+        toolbarHeight: 100,
+        title: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 0),
+          child: Row(
+            children: [
+              Text(
+                title,
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 22.0,
+                  fontFamily: 'BreeSerif',
+                  color: Colors.white,
+                ),
+              ),
+            ],
+          ),
+        ),
+        backgroundColor: Colors.orange.shade500,
+      ),
+    );
+  }
+
+  @override
   PreferredSizeWidget buildMenuItemDetailsAppsBar(BuildContext context) {
     return AppBar(
       backgroundColor: Colors.white,
@@ -388,7 +508,11 @@ class AppsBarState extends State<AppsBar> {
                 fontSize: 17.0,
               ),
             ),
-            onTap: () => {},
+            onTap: () => {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => VoucherListPage(user: currentUser, cart: currentCart))
+              ),
+            },
           ),
           ListTile(
             leading: Icon(

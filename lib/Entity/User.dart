@@ -11,9 +11,9 @@ class User {
   final String phone;
   final String gender;
   final DateTime dob;
-  final int points;
+  int points;
 
-  const User({required this.uid, required this.name, required this.is_active, required this.email, required this.phone, required this.gender, required this.dob, required this.points});
+  User({required this.uid, required this.name, required this.is_active, required this.email, required this.phone, required this.gender, required this.dob, required this.points});
 
   factory User.fromJson(Map<String, dynamic> json) {
     if (kDebugMode) {
