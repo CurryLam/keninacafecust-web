@@ -139,7 +139,7 @@ class _ViewCartPageState extends State<ViewCartPage> {
                     ),
                   ),
                   Text(
-                    'MYR ${currentCart.getGrandTotal().toStringAsFixed(2)}',
+                    'MYR ${currentCart.getGrandTotalBeforeDiscount().toStringAsFixed(2)}',
                     style: const TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 22.0,
@@ -436,14 +436,24 @@ class _ViewCartPageState extends State<ViewCartPage> {
                             // if (a.remarks == "")
                             //   const SizedBox(height: 22.0,),
                             const SizedBox(height: 10.0),
-                            Text(
-                              'MYR ${(a.price*a.numOrder).toStringAsFixed(2)}',
-                              style: const TextStyle(
-                                fontSize: 15.0,
-                                fontFamily: 'BreeSerif',
-                                // fontWeight: FontWeight.bold,
+                            if (a.hasSize && a.sizeChosen == "Large")
+                              Text(
+                                'MYR ${(a.price_large*a.numOrder).toStringAsFixed(2)}',
+                                style: const TextStyle(
+                                  fontSize: 15.0,
+                                  fontFamily: 'BreeSerif',
+                                  // fontWeight: FontWeight.bold,
+                                ),
                               ),
-                            ),
+                            if (!a.hasSize || a.sizeChosen == "Standard")
+                              Text(
+                                'MYR ${(a.price_standard*a.numOrder).toStringAsFixed(2)}',
+                                style: const TextStyle(
+                                  fontSize: 15.0,
+                                  fontFamily: 'BreeSerif',
+                                  // fontWeight: FontWeight.bold,
+                                ),
+                              ),
                             if (a.variantChosen == "" && a.sizeChosen == "")
                               const SizedBox(height: 10.0,),
                             if (a.remarks == "")

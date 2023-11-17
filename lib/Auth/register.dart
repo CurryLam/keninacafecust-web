@@ -561,8 +561,8 @@ class _RegisterPageState extends State<RegisterPage> {
   Future<(User, String)> createUser(String name, String email, String phone, String enc_pw, String gender, DateTime dob) async {
     try {
       final response = await http.post(
-        Uri.parse('http://10.0.2.2:8000/users/register'),  // For phone
-        // Uri.parse('http://localhost:8000/users/register'),  // For website
+        // Uri.parse('http://10.0.2.2:8000/users/register'),  // For phone
+        Uri.parse('http://localhost:8000/users/register'),  // For website
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },

@@ -80,7 +80,7 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
     });
   }
 
-  Cart currentCart = Cart(id: 0, menuItem: [], numMenuItemOrder: 0, grandTotalBeforeDiscount: 0, grandTotalAfterDiscount: 0);
+  Cart currentCart = Cart(id: 0, menuItem: [], numMenuItemOrder: 0, grandTotalBeforeDiscount: 0, grandTotalAfterDiscount: 0, price_discount: 0, voucherAppliedID: 0, voucherApplied_type_name: "", voucherApplied_cost_off: 0, voucherApplied_free_menu_item_name: "", voucherApplied_applicable_menu_item_name: "", voucherApplied_min_spending: 0);
 
   @override
   Widget build(BuildContext context) {
@@ -90,7 +90,6 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
         decoration: const BoxDecoration(
           image: DecorationImage(
             image: AssetImage("images/login_background.png"),
-
             fit: BoxFit.cover
           )
         ),
@@ -451,8 +450,8 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
   Future<(User, String)> createUser(String email, String enc_pw) async {
     try {
       final response = await http.post(
-        Uri.parse('http://10.0.2.2:8000/users/login'),  // For phone
-        // Uri.parse('http://localhost:8000/users/login'), // For website
+        // Uri.parse('http://10.0.2.2:8000/users/login'),  // For phone
+        Uri.parse('http://localhost:8000/users/login'), // For website
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },

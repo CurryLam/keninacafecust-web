@@ -72,6 +72,15 @@ class _MenuHomePageState extends State<MenuHomePage> with SingleTickerProviderSt
     return widget.cart;
   }
 
+  onGoBack(dynamic value) {
+    setState(() {});
+  }
+
+  void navigateViewCartPage(Cart currentCart, User currentUser) {
+    Route route = MaterialPageRoute(builder: (context) => ViewCartPage(cart: currentCart, user: currentUser,));
+    Navigator.push(context, route).then(onGoBack);
+  }
+
   @override
   Widget build(BuildContext context) {
     enterFullScreen();
@@ -221,9 +230,10 @@ class _MenuHomePageState extends State<MenuHomePage> with SingleTickerProviderSt
                     minWidth: double.infinity,
                     height:50,
                     onPressed: () async {
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (context) => ViewCartPage(user: currentUser, cart: currentCart))
-                      );
+                      navigateViewCartPage(currentCart, currentUser);
+                      // Navigator.push(context,
+                      //     MaterialPageRoute(builder: (context) => ViewCartPage(user: currentUser, cart: currentCart))
+                      // );
                     },
                     color: Colors.orange.shade500,
                     shape: RoundedRectangleBorder(
@@ -267,7 +277,7 @@ class _MenuHomePageState extends State<MenuHomePage> with SingleTickerProviderSt
                             // mainAxisSize: MainAxisSize.min,
                             children: [
                               Text(
-                                'RM ${currentCart.getGrandTotal().toStringAsFixed(2)}', // Replace with the actual total price.
+                                'RM ${currentCart.getGrandTotalBeforeDiscount().toStringAsFixed(2)}', // Replace with the actual total price.
                                 style: const TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 16.5,
@@ -606,8 +616,8 @@ class _MenuHomePageState extends State<MenuHomePage> with SingleTickerProviderSt
   Future<List<MenuItem>> getMenuItemList() async {
     try {
       final response = await http.get(
-        Uri.parse('http://10.0.2.2:8000/menu/request_menu_item_list'),
-        // Uri.parse('http://localhost:8000/menu/request_menu_item_list'),
+        // Uri.parse('http://10.0.2.2:8000/menu/request_menu_item_list'),
+        Uri.parse('http://localhost:8000/menu/request_menu_item_list'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
@@ -626,8 +636,8 @@ class _MenuHomePageState extends State<MenuHomePage> with SingleTickerProviderSt
   Future<List<MenuItem>> getItemCategoryList() async {
     try {
       final response = await http.get(
-        Uri.parse('http://10.0.2.2:8000/menu/request_item_category_list'),
-        // Uri.parse('http://localhost:8000/menu/request_item_category_list'),
+        // Uri.parse('http://10.0.2.2:8000/menu/request_item_category_list'),
+        Uri.parse('http://localhost:8000/menu/request_item_category_list'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
@@ -675,6 +685,15 @@ class _MenuCategoryState extends State<MenuCategory> {
   Cart? getCart() {
     return widget.currentCart;
   }
+
+  // onGoBack(dynamic value) {
+  //   setState(() {});
+  // }
+  //
+  // void navigateMenuItemDetailsPage(MenuItem currentMenuItem, Cart currentCart, User currentUser) {
+  //   Route route = MaterialPageRoute(builder: (context) => MenuItemDetailsPage(menuItem: currentMenuItem, cart: currentCart, user: currentUser,));
+  //   Navigator.push(context, route).then(onGoBack);
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -830,7 +849,7 @@ class _MenuCategoryState extends State<MenuCategory> {
                 child: Align(
                   alignment: Alignment.centerLeft,
                   child: Text(
-                    'RM ${currentMenuItem.price.toStringAsFixed(2)}',
+                    'RM ${currentMenuItem.price_standard.toStringAsFixed(2)}',
                     style: const TextStyle(
                       fontSize: 14.0,
                       fontFamily: "Itim"
@@ -973,6 +992,7 @@ class _MenuCategoryState extends State<MenuCategory> {
                               Navigator.push(context,
                                   MaterialPageRoute(builder: (context) => MenuItemDetailsPage(user: currentUser, menuItem: currentMenuItem, cart: currentCart))
                               );
+                              // navigateMenuItemDetailsPage(currentMenuItem, currentCart, currentUser);
                               setState(() {
                                 currentMenuItem.numOrder = 0;
                                 currentMenuItem.sizeChosen = "";
