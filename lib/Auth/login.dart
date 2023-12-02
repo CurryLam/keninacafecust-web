@@ -325,7 +325,7 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
                                         actions: <Widget>[
                                           TextButton(
                                             onPressed: () {
-                                              Navigator.of(context).pop();
+                                              // Navigator.of(context).pop();
                                               Navigator.push(context, MaterialPageRoute(builder: (context) => MenuHomePage(user: currentUser, cart: currentCart)));
                                             },
                                             child: const Text('Ok'),

@@ -1,28 +1,16 @@
 import 'dart:async';
-
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/gestures.dart';
-import 'package:flutter/material.dart';
 import 'dart:convert';
 
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:keninacafecust_web/AppsBar.dart';
 import 'package:http/http.dart' as http;
-import 'package:keninacafecust_web/Menu/menuHome.dart';
-import 'package:coupon_uikit/coupon_uikit.dart';
-import 'package:badges/badges.dart' as badges;
-import 'package:keninacafecust_web/Order/orderPlaced.dart';
-
 
 import '../Entity/Cart.dart';
 import '../Entity/FoodOrder.dart';
-import '../Entity/MenuItem.dart';
 import '../Entity/OrderFoodItemMoreInfo.dart';
 import '../Entity/User.dart';
-import '../Menu/viewCart.dart';
-import '../Utils/error_codes.dart';
-import '../Widget/DottedLine.dart';
 
 void main() {
   runApp(const MyApp());
@@ -83,7 +71,7 @@ class _OrderHistoryDetailsPageState extends State<OrderHistoryDetailsPage> {
     Cart? currentCart = getCart();
 
     return Scaffold(
-      appBar: AppsBarState().buildOrderHistoryDetailsAppBar(context, "ORDER DETAILS", currentUser!, currentCart!),
+      appBar: AppsBarState().buildOrderHistoryDetailsAppBar(context, "ORDER SUMMARY", currentUser!, currentCart!),
       body: SafeArea(
         child: SingleChildScrollView (
           child: Padding(
@@ -137,17 +125,11 @@ class _OrderHistoryDetailsPageState extends State<OrderHistoryDetailsPage> {
                   topRight: Radius.circular(15.0),
                 ),
               ),
-              child: const ListTile(
+              child: ListTile(
                 title: Text(
-                  "Order Summary",
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, fontFamily: "Itim", overflow: TextOverflow.ellipsis,),
+                  "Order #${currentOrder?.id}",
+                  style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, fontFamily: "Itim", overflow: TextOverflow.ellipsis,),
                 ),
-                // trailing: IconButton(
-                //   icon: const Icon(Icons.edit),
-                //   onPressed: () {
-                //     // Handle the edit action here
-                //   },
-                // ),
               ),
             ),
             // SizedBox(
@@ -184,11 +166,11 @@ class _OrderHistoryDetailsPageState extends State<OrderHistoryDetailsPage> {
                   const Row(
                       children: [
                         Expanded(
-                          flex: 3,
+                          flex: 5,
                           child: Text(
                             'Qty',
                             style: TextStyle(
-                              fontSize: 16.0,
+                              fontSize: 18.0,
                               color: Colors.black,
                               // fontWeight: FontWeight.bold,
                               fontFamily: 'BebasNeue',
@@ -196,11 +178,11 @@ class _OrderHistoryDetailsPageState extends State<OrderHistoryDetailsPage> {
                           ),
                         ),
                         Expanded(
-                          flex: 14,
+                          flex: 16,
                           child: Text(
                             'Item',
                             style: TextStyle(
-                              fontSize: 16.0,
+                              fontSize: 18.0,
                               color: Colors.black,
                               // fontWeight: FontWeight.bold,
                               fontFamily: 'BebasNeue',
@@ -209,11 +191,11 @@ class _OrderHistoryDetailsPageState extends State<OrderHistoryDetailsPage> {
                         ),
                         Spacer(),
                         Expanded(
-                          flex: 5,
+                          flex: 0,
                           child: Text(
                             'Price',
                             style: TextStyle(
-                              fontSize: 16.0,
+                              fontSize: 18.0,
                               color: Colors.black,
                               // fontWeight: FontWeight.bold,
                               fontFamily: 'BebasNeue',
@@ -232,13 +214,13 @@ class _OrderHistoryDetailsPageState extends State<OrderHistoryDetailsPage> {
                             // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Expanded(
-                                flex: 3,
+                                flex: 5,
                                 child: Padding(
                                   padding: const EdgeInsets.symmetric(horizontal: 5.0,),
                                   child: Text(
                                     orderFoodItemList[i].numOrder.toInt().toString(),
                                     style: TextStyle(
-                                      fontSize: 15.0,
+                                      fontSize: 16.0,
                                       color: Colors.grey.shade700,
                                       fontFamily: 'BebasNeue',
                                       // fontWeight: FontWeight.bold,
@@ -248,14 +230,14 @@ class _OrderHistoryDetailsPageState extends State<OrderHistoryDetailsPage> {
                               ),
                               // const SizedBox(width: 5.0),
                               Expanded(
-                                flex: 14,
+                                flex: 16,
                                 child: Row(
                                   children: [
                                     Flexible(
                                       child: Text(
                                         orderFoodItemList[i].menu_item_name,
                                         style: TextStyle(
-                                          fontSize: 15.0,
+                                          fontSize: 16.0,
                                           color: Colors.grey.shade700,
                                           fontFamily: 'BebasNeue',
                                           // fontWeight: FontWeight.bold,
@@ -265,9 +247,9 @@ class _OrderHistoryDetailsPageState extends State<OrderHistoryDetailsPage> {
                                     ),
                                     if (orderFoodItemList[i].remarks != "")
                                       const Text(
-                                        '*',
+                                        ' *',
                                         style: TextStyle(
-                                          fontSize: 15.0,
+                                          fontSize: 16.0,
                                           color: Colors.red,
                                           fontFamily: 'BebasNeue',
                                           // fontWeight: FontWeight.bold,
@@ -278,12 +260,12 @@ class _OrderHistoryDetailsPageState extends State<OrderHistoryDetailsPage> {
                               ),
                               const Spacer(),
                               Expanded(
-                                flex: 5,
+                                flex: 0,
                                 child: orderFoodItemList[i].size == "Standard" || orderFoodItemList[i].size == ""
                                     ? Text(
                                   "MYR ${(orderFoodItemList[i].numOrder*orderFoodItemList[i].menu_item_price_standard).toStringAsFixed(2)}",
                                   style: TextStyle(
-                                    fontSize: 15.0,
+                                    fontSize: 16.0,
                                     color: Colors.grey.shade700,
                                     fontFamily: 'BebasNeue',
                                     // fontWeight: FontWeight.bold,
@@ -291,7 +273,7 @@ class _OrderHistoryDetailsPageState extends State<OrderHistoryDetailsPage> {
                                 ) : Text(
                                     "MYR ${(orderFoodItemList[i].numOrder*orderFoodItemList[i].menu_item_price_large).toStringAsFixed(2)}",
                                     style: TextStyle(
-                                      fontSize: 15.0,
+                                      fontSize: 16.0,
                                       color: Colors.grey.shade700,
                                       fontFamily: 'BebasNeue',
                                       // fontWeight: FontWeight.bold,
@@ -303,45 +285,72 @@ class _OrderHistoryDetailsPageState extends State<OrderHistoryDetailsPage> {
                           Row(
                             children: [
                               if (orderFoodItemList[i].size != "" || orderFoodItemList[i].variant != "")
-                                Padding(
-                                  padding: const EdgeInsets.fromLTRB(40, 2, 0, 0),
+                                Expanded(
+                                  flex: 21, // Adjust the flex values based on your layout needs
                                   child: Row(
                                     children: [
-                                      if (orderFoodItemList[i].variant != "")
-                                        Text(
-                                          orderFoodItemList[i].variant,
-                                          style: const TextStyle(
-                                            fontSize: 8.0,
-                                            color: Colors.red,
-                                            // fontFamily: 'YoungSerif',
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                      if (orderFoodItemList[i].size != "" && orderFoodItemList[i].variant != "")
-                                        const Text(
-                                          ", ",
+                                      const Expanded(
+                                        flex: 5,
+                                        child: Text(
+                                          '',
                                           style: TextStyle(
-                                            fontSize: 8.0,
-                                            color: Colors.red,
-                                            // fontFamily: 'YoungSerif',
-                                            fontWeight: FontWeight.bold,
+                                            fontSize: 16.0,
+                                            color: Colors.black,
+                                            fontFamily: 'BebasNeue',
                                           ),
                                         ),
-                                      if (orderFoodItemList[i].size != "")
-                                        Text(
-                                          orderFoodItemList[i].size,
-                                          style: const TextStyle(
-                                            fontSize: 8.0,
-                                            color: Colors.red,
-                                            // fontFamily: 'YoungSerif',
-                                            fontWeight: FontWeight.bold,
+                                      ),
+                                      Expanded(
+                                        flex: 16,
+                                        child: Row(
+                                          children: [
+                                            if (orderFoodItemList[i].variant != "")
+                                              Text(
+                                                orderFoodItemList[i].variant,
+                                                style: const TextStyle(
+                                                  fontSize: 10.0,
+                                                  color: Colors.red,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                            if (orderFoodItemList[i].size != "" && orderFoodItemList[i].variant != "")
+                                              const Text(
+                                                ", ",
+                                                style: TextStyle(
+                                                  fontSize: 10.0,
+                                                  color: Colors.red,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                            if (orderFoodItemList[i].size != "")
+                                              Text(
+                                                orderFoodItemList[i].size,
+                                                style: const TextStyle(
+                                                  fontSize: 10.0,
+                                                  color: Colors.red,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                          ],
+                                        ),
+                                      ),
+                                      const Spacer(),
+                                      const Expanded(
+                                        flex: 0,
+                                        child: Text(
+                                          '',
+                                          style: TextStyle(
+                                            fontSize: 16.0,
+                                            color: Colors.black,
+                                            fontFamily: 'BebasNeue',
                                           ),
                                         ),
+                                      ),
                                     ],
                                   ),
                                 ),
-                            ]
-                          )
+                            ],
+                          ),
                         ],
                       ),
                     ),
@@ -380,14 +389,24 @@ class _OrderHistoryDetailsPageState extends State<OrderHistoryDetailsPage> {
                           fontFamily: 'BebasNeue',
                         ),
                       ),
-                      Text(
-                        "- MYR ${currentOrder?.grand_total.toStringAsFixed(2)}",
-                        style: const TextStyle(
-                          fontSize: 18.0,
-                          color: Colors.black,
-                          fontFamily: 'BebasNeue',
-                        ),
-                      ),
+                      if (currentOrder!.voucher_assign_id == 0)
+                        const Text(
+                          " - ",
+                          style: TextStyle(
+                            fontSize: 18.0,
+                            color: Colors.black,
+                            fontFamily: 'BebasNeue',
+                          ),
+                        )
+                      else
+                        Text(
+                          "- MYR ${(currentOrder.gross_total - currentOrder.grand_total).toStringAsFixed(2)}",
+                          style: const TextStyle(
+                            fontSize: 18.0,
+                            color: Colors.black,
+                            fontFamily: 'BebasNeue',
+                          ),
+                        )
                     ],
                   ),
                   const SizedBox(height: 10.0,),
@@ -404,7 +423,7 @@ class _OrderHistoryDetailsPageState extends State<OrderHistoryDetailsPage> {
                       ),
                       const Spacer(),
                       Text(
-                        "MYR ${currentOrder?.grand_total.toStringAsFixed(2)}",
+                        "MYR ${currentOrder.grand_total.toStringAsFixed(2)}",
                         style: const TextStyle(
                           fontSize: 18.0,
                           color: Colors.red,

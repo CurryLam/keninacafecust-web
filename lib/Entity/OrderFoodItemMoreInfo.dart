@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import 'package:flutter/foundation.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 import 'FoodOrder.dart';
@@ -7,8 +10,8 @@ import 'MenuItem.dart';
 class OrderFoodItemMoreInfo {
   final int id;
   final String remarks;
-  final String size;
-  final String variant;
+  String size;
+  String variant;
   final bool is_done;
   final int food_order;
   final String menu_item_image;
@@ -36,17 +39,17 @@ class OrderFoodItemMoreInfo {
     //   print('MenuItem.fromJson: $json');
     // }
     return OrderFoodItemMoreInfo(
-      id: json['id'],
+      id: json['id'] ?? 0,
       remarks: json['description'] ?? '',
       size: json['size'] ?? '',
       variant: json['variant'] ?? '',
-      is_done: json['is_done'],
-      food_order: json['food_order'],
-      menu_item_image: json['menu_item_image'],
-      menu_item_name: json['menu_item_name'],
-      menu_item_price_standard: json['menu_item_price_standard'],
+      is_done: json['is_done'] ?? false,
+      food_order: json['food_order'] ?? 0,
+      menu_item_image: json['menu_item_image'] ?? '',
+      menu_item_name: json['menu_item_name'] ?? '',
+      menu_item_price_standard: json['menu_item_price_standard'] ?? 0,
       menu_item_price_large: json['menu_item_price_large'] ?? 0,
-      numOrder: json['num_order'],
+      numOrder: json['num_order'] ?? 0,
 
     );
   }
@@ -75,14 +78,4 @@ class OrderFoodItemMoreInfo {
     }
     return orderFoodItemDataList;
   }
-
-// static List<MenuItem> getItemCategoryExistMenuItemList(Map<String, dynamic> json) {
-//   List<MenuItem> itemCategoryExistMenuItemList = [];
-//   for (Map<String,dynamic> itemCategoryExistMenuItem in json['data']) {
-//     MenuItem oneitemCategoryExistMenuItem = MenuItem.fromJson(itemCategoryExistMenuItem);
-//     itemCategoryExistMenuItemList.add(oneitemCategoryExistMenuItem);
-//   }
-//   return itemCategoryExistMenuItemList;
-// }
-
 }

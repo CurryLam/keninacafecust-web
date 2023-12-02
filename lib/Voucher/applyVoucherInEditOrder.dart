@@ -39,22 +39,23 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const ApplyVoucherPage(user: null, cart: null,),
+      home: const ApplyVoucherInEditOrderPage(user: null, cart: null, cartOrder: null,),
     );
   }
 }
 
-class ApplyVoucherPage extends StatefulWidget {
-  const ApplyVoucherPage({super.key, this.user, this.cart});
+class ApplyVoucherInEditOrderPage extends StatefulWidget {
+  const ApplyVoucherInEditOrderPage({super.key, this.user, this.cart, this.cartOrder});
 
   final User? user;
   final Cart? cart;
+  final CartForOrderFoodItemMoreInfo? cartOrder;
 
   @override
-  State<ApplyVoucherPage> createState() => _ApplyVoucherPageState();
+  State<ApplyVoucherInEditOrderPage> createState() => _ApplyVoucherInEditOrderPageState();
 }
 
-class _ApplyVoucherPageState extends State<ApplyVoucherPage> {
+class _ApplyVoucherInEditOrderPageState extends State<ApplyVoucherInEditOrderPage> {
   bool isMenuHomePage = false;
 
   User? getUser() {
@@ -63,6 +64,10 @@ class _ApplyVoucherPageState extends State<ApplyVoucherPage> {
 
   Cart? getCart() {
     return widget.cart;
+  }
+
+  CartForOrderFoodItemMoreInfo? getCartOrder() {
+    return widget.cartOrder;
   }
 
   onGoBack(dynamic value) {
@@ -80,6 +85,7 @@ class _ApplyVoucherPageState extends State<ApplyVoucherPage> {
 
     User? currentUser = getUser();
     Cart? currentCart = getCart();
+    CartForOrderFoodItemMoreInfo? currentCartOrder = getCartOrder();
     List<MenuItem> menuItemList = currentCart!.getMenuItemList();
 
     return Scaffold(
@@ -94,7 +100,7 @@ class _ApplyVoucherPageState extends State<ApplyVoucherPage> {
                 builder: (BuildContext context, AsyncSnapshot<List<VoucherAssignUserMoreInfo>> snapshot) {
                   if (snapshot.hasData) {
                     return Column(
-                      children: buildAvailableVoucherRedeemedList(snapshot.data, currentUser, currentCart),
+                      children: buildAvailableVoucherRedeemedList(snapshot.data, currentUser, currentCart, currentCartOrder!),
                     );
                   } else {
                     if (snapshot.hasError) {
@@ -112,8 +118,7 @@ class _ApplyVoucherPageState extends State<ApplyVoucherPage> {
     );
   }
 
-  List<Widget> buildAvailableVoucherRedeemedList(List<VoucherAssignUserMoreInfo>? availableVoucherRedeemedList, User? currentUser, Cart currentCart) {
-    print(availableVoucherRedeemedList);
+  List<Widget> buildAvailableVoucherRedeemedList(List<VoucherAssignUserMoreInfo>? availableVoucherRedeemedList, User? currentUser, Cart currentCart, CartForOrderFoodItemMoreInfo currentCartOrder) {
     List<Widget> voucher = [];
     List<VoucherAssignUserMoreInfo> validVoucher = [];
     List<VoucherAssignUserMoreInfo> nonValidVoucher = [];
@@ -192,29 +197,30 @@ class _ApplyVoucherPageState extends State<ApplyVoucherPage> {
         DateTime currentDate = DateTime.now();
         DateTime expiryDateTime = availableVoucherRedeemedList![i].expiry_date;
         if (availableVoucherRedeemedList[i].is_available && currentDate.isBefore(expiryDateTime)) {
-          if (availableVoucherRedeemedList[i].voucher_type_name == "Discount" && currentCart.grandTotalBeforeDiscount >= availableVoucherRedeemedList[i].min_spending) {
+          if (availableVoucherRedeemedList[i].voucher_type_name == "Discount" && currentCartOrder.order_grand_total >= availableVoucherRedeemedList[i].min_spending) {
             validVoucher.add(availableVoucherRedeemedList[i]);
             continue;
           }
           numOrderOfCurrentFoodItem = 0;
-          for (int j = 0; j < currentCart.menuItem.length; j++) {
-            if (availableVoucherRedeemedList[i].voucher_type_name == "FreeItem" && availableVoucherRedeemedList[i].free_menu_item_name == currentCart.menuItem[j].name) {
+          for (int j = 0; j < currentCartOrder.orderFoodItemMoreInfoList.length; j++) {
+            if (availableVoucherRedeemedList[i].voucher_type_name == "FreeItem" && availableVoucherRedeemedList[i].free_menu_item_name == currentCartOrder.orderFoodItemMoreInfoList[j].menu_item_name && currentCartOrder.orderFoodItemMoreInfoList[j].numOrder >= 1) {
               validVoucher.add(availableVoucherRedeemedList[i]);
               break;
             }
-            if (availableVoucherRedeemedList[i].voucher_type_name == "BuyOneFreeOne" && availableVoucherRedeemedList[i].applicable_menu_item_name == currentCart.menuItem[j].name) {
-              numOrderOfCurrentFoodItem += currentCart.menuItem[j].numOrder;
+            if (availableVoucherRedeemedList[i].voucher_type_name == "BuyOneFreeOne" && availableVoucherRedeemedList[i].applicable_menu_item_name == currentCartOrder.orderFoodItemMoreInfoList[j].menu_item_name) {
+              numOrderOfCurrentFoodItem += currentCartOrder.orderFoodItemMoreInfoList[j].numOrder.toInt();
               if (numOrderOfCurrentFoodItem >= 2) {
                 validVoucher.add(availableVoucherRedeemedList[i]);
                 break;
               }
             }
-            if (j == currentCart.menuItem.length - 1) {
+            if (j == currentCartOrder.orderFoodItemMoreInfoList.length - 1) {
               nonValidVoucher.add(availableVoucherRedeemedList[i]);
             }
           }
         }
       }
+
       if (validVoucher.isEmpty && nonValidVoucher.isEmpty) {
         voucher.add(
           Column(
@@ -324,11 +330,11 @@ class _ApplyVoucherPageState extends State<ApplyVoucherPage> {
                   child: Row(
                     children: [
                       const Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 20.0),
-                        child: Icon(
-                          Icons.discount_rounded,
-                          size: 35.0,
-                        )
+                          padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 20.0),
+                          child: Icon(
+                            Icons.discount_rounded,
+                            size: 35.0,
+                          )
                         // child: Image.asset(
                         //   "images/voucherLogo.png",
                         //   width: 50,
@@ -366,8 +372,9 @@ class _ApplyVoucherPageState extends State<ApplyVoucherPage> {
                                 TextButton(
                                   onPressed: () {
                                     setState(() {
-                                      currentCart.applyVoucher(validVoucher[i].id, validVoucher[i].voucher_type_name, validVoucher[i].cost_off, validVoucher[i].free_menu_item_name, validVoucher[i].applicable_menu_item_name, validVoucher[i].min_spending);
-                                      Navigator.pop(context);
+                                      currentCartOrder.applyVoucher(validVoucher[i].id, validVoucher[i].voucher_type_name, validVoucher[i].cost_off, validVoucher[i].free_menu_item_name, validVoucher[i].applicable_menu_item_name, validVoucher[i].min_spending);
+                                      currentCartOrder.isEditCartOrder = true;
+                                      Navigator.of(context).pop();
                                     });
                                   },
                                   style: TextButton.styleFrom(
@@ -389,38 +396,6 @@ class _ApplyVoucherPageState extends State<ApplyVoucherPage> {
                                   ),
                                 ),
                                 const SizedBox(width: 20.0),
-                                // GestureDetector(
-                                //   onTap: () {
-                                //     setState(() {
-                                //       // currentCart.voucherAppliedID = validVoucher[i].id;
-                                //       currentCart.applyVoucher(validVoucher[i].id, validVoucher[i].voucher_type_name, validVoucher[i].cost_off, validVoucher[i].free_menu_item_name, validVoucher[i].applicable_menu_item_name, validVoucher[i].min_spending);
-                                //       Navigator.pop(context);
-                                //     });
-                                //     // Navigator.push(context,
-                                //     //     MaterialPageRoute(builder: (context) => ApplyVoucherPage(user: currentUser, cart: currentCart))
-                                //     // );
-                                //   },
-                                //   child: Container(
-                                //     decoration: const BoxDecoration(
-                                //       shape: BoxShape.rectangle,
-                                //       color: Colors.transparent,
-                                //     ),
-                                //     child: Row(
-                                //       mainAxisAlignment: MainAxisAlignment.start,
-                                //       children: [
-                                //         Text(
-                                //           "Apply",
-                                //           style: TextStyle(
-                                //             fontWeight: FontWeight.bold,
-                                //             fontSize: 17,
-                                //             color: Colors.redAccent.shade200,
-                                //           ),
-                                //         ),
-                                //         const SizedBox(width: 20.0),
-                                //       ],
-                                //     ),
-                                //   ),
-                                // ),
                               ],
                             ),
                             const SizedBox(height: 3.0,),
@@ -792,7 +767,6 @@ class _ApplyVoucherPageState extends State<ApplyVoucherPage> {
                             ],
                           ),
                         const SizedBox(height: 4.0,),
-
                         Row(
                           children: [
                             Text(

@@ -1,22 +1,20 @@
+import 'dart:convert';
+
+import 'package:coupon_uikit/coupon_uikit.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'dart:convert';
-
 import 'package:flutter/services.dart';
-import 'package:keninacafecust_web/AppsBar.dart';
 import 'package:http/http.dart' as http;
 import 'package:keninacafecust_web/Entity/CartForOrderFoodItemMoreInfo.dart';
-import 'package:keninacafecust_web/Menu/menuHome.dart';
-import 'package:keninacafecust_web/Order/orderPlaced.dart';
 
 import '../Entity/Cart.dart';
 import '../Entity/FoodOrder.dart';
-import '../Entity/MenuItem.dart';
 import '../Entity/OrderFoodItemMoreInfo.dart';
 import '../Entity/User.dart';
-import '../Order/orderOverview.dart';
+import '../Entity/Voucher.dart';
 import '../Utils/error_codes.dart';
+import '../Voucher/applyVoucherInEditOrder.dart';
 import 'orderHistory.dart';
 
 void main() {
@@ -60,6 +58,7 @@ class _EditOrderDetailsPageState extends State<EditOrderDetailsPage> {
   Widget? image;
   String base64Image = "";
   bool orderEdited = false;
+  bool orderDeleted = false;
 
   User? getUser() {
     return widget.user;
@@ -77,52 +76,94 @@ class _EditOrderDetailsPageState extends State<EditOrderDetailsPage> {
     return widget.cartOrder;
   }
 
+  onGoBack(dynamic value) {
+    setState(() {});
+  }
+
+  void navigateApplyVoucherInEditOrderPage(Cart currentCart, CartForOrderFoodItemMoreInfo currentCartOrder, User currentUser) {
+    Route route = MaterialPageRoute(builder: (context) => ApplyVoucherInEditOrderPage(cart: currentCart, cartOrder: currentCartOrder, user: currentUser,));
+    Navigator.push(context, route).then(onGoBack);
+  }
+
   @override
   Widget build(BuildContext context) {
     enterFullScreen();
-
-    // if (base64Image == "") {
-    //   base64Image = currentMenuItem!.image;
-    //   if (base64Image == "") {
-    //     image = Image.asset('images/KE_Nina_Cafe_logo.jpg');
-    //     print("nothing in base64");
-    //   } else {
-    //     image = Image.memory(base64Decode(base64Image), fit: BoxFit.fill);
-    //   }
-    // } else {
-    //   image = Image.memory(base64Decode(base64Image), fit: BoxFit.fill);
-    // }
 
     User? currentUser = getUser();
     FoodOrder? currentOrder = getOrder();
     Cart? currentCart = getCart();
     CartForOrderFoodItemMoreInfo? currentCartOrder = getCartOrder();
+    if (!currentCartOrder!.isEditCartOrder) {
+      currentCartOrder?.order_grand_total = currentOrder!.grand_total;
+      currentCartOrder?.order_grand_total_before_discount = currentOrder!.gross_total;
+      currentCartOrder?.price_discount_voucher = (currentOrder!.gross_total - currentOrder.grand_total);
+      currentCartOrder?.voucherAppliedID = currentOrder!.voucher_assign_id;
+      currentCartOrder?.voucherAppliedIDBefore = currentOrder!.voucher_assign_id;
+    }
 
     return Scaffold(
-      appBar: AppsBarState().buildEditOrderHistoryDetailsAppBar(context, "EDIT ORDER", currentUser!, currentCart!),
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(80),
+        child: AppBar(
+          leading: IconButton(
+            onPressed: () => {
+              if (currentCartOrder.isEditCartOrder) {
+                showConfirmNoSaveDialog(currentCartOrder),
+              } else {
+                Navigator.of(context).pop(),
+                makeTheVoucherAvailableOrUnavailable(currentCartOrder!.voucherAppliedIDBefore, false),
+              }
+            },
+            icon: const Icon(Icons.arrow_back_ios_rounded, color: Colors.white),
+          ),
+          elevation: 0,
+          toolbarHeight: 100,
+          title: const Row(
+            children: [
+              Icon(
+                Icons.edit,
+                size: 35.0,
+                color: Colors.white,
+              ),
+              SizedBox(width: 8.0,),
+              Text(
+                "Edit Order",
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 27.0,
+                  fontFamily: 'BreeSerif',
+                  color: Colors.white,
+                ),
+              ),
+            ],
+          ),
+          backgroundColor: Colors.orange.shade500,
+          centerTitle: true,
+        ),
+      ),
       body: SafeArea(
         child: SingleChildScrollView (
           child: SizedBox(
             child: Column(
               children: [
                 Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    child: FutureBuilder<List<OrderFoodItemMoreInfo>>(
-                        future: getOrderFoodItemDetails(currentOrder!),
-                        builder: (BuildContext context, AsyncSnapshot<List<OrderFoodItemMoreInfo>> snapshot) {
-                          if (snapshot.hasData) {
-                            return Column(
-                              children: buildOrderFoodItemList(snapshot.data, currentUser, currentCart, currentCartOrder!),
-                            );
-                          } else {
-                            if (snapshot.hasError) {
-                              return Center(child: Text('Error: ${snapshot.error}'));
-                            } else {
-                              return const Center(child: Text('Loading....'));
-                            }
-                          }
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: FutureBuilder<List<OrderFoodItemMoreInfo>>(
+                    future: getOrderFoodItemDetails(currentOrder!),
+                    builder: (BuildContext context, AsyncSnapshot<List<OrderFoodItemMoreInfo>> snapshot) {
+                      if (snapshot.hasData) {
+                        return Column(
+                          children: buildOrderFoodItemList(snapshot.data, currentUser, currentCart, currentCartOrder!),
+                        );
+                      } else {
+                        if (snapshot.hasError) {
+                          return Center(child: Text('Error: ${snapshot.error}'));
+                        } else {
+                          return const Center(child: Text('Loading....'));
                         }
-                    )
+                      }
+                    }
+                  )
                 ),
               ],
             ),
@@ -139,7 +180,7 @@ class _EditOrderDetailsPageState extends State<EditOrderDetailsPage> {
                 ),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
-                  children: buildBottomNavigationBar(snapshot.data, currentUser, currentCart, currentCartOrder),
+                  children: buildBottomNavigationBar(snapshot.data, currentUser!, currentCart!, currentCartOrder),
                 ),
               );
             } else {
@@ -156,15 +197,94 @@ class _EditOrderDetailsPageState extends State<EditOrderDetailsPage> {
   }
 
   List<Widget> buildBottomNavigationBar(List<FoodOrder>? currentOrder, User currentUser, Cart currentCart, CartForOrderFoodItemMoreInfo? currentCartOrder) {
-    if (currentCartOrder?.order_grand_total == 0) {
-      for (int i = 0; i < currentOrder!.length; i++) {
-        currentCartOrder?.order_grand_total = currentOrder[i]!.grand_total;
-      }
-    }
     List<Widget> bottomNavigationBar = [];
+    // bottomNavigationBar.add(
+    //   Padding(
+    //     padding: const EdgeInsets.fromLTRB(20, 13, 20, 10),
+    //     child: Row(
+    //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    //       children: [
+    //         const Text(
+    //           'Total :',
+    //           style: TextStyle(
+    //             fontWeight: FontWeight.bold,
+    //             fontSize: 22.0,
+    //             fontFamily: 'Itim',
+    //           ),
+    //         ),
+    //         Text(
+    //           'MYR ${currentCartOrder?.order_grand_total.toStringAsFixed(2)}',
+    //           style: const TextStyle(
+    //             fontWeight: FontWeight.bold,
+    //             fontSize: 22.0,
+    //             fontFamily: 'Gabarito',
+    //           ),
+    //         ),
+    //       ],
+    //     ),
+    //   ),
+    // );
+    if (currentCartOrder?.voucherAppliedID != 0) {
+      bottomNavigationBar.add(
+        Padding(
+          padding: const EdgeInsets.fromLTRB(20, 10, 20, 0),
+          child: FutureBuilder<List<Voucher>>(
+              future: getVoucherAppliedDetails(currentCartOrder!.voucherAppliedID),
+              builder: (BuildContext context, AsyncSnapshot <List<Voucher>> snapshot) {
+                if (snapshot.hasData) {
+                  return Column(
+                    children: buildVoucherApplied(snapshot.data, currentCartOrder!, currentCart),
+                  );
+                } else {
+                  if (snapshot.hasError) {
+                    return Center(child: Text('Error: ${snapshot.error}'));
+                  } else {
+                    return const Center(child: Text('Loading....'));
+                  }
+                }
+              }
+          ),
+        ),
+      );
+    } else {
+      bottomNavigationBar.add(
+        Padding(
+          padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
+          child: TextButton(
+            onPressed: () {
+              navigateApplyVoucherInEditOrderPage(currentCart, currentCartOrder!, currentUser);
+            },
+            style: TextButton.styleFrom(
+                padding: EdgeInsets.zero,
+                minimumSize: const Size(50, 15),
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                alignment: Alignment.centerLeft),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Icon(
+                  Icons.local_activity_outlined,
+                  color: Colors.redAccent.shade200,
+                  size: 25.0,
+                ),
+                const SizedBox(width: 8.0), // Add spacing between icon and text
+                Text(
+                  "Apply a voucher",
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 17,
+                    color: Colors.redAccent.shade200,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
     bottomNavigationBar.add(
       Padding(
-        padding: const EdgeInsets.fromLTRB(20, 13, 20, 10),
+        padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -176,21 +296,31 @@ class _EditOrderDetailsPageState extends State<EditOrderDetailsPage> {
                 fontFamily: 'Itim',
               ),
             ),
-            Text(
-              'MYR ${currentCartOrder?.order_grand_total.toStringAsFixed(2)}',
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 22.0,
-                fontFamily: 'Gabarito',
+            if (currentCartOrder?.order_grand_total != -0 || currentCartOrder?.order_grand_total != 0)
+              Text(
+                'MYR ${currentCartOrder?.order_grand_total.toStringAsFixed(2)}',
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 22.0,
+                  fontFamily: 'Gabarito',
+                ),
+              )
+            else
+              const Text(
+                'MYR 0',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 22.0,
+                  fontFamily: 'Gabarito',
+                ),
               ),
-            ),
           ],
         ),
       ),
     );
     bottomNavigationBar.add(
       Padding(
-        padding: const EdgeInsets.fromLTRB(20, 0, 20, 15),
+        padding: const EdgeInsets.fromLTRB(20, 10, 20, 15),
         child: Container(
           padding: const EdgeInsets.only(top: 3, left: 3),
           child: MaterialButton(
@@ -245,10 +375,6 @@ class _EditOrderDetailsPageState extends State<EditOrderDetailsPage> {
               color: Colors.white,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(15.0),
-                // side: BorderSide(
-                //   color: Colors.blueGrey, // Border color
-                //   width: 2.0, // Border width
-                // ),
               ),
               elevation: 15.0,
               child: Container(
@@ -272,8 +398,10 @@ class _EditOrderDetailsPageState extends State<EditOrderDetailsPage> {
                       child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 0),
                         child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
+                            const SizedBox(height: 10.0,),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
@@ -288,30 +416,25 @@ class _EditOrderDetailsPageState extends State<EditOrderDetailsPage> {
                                     overflow: TextOverflow.clip,
                                   ),
                                 ),
+                                const Spacer(),
                                 Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 0),
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      setState(() {
-                                        // deleteFoodItemOrder(a);
-                                        currentCartOrder.removeFromCartForOrderFoodItemMoreInfo(a);
-                                      });
-                                    },
-                                    child: Container(
-                                      width: 30,
-                                      height: 30,
-                                      decoration: BoxDecoration(
-                                        shape: BoxShape.rectangle,
-                                        color: Colors.grey.shade300,
-                                        // border: Border.all(color: Colors.grey),
-                                        borderRadius: BorderRadius.circular(5.0),
-                                      ),
-                                      // padding: const EdgeInsets.all(1),
-                                      child: Icon(
-                                        Icons.delete,
-                                        size: 22.0,
-                                        color: Colors.grey.shade700,
-                                      ),
+                                  padding: const EdgeInsets.fromLTRB(0, 0, 15, 0),
+                                  child: Container(
+                                    width: 35,
+                                    height: 35,
+                                    decoration: BoxDecoration(borderRadius: BorderRadius.circular(100), color: Colors.yellow),
+                                    child: ElevatedButton(
+                                      style: ElevatedButton.styleFrom(padding: const EdgeInsets.fromLTRB(0, 1, 0, 0), backgroundColor: Colors.grey.shade300),
+                                      onPressed: () {
+                                        setState(() {
+                                          if (currentCartOrder.checkIsLastItem(a)) {
+                                            showDeleteLastItemConfirmationDialog(a, currentCartOrder, currentCart!, currentUser!);
+                                          } else if (!currentCartOrder.checkIsLastItem(a)) {
+                                            showDeleteSpecificItemConfirmationDialog(currentCartOrder, a);
+                                          }
+                                        });
+                                      },
+                                      child: Icon(Icons.delete, color: Colors.grey.shade800),
                                     ),
                                   ),
                                 ),
@@ -433,22 +556,16 @@ class _EditOrderDetailsPageState extends State<EditOrderDetailsPage> {
                                 children: [
                                   InkWell(
                                     onTap: () {
-                                      if (a.numOrder == 1) {
-                                        setState(() {
-                                          // deleteFoodItemOrder(a);
-                                          // if (orderFoodItemList.length == 1) {
-                                          //   Navigator.push(context,
-                                          //       MaterialPageRoute(builder: (context) => OrderHistoryPage(user: currentUser, cart: currentCart))
-                                          //   );
-                                          // }
-                                          currentCartOrder.reduceNumOrderForOrderFoodItemMoreInfo(a);
-                                        });
-                                      } else {
-                                        setState(() {
-                                          // updateFoodItemNumOrder(a, (a.numOrder.toInt() - 1));
-                                          currentCartOrder.reduceNumOrderForOrderFoodItemMoreInfo(a);
-                                        });
-                                      }
+                                      setState(() {
+                                        if (a.numOrder == 1 && currentCartOrder.checkIsLastItem(a)) {
+                                          showDeleteLastItemConfirmationDialog(a, currentCartOrder, currentCart!, currentUser!);
+                                        } else if (a.numOrder == 1 && !currentCartOrder.checkIsLastItem(a)) {
+                                          showDeleteLastNumOrderItemConfirmationDialog(currentCartOrder, a);
+                                        } else if (a.numOrder > 1) {
+                                          currentCartOrder.reduceNumOrderForOrderFoodItemMoreInfo(a, 1);
+                                          currentCartOrder.isEditCartOrder = true;
+                                        }
+                                      });
                                     },
                                     child: Container(
                                       width: 30,
@@ -474,10 +591,10 @@ class _EditOrderDetailsPageState extends State<EditOrderDetailsPage> {
                                   const SizedBox(width: 10), // Add spacing between buttons
                                   InkWell(
                                     onTap: () {
-                                      // a.numOrder++;
                                       setState(() {
                                         // updateFoodItemNumOrder(a, (a.numOrder.toInt() + 1));
                                         currentCartOrder.increaseNumOrderForOrderFoodItemMoreInfo(a);
+                                        currentCartOrder.isEditCartOrder = true;
                                       });
                                     },
                                     child: Container(
@@ -512,6 +629,692 @@ class _EditOrderDetailsPageState extends State<EditOrderDetailsPage> {
       }
     }
     return cards;
+  }
+
+  List<Widget> buildVoucherApplied (List<Voucher>? voucherAppliedDetails, CartForOrderFoodItemMoreInfo currentCartOrder, Cart currentCart) {
+    currentCartOrder.voucherApplied_type_name = voucherAppliedDetails![0].voucher_type_name;
+    currentCartOrder.voucherApplied_cost_off = voucherAppliedDetails[0].cost_off;
+    currentCartOrder.voucherApplied_free_menu_item_name = voucherAppliedDetails[0].free_menu_item_name;
+    currentCartOrder.voucherApplied_applicable_menu_item_name = voucherAppliedDetails[0].applicable_menu_item_name;
+    currentCartOrder.voucherApplied_min_spending = voucherAppliedDetails[0].min_spending;
+    List<Widget> voucherApplied = [];
+    var verifyResult = currentCartOrder.verifyVoucher();
+    bool voucherAppliedSuccessfully = verifyResult.item1;
+    String requirement = verifyResult.item2;
+
+    if (voucherAppliedSuccessfully == true) {
+      voucherApplied.add(
+        CouponCard(
+          height: 150,
+          backgroundColor: Colors.transparent,
+          clockwise: true,
+          curvePosition: 65,
+          curveRadius: 30,
+          curveAxis: Axis.horizontal,
+          borderRadius: 10,
+          border: const BorderSide(
+            color: Colors.grey, // Border color
+            width: 3.0, // Border width
+          ),
+          firstChild: Container(
+            decoration: BoxDecoration(
+              color: const Color(0xFFFFDAB9).withOpacity(0.7),
+            ),
+            child: Row(
+              children: [
+                const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 20.0),
+                    child: Icon(
+                      Icons.discount_rounded,
+                      size: 35.0,
+                    )
+                ),
+                Expanded(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          const Text(
+                            'Code : ',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black54,
+                            ),
+                          ),
+                          Text(
+                            voucherAppliedDetails![0].voucher_code,
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black54,
+                            ),
+                          ),
+                          const Spacer(),
+                          TextButton(
+                            onPressed: () {
+                              setState(() {
+                                makeTheVoucherAvailableOrUnavailable(currentCartOrder.voucherAppliedIDBefore, true);
+                                setState(() {
+                                  currentCartOrder.removeVoucher(voucherAppliedSuccessfully);
+                                  currentCartOrder.isEditCartOrder = true;
+                                });
+                              });
+                            },
+                            style: TextButton.styleFrom(
+                                padding: EdgeInsets.zero,
+                                minimumSize: const Size(50, 15),
+                                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                alignment: Alignment.centerLeft),
+                            child: Text(
+                              'Remove',
+                              style: TextStyle(
+                                fontSize: 17.0,
+                                decoration: TextDecoration.underline,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.transparent,
+                                shadows: [Shadow(color: Colors.redAccent.shade200, offset: const Offset(0, -2))],
+                                decorationThickness: 3,
+                                decorationColor: Colors.redAccent.shade200,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 20.0),
+                        ],
+                      ),
+                      const SizedBox(height: 3.0,),
+                      if (voucherAppliedDetails[0].voucher_type_name == "Discount")
+                        Row(
+                          children: [
+                            Text(
+                              'MYR ${voucherAppliedDetails[0].cost_off.toStringAsFixed(0)}',
+                              style: const TextStyle(
+                                color: Colors.black,
+                                fontSize: 22,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(width: 5.0,),
+                            const Text(
+                              'OFF',
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      if (voucherAppliedDetails[0].voucher_type_name == "FreeItem")
+                        Row(
+                          children: [
+                            const Text(
+                              'Free ',
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Text(
+                              voucherAppliedDetails[0].free_menu_item_name,
+                              style: const TextStyle(
+                                color: Colors.black,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                fontStyle: FontStyle.italic,
+                              ),
+                            ),
+                          ],
+                        ),
+                      if (voucherAppliedDetails[0].voucher_type_name == "BuyOneFreeOne")
+                        const Row(
+                          children: [
+                            Text(
+                              'Buy 1 Free 1',
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 22,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          secondChild: Container(
+            width: double.maxFinite,
+            // padding: const EdgeInsets.all(18),
+            decoration: BoxDecoration(
+              color: const Color(0xFFFFDAB9).withOpacity(0.4),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if (voucherAppliedDetails[0].voucher_type_name == "Discount" || voucherAppliedDetails[0].voucher_type_name == "FreeItem")
+                    Row(
+                      children: [
+                        Text(
+                          'Min. Spend : ',
+                          style: TextStyle(
+                            color: Colors.grey.shade800,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Text(
+                          'MYR ${voucherAppliedDetails[0].min_spending.toStringAsFixed(0)}',
+                          style: TextStyle(
+                            color: Colors.grey.shade900,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                  if (voucherAppliedDetails[0].voucher_type_name == "BuyOneFreeOne")
+                    Row(
+                      children: [
+                        Text(
+                          'Applicable For ',
+                          style: TextStyle(
+                            color: Colors.grey.shade800,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Text(
+                          '${voucherAppliedDetails[0].applicable_menu_item_name} ',
+                          style: TextStyle(
+                            color: Colors.grey.shade900,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            fontStyle: FontStyle.italic,
+                          ),
+                        ),
+                        Text(
+                          'Only',
+                          style: TextStyle(
+                            color: Colors.grey.shade800,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                  const SizedBox(height: 4.0,),
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.check_circle_rounded,
+                        color: Colors.green.shade600,
+                        size: 20.0,
+                      ),
+                      const SizedBox(width: 10.0),
+                      Text(
+                        'Voucher Applied !',
+                        style: TextStyle(
+                          color: Colors.green.shade800,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+    } else {
+      voucherApplied.add(
+        CouponCard(
+          height: 150,
+          backgroundColor: Colors.transparent,
+          clockwise: true,
+          curvePosition: 65,
+          curveRadius: 30,
+          curveAxis: Axis.horizontal,
+          borderRadius: 10,
+          border: const BorderSide(
+            color: Colors.grey, // Border color
+            width: 3.0, // Border width
+          ),
+          firstChild: Container(
+            decoration: BoxDecoration(
+              color: Colors.grey.shade200,
+            ),
+            child: Row(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 20.0),
+                  child: Icon(
+                    Icons.discount_rounded,
+                    size: 35.0,
+                    color: Colors.grey.shade500,
+                  ),
+                ),
+                Expanded(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Text(
+                            'Code : ',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.grey.shade500,
+                            ),
+                          ),
+                          Text(
+                            voucherAppliedDetails![0].voucher_code,
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.grey.shade500,
+                            ),
+                          ),
+                          const Spacer(),
+                          TextButton(
+                            onPressed: () {
+                              setState(() {
+                                makeTheVoucherAvailableOrUnavailable(currentCartOrder.voucherAppliedIDBefore, true);
+                                setState(() {
+                                  currentCartOrder.removeVoucher(voucherAppliedSuccessfully);
+                                  currentCartOrder.isEditCartOrder = true;
+                                });
+                              });
+                            },
+                            style: TextButton.styleFrom(
+                                padding: EdgeInsets.zero,
+                                minimumSize: const Size(50, 15),
+                                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                alignment: Alignment.centerLeft),
+                            child: Text(
+                              'Remove',
+                              style: TextStyle(
+                                fontSize: 17.0,
+                                decoration: TextDecoration.underline,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.transparent,
+                                shadows: [Shadow(color: Colors.redAccent.shade200, offset: const Offset(0, -2))],
+                                decorationThickness: 3,
+                                decorationColor: Colors.redAccent.shade200,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 20.0),
+                        ],
+                      ),
+                      const SizedBox(height: 3.0,),
+                      if (voucherAppliedDetails[0].voucher_type_name == "Discount")
+                        Row(
+                          children: [
+                            Text(
+                              'MYR ${voucherAppliedDetails[0].cost_off.toStringAsFixed(0)}',
+                              style: TextStyle(
+                                color: Colors.grey.shade500,
+                                fontSize: 22,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(width: 5.0,),
+                            Text(
+                              'OFF',
+                              style: TextStyle(
+                                color: Colors.grey.shade500,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      if (voucherAppliedDetails[0].voucher_type_name == "FreeItem")
+                        Row(
+                          children: [
+                            Text(
+                              'Free ',
+                              style: TextStyle(
+                                color: Colors.grey.shade500,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Text(
+                              voucherAppliedDetails[0].free_menu_item_name,
+                              style: TextStyle(
+                                color: Colors.grey.shade700,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                fontStyle: FontStyle.italic,
+                              ),
+                            ),
+                          ],
+                        ),
+                      if (voucherAppliedDetails[0].voucher_type_name == "BuyOneFreeOne")
+                        Row(
+                          children: [
+                            Text(
+                              'Buy 1 Free 1',
+                              style: TextStyle(
+                                color: Colors.grey.shade500,
+                                fontSize: 22,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          secondChild: Container(
+            width: double.maxFinite,
+            // padding: const EdgeInsets.all(18),
+            decoration: BoxDecoration(
+              color: Colors.grey.shade100,
+            ),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(
+                  horizontal: 30.0, vertical: 10.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if (voucherAppliedDetails[0].voucher_type_name == "Discount" || voucherAppliedDetails[0].voucher_type_name == "FreeItem")
+                    Row(
+                      children: [
+                        Text(
+                          'Min. Spend : ',
+                          style: TextStyle(
+                            color: Colors.grey.shade500,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Text(
+                          'MYR ${voucherAppliedDetails[0].min_spending.toStringAsFixed(0)}',
+                          style: TextStyle(
+                            color: Colors.grey.shade500,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                  if (voucherAppliedDetails[0].voucher_type_name == "BuyOneFreeOne")
+                    Row(
+                      children: [
+                        Text(
+                          'Applicable For ',
+                          style: TextStyle(
+                            color: Colors.grey.shade500,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Text(
+                          '${voucherAppliedDetails[0].applicable_menu_item_name} ',
+                          style: TextStyle(
+                            color: Colors.redAccent.shade200,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            fontStyle: FontStyle.italic,
+                          ),
+                        ),
+                        Text(
+                          'Only',
+                          style: TextStyle(
+                            color: Colors.grey.shade500,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                  const SizedBox(height: 4.0,),
+                  Row(
+                    children: [
+                      Text(
+                        requirement,
+                        style: TextStyle(
+                          color: Colors.redAccent.shade200,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+    voucherApplied.add(const SizedBox(height: 20.0));
+    return voucherApplied;
+  }
+
+  void showDeleteLastItemConfirmationDialog(OrderFoodItemMoreInfo orderFoodItemMoreInfo, CartForOrderFoodItemMoreInfo currentCartOrder, Cart currentCart, User currentUser) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Confirmation', style: TextStyle(fontWeight: FontWeight.bold,)),
+          content: const Text('This Order will be deleted if the last item is deleted.'),
+          actions: [
+            ElevatedButton(
+              onPressed: () async {
+                var (orderDeletedAsync, err_code) = await deleteFoodOrder(orderFoodItemMoreInfo);
+                setState(() {
+                  orderDeleted = orderDeletedAsync;
+                  if (!orderDeleted) {
+                    if (err_code == ErrorCodes.DELETE_ORDER_FAIL_BACKEND) {
+                      showDialog(context: context, builder: (
+                          BuildContext context) =>
+                          AlertDialog(
+                            title: const Text('Error'),
+                            content: Text('An Error occurred while trying to delete the order.\n\nError Code: $err_code'),
+                            actions: <Widget>[
+                              TextButton(onPressed: () =>
+                                  Navigator.pop(context, 'Ok'),
+                                  child: const Text('Ok')),
+                            ],
+                          ),
+                      );
+                    } else {
+                      showDialog(context: context, builder: (
+                          BuildContext context) =>
+                          AlertDialog(
+                            title: const Text('Connection Error'),
+                            content: Text(
+                                'Unable to establish connection to our services. Please make sure you have an internet connection.\n\nError Code: $err_code'),
+                            actions: <Widget>[
+                              TextButton(onPressed: () =>
+                                  Navigator.pop(context, 'Ok'),
+                                  child: const Text('Ok')),
+                            ],
+                          ),
+                      );
+                    }
+                  } else {
+                    Navigator.of(context).pop();
+                    showDialog(context: context, builder: (
+                        BuildContext context) =>
+                        AlertDialog(
+                          title: const Text('Order Deleted Successful'),
+                          content: const Text('New Order can be make in the menu home page.'),
+                          actions: <Widget>[
+                            TextButton(
+                              child: const Text('Ok'),
+                              onPressed: () {
+                                setState(() {
+                                  currentCartOrder.reduceNumOrderForOrderFoodItemMoreInfo(orderFoodItemMoreInfo, orderFoodItemMoreInfo.numOrder);
+                                  currentCartOrder.isEditCartOrder = true;
+                                  Navigator.of(context).pop();
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(builder: (context) => OrderHistoryPage(user: currentUser, cart: currentCart)),
+                                  );
+                                });
+                              },
+                            ),
+                          ],
+                        ),
+                    );
+                    setState(() {
+
+                    });
+                  }
+                });
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.green,
+              ),
+              child: const Text('Yes'),
+
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red,
+              ),
+              child: const Text('No'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void showDeleteLastNumOrderItemConfirmationDialog(CartForOrderFoodItemMoreInfo currentCartOrder, OrderFoodItemMoreInfo orderFoodItemMoreInfo) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Confirmation', style: TextStyle(fontWeight: FontWeight.bold,)),
+          content: const Text('The last number of this item will be deleted.'),
+          actions: [
+            ElevatedButton(
+              onPressed: () async {
+                setState(() {
+                  currentCartOrder.reduceNumOrderForOrderFoodItemMoreInfo(orderFoodItemMoreInfo, 1);
+                  currentCartOrder.isEditCartOrder = true;
+                  Navigator.of(context).pop();
+                });
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.green,
+              ),
+              child: const Text('Yes'),
+
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red,
+              ),
+              child: const Text('No'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void showDeleteSpecificItemConfirmationDialog(CartForOrderFoodItemMoreInfo currentCartOrder, OrderFoodItemMoreInfo orderFoodItemMoreInfo) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Confirmation', style: TextStyle(fontWeight: FontWeight.bold,)),
+          content: const Text('This item will be deleted.'),
+          actions: [
+            ElevatedButton(
+              onPressed: () async {
+                setState(() {
+                  currentCartOrder.reduceNumOrderForOrderFoodItemMoreInfo(orderFoodItemMoreInfo, orderFoodItemMoreInfo.numOrder);
+                  currentCartOrder.isEditCartOrder = true;
+                  Navigator.of(context).pop();
+                });
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.green,
+              ),
+              child: const Text('Yes'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red,
+              ),
+              child: const Text('No'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void showConfirmNoSaveDialog(CartForOrderFoodItemMoreInfo currentCartOrder) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Leave site?', style: TextStyle(fontWeight: FontWeight.bold,)),
+          content: const Text('Changes you made may not be saved.'),
+          actions: [
+            ElevatedButton(
+              onPressed: () async {
+                Navigator.of(context).pop();
+                Navigator.of(context).pop();
+                makeTheVoucherAvailableOrUnavailable(currentCartOrder!.voucherAppliedIDBefore, false);
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.green,
+              ),
+              child: const Text('Yes'),
+
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red,
+              ),
+              child: const Text('No'),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   void showConfirmationUpdateDialog(Cart currentCart, User currentUser, CartForOrderFoodItemMoreInfo currentCartOrder) {
@@ -557,7 +1360,6 @@ class _EditOrderDetailsPageState extends State<EditOrderDetailsPage> {
                       );
                     }
                   } else {
-                    currentCart = Cart(id: 0, menuItem: [], numMenuItemOrder: 0, grandTotalBeforeDiscount: 0, grandTotalAfterDiscount: 0, price_discount: 0, voucherAppliedID: 0, voucherApplied_type_name: "", voucherApplied_cost_off: 0, voucherApplied_free_menu_item_name: "", voucherApplied_applicable_menu_item_name: "", voucherApplied_min_spending: 0);
                     Navigator.of(context).pop();
                     showDialog(context: context, builder: (
                         BuildContext context) =>
@@ -636,7 +1438,6 @@ class _EditOrderDetailsPageState extends State<EditOrderDetailsPage> {
       );
 
       if (response.statusCode == 201 || response.statusCode == 200) {
-        print(FoodOrder.getOrderList(jsonDecode(response.body)));
         return FoodOrder.getOrderList(jsonDecode(response.body));
       } else {
         throw Exception('Failed to load the order details.');
@@ -675,11 +1476,41 @@ class _EditOrderDetailsPageState extends State<EditOrderDetailsPage> {
     }
   }
 
-  Future<(bool, String)> deleteFoodItemOrder(OrderFoodItemMoreInfo orderFoodItem) async {
+  Future<(bool, String)> makeTheVoucherAvailableOrUnavailable(int currentCartOrderVoucherAppliedID, bool is_available) async {
+    try {
+      final response = await http.put(
+        // Uri.parse('http://10.0.2.2:8000/order/update_food_item_num_order/${orderFoodItem.id}/'),
+        Uri.parse('http://localhost:8000/order/update_voucher_available_status'),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(<String, dynamic> {
+          'voucher_assign_id': currentCartOrderVoucherAppliedID,
+          'is_available': is_available,
+        }),
+      );
+
+      if (response.statusCode == 201 || response.statusCode == 200) {
+        return (true, (ErrorCodes.OPERATION_OK));
+      } else {
+        if (kDebugMode) {
+          print('Update Number Order Of Food Item Failed.');
+        }
+        return (false, (ErrorCodes.UPDATE_VOUCHER_AVAILABLE_STATUS_FAIL_BACKEND));
+      }
+    } on Exception catch (e) {
+      if (kDebugMode) {
+        print('API Connection Error. $e');
+      }
+      return (false, (ErrorCodes.UPDATE_VOUCHER_AVAILABLE_STATUS_FAIL_API_CONNECTION));
+    }
+  }
+
+  Future<(bool, String)> deleteFoodOrder(OrderFoodItemMoreInfo orderFoodItem) async {
     try {
       final response = await http.put(
         // Uri.parse('http://10.0.2.2:8000/order/delete_food_item_order/${orderFoodItem.id}/'),
-        Uri.parse('http://localhost:8000/order/delete_food_item_order/${orderFoodItem.id}/'),
+        Uri.parse('http://localhost:8000/order/delete_food_order/${orderFoodItem.food_order}/'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
@@ -689,23 +1520,22 @@ class _EditOrderDetailsPageState extends State<EditOrderDetailsPage> {
         return (true, (ErrorCodes.OPERATION_OK));
       } else {
         if (kDebugMode) {
-          print('Update Number Order Of Food Item Failed.');
+          print('Delete Food Order Failed.');
         }
-        return (false, (ErrorCodes.UPDATE_NUM_ORDER_FOOD_ITEM_FAIL_BACKEND));
+        return (false, (ErrorCodes.DELETE_ORDER_FAIL_BACKEND));
       }
     } on Exception catch (e) {
       if (kDebugMode) {
         print('API Connection Error. $e');
       }
-      return (false, (ErrorCodes.UPDATE_NUM_ORDER_FOOD_ITEM_FAIL_API_CONNECTION));
+      return (false, (ErrorCodes.DELETE_ORDER_FAIL_API_CONNECTION));
     }
   }
 
   Future<(bool, String)> _submitOrderFoodItemUpdateDetails(CartForOrderFoodItemMoreInfo currentCartOrder) async {
     List<OrderFoodItemMoreInfo> orderFoodItemUpdateList = currentCartOrder.getFoodItemOrderList();
-    double grand_total = currentCartOrder.getOrderGrandTotal();
-    print(grand_total);
-    var (success, err_code) = await updateOrderFoodItemDetails(orderFoodItemUpdateList, grand_total);
+    // double grand_total = currentCartOrder.getOrderGrandTotal();
+    var (success, err_code) = await updateOrderFoodItemDetails(orderFoodItemUpdateList, currentCartOrder);
     if (success == false) {
       if (kDebugMode) {
         print("Failed to edit order.");
@@ -715,7 +1545,7 @@ class _EditOrderDetailsPageState extends State<EditOrderDetailsPage> {
     return (true, err_code);
   }
 
-  Future<(bool, String)> updateOrderFoodItemDetails(List<OrderFoodItemMoreInfo> orderFoodItemUpdateList, double grand_total) async {
+  Future<(bool, String)> updateOrderFoodItemDetails(List<OrderFoodItemMoreInfo> orderFoodItemUpdateList, CartForOrderFoodItemMoreInfo currentCartOrder) async {
     try {
       final response = await http.put(
         // Uri.parse('http://10.0.2.2:8000/order/update_food_item_order'),
@@ -727,16 +1557,15 @@ class _EditOrderDetailsPageState extends State<EditOrderDetailsPage> {
         body: jsonEncode(<dynamic, dynamic> {
           'order_food_item_update_list': orderFoodItemUpdateList.map((orderFoodItemList) => orderFoodItemList.toJson()).toList(),
           'order_id': orderFoodItemUpdateList[0].food_order,
-          'grand_total': grand_total,
-          'gross_total': grand_total,
+          'grand_total': currentCartOrder.order_grand_total,
+          'gross_total': currentCartOrder.order_grand_total_before_discount,
+          'voucher_assign_id': currentCartOrder.voucherAppliedID,
         }),
       );
 
       if (response.statusCode == 201 || response.statusCode == 200) {
         if (kDebugMode) {
           print("Edit Order Successful.");
-          print(orderFoodItemUpdateList[0].food_order);
-          print(grand_total);
         }
         return (true, ErrorCodes.OPERATION_OK);
       } else {
@@ -751,6 +1580,26 @@ class _EditOrderDetailsPageState extends State<EditOrderDetailsPage> {
         print('API Connection Error. $e');
       }
       return (false, (ErrorCodes.EDIT_ORDER_FAIL_API_CONNECTION));
+    }
+  }
+
+  Future<List<Voucher>> getVoucherAppliedDetails(int voucherAppliedID) async {
+    try {
+      final response = await http.get(
+        // Uri.parse('http://10.0.2.2:8000/order/request_voucher_applied_details/$voucherAppliedID/'),
+        Uri.parse('http://localhost:8000/order/request_voucher_applied_details/$voucherAppliedID/'),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+      );
+
+      if (response.statusCode == 201 || response.statusCode == 200) {
+        return Voucher.getVoucherAppliedDetails(jsonDecode(response.body));
+      } else {
+        throw Exception('Failed to edit order by user.');
+      }
+    } on Exception catch (e) {
+      throw Exception('API Connection Error. $e');
     }
   }
 }

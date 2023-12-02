@@ -65,21 +65,45 @@ class _ViewCartPageState extends State<ViewCartPage> {
     return widget.cart;
   }
 
+  void showConfirmationRemoveItemFromCart(Cart currentCart, MenuItem currentMenuItem) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Confirmation', style: TextStyle(fontWeight: FontWeight.bold,)),
+          content: Text('Confirm to remove this item (${currentMenuItem.name})?'),
+          actions: [
+            ElevatedButton(
+              onPressed: () async {
+                setState(() {
+                  Navigator.of(context).pop();
+                  currentCart?.removeFromCart(currentMenuItem);
+                });
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.green,
+              ),
+              child: const Text('Yes'),
+
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red,
+              ),
+              child: const Text('No'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     enterFullScreen();
-
-    // if (base64Image == "") {
-    //   base64Image = currentMenuItem!.image;
-    //   if (base64Image == "") {
-    //     image = Image.asset('images/KE_Nina_Cafe_logo.jpg');
-    //     print("nothing in base64");
-    //   } else {
-    //     image = Image.memory(base64Decode(base64Image), fit: BoxFit.fill);
-    //   }
-    // } else {
-    //   image = Image.memory(base64Decode(base64Image), fit: BoxFit.fill);
-    // }
 
     User? currentUser = getUser();
     Cart? currentCart = getCart();
@@ -236,6 +260,9 @@ class _ViewCartPageState extends State<ViewCartPage> {
                     Navigator.push(context,
                         MaterialPageRoute(builder: (context) => MenuHomePage(user: currentUser, cart: currentCart))
                     );
+                    // Navigator.push(context,
+                    //     MaterialPageRoute(builder: (context) => MenuHomePage())
+                    // );
                   },
                   color: Colors.white,
                   shape: const RoundedRectangleBorder(
@@ -306,6 +333,7 @@ class _ViewCartPageState extends State<ViewCartPage> {
                         padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 0),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.start,
                           children: <Widget>[
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -322,23 +350,18 @@ class _ViewCartPageState extends State<ViewCartPage> {
                                   ),
                                 ),
                                 Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 0),
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      setState(() {
-                                        currentCart?.removeFromCart(a);
-                                      });
-                                    },
-                                    child: Container(
-                                      width: 30,
-                                      height: 30,
-                                      decoration: BoxDecoration(
-                                        shape: BoxShape.rectangle,
-                                        color: Colors.grey.shade300,
-                                        // border: Border.all(color: Colors.grey),
-                                        borderRadius: BorderRadius.circular(5.0),
-                                      ),
-                                      // padding: const EdgeInsets.all(1),
+                                  padding: const EdgeInsets.fromLTRB(5, 0, 10, 0),
+                                  child: Container(
+                                    width: 35,
+                                    height: 35,
+                                    decoration: BoxDecoration(borderRadius: BorderRadius.circular(100), color: Colors.yellow),
+                                    child: ElevatedButton(
+                                      style: ElevatedButton.styleFrom(padding: const EdgeInsets.fromLTRB(0, 1, 0, 0), backgroundColor: Colors.grey.shade300),
+                                      onPressed: () async {
+                                        setState(() {
+                                          showConfirmationRemoveItemFromCart(currentCart!, a);
+                                        });
+                                      },
                                       child: Icon(
                                         Icons.delete,
                                         size: 22.0,
