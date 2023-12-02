@@ -52,6 +52,10 @@ class Cart {
     return grandTotalAfterDiscount;
   }
 
+  String getDiffBetweenPriceGrandAndGross () {
+    return (grandTotalBeforeDiscount - grandTotalAfterDiscount).toStringAsFixed(2);
+  }
+
   bool containMenuItem () {
     if (menuItem.isNotEmpty) {
       return true;
@@ -82,7 +86,7 @@ class Cart {
             price_discount = menuItem[i].price_large;
             continue;
           }
-          if (menuItem[i].sizeChosen == "Standard") {
+          if (menuItem[i].sizeChosen == "" || menuItem[i].sizeChosen == "Standard") {
             price_discount = menuItem[i].price_standard;
             break;
           }
@@ -113,13 +117,11 @@ class Cart {
     grandTotalAfterDiscount = grandTotalBeforeDiscount;
     if (voucherApplied_type_name == "Discount") {
       if (grandTotalBeforeDiscount < voucherApplied_min_spending) {
-        print(grandTotalAfterDiscount);
         requirementsToFulfill = voucherApplied_min_spending - grandTotalBeforeDiscount;
         return Tuple2(voucherApplied, "Add MYR $requirementsToFulfill more to use this voucher");
       }
       voucherApplied = true;
       grandTotalAfterDiscount -= price_discount;
-      print(grandTotalAfterDiscount);
       return Tuple2(voucherApplied, "Applied Successfully");
     } else if (voucherApplied_type_name == "FreeItem") {
       for (int i = 0; i < menuItem.length; i++) {
@@ -131,7 +133,7 @@ class Cart {
               lowestPrice = price_discount;
             }
           }
-          if (menuItem[i].sizeChosen == "Standard") {
+          if (menuItem[i].sizeChosen == "" || menuItem[i].sizeChosen == "Standard") {
             price_discount = menuItem[i].price_standard;
             if (price_discount < lowestPrice) {
               lowestPrice = price_discount;
@@ -163,7 +165,7 @@ class Cart {
                 lowestPrice = price_discount;
               }
             }
-            if (menuItem[i].sizeChosen == "Standard") {
+            if (menuItem[i].sizeChosen == "" || menuItem[i].sizeChosen == "Standard") {
               price_discount = menuItem[i].price_standard;
               if (price_discount < lowestPrice) {
                 lowestPrice = price_discount;

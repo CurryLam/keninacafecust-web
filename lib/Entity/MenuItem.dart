@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:dart_jsonwebtoken/dart_jsonwebtoken.dart';
+import 'package:tuple/tuple.dart';
 
 import 'User.dart';
 
@@ -109,15 +110,6 @@ class MenuItem {
   @override
   int get hashCode => id.hashCode;
 
-  // @override
-  // int get hashCode {
-  //   var result = 17;
-  //   result = 37 * result + color.hashCode;
-  //   result = 37 * result + make.hashCode;
-  //   result = 37 * result + year.hashCode;
-  //   return result;
-  // }
-
   static List<MenuItem> getMenuItemDataList(Map<String, dynamic> json) {
     List<MenuItem> menuItemDataList = [];
     for (Map<String,dynamic> menuItemData in json['data']) {
@@ -134,6 +126,26 @@ class MenuItem {
       itemCategoryExistMenuItemList.add(oneitemCategoryExistMenuItem);
     }
     return itemCategoryExistMenuItemList;
+  }
+
+  static Tuple2<List<MenuItem>, List<MenuItem>> getBestSellingMenuItemList(Map<String, dynamic> json) {
+    List<MenuItem> bestSellingFoodsList = [];
+    List<MenuItem> bestSellingDrinksList = [];
+    List<Map<String, dynamic>> bestSellingFoodsListGet = List<Map<String, dynamic>>.from(json['data']['all_stock']);
+    List<Map<String, dynamic>> bestSellingDrinksListGet = List<Map<String, dynamic>>.from(json['data']['all_stock_with_current_supplier']);
+    for (Map<String,dynamic> foods in bestSellingFoodsListGet) {
+      MenuItem oneFoods = MenuItem.fromJson(foods);
+      bestSellingFoodsList.add(oneFoods);
+    }
+    for (Map<String,dynamic> drinks in bestSellingDrinksListGet) {
+      MenuItem oneDrinks = MenuItem.fromJson(drinks);
+      bestSellingDrinksList.add(oneDrinks);
+    }
+    if (kDebugMode) {
+      print(bestSellingFoodsList);
+      print(bestSellingDrinksList);
+    }
+    return Tuple2<List<MenuItem>, List<MenuItem>>(bestSellingFoodsList, bestSellingDrinksList);
   }
 
 }

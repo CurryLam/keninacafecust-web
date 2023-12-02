@@ -116,7 +116,6 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
           ),
           child: InkWell(
             onTap: () {
-
               Navigator.push(context,
                   MaterialPageRoute(builder: (context) => OrderHistoryDetailsPage(user: currentUser, order: orderList[i], cart: currentCart))
               );
@@ -168,32 +167,22 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
                                   ),
                                   const Spacer(),
                                   if (orderList[i].order_status == "PL")
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 0),
-                                      child: GestureDetector(
-                                        onTap: () {
-                                          CartForOrderFoodItemMoreInfo currentCartOrder = CartForOrderFoodItemMoreInfo(orderFoodItemMoreInfoList: [], order_grand_total: 0);
+                                    Container(
+                                      width: 35,
+                                      height: 35,
+                                      decoration: BoxDecoration(borderRadius: BorderRadius.circular(100), color: Colors.yellow),
+                                      child: ElevatedButton(
+                                        style: ElevatedButton.styleFrom(padding: const EdgeInsets.fromLTRB(0, 1, 0, 0), backgroundColor: Colors.grey.shade300),
+                                        onPressed: () async {
+                                          CartForOrderFoodItemMoreInfo currentCartOrder = CartForOrderFoodItemMoreInfo(orderFoodItemMoreInfoList: [], order_grand_total: 0, order_grand_total_before_discount: 0, price_discount_voucher: 0, voucherAppliedIDBefore: 0, voucherAppliedID: 0, voucherApplied_type_name: "", voucherApplied_cost_off: 0, voucherApplied_free_menu_item_name: "", voucherApplied_applicable_menu_item_name: "", voucherApplied_min_spending: 0, isEditCartOrder: false);
                                           Navigator.push(context,
                                               MaterialPageRoute(builder: (context) => EditOrderDetailsPage(user: currentUser, order: orderList[i], cart: currentCart, cartOrder: currentCartOrder,))
                                           );
                                         },
-                                        child: Container(
-                                          width: 28,
-                                          height: 28,
-                                          decoration: BoxDecoration(
-                                            shape: BoxShape.rectangle,
-                                            color: Colors.grey.shade300,
-                                            borderRadius: BorderRadius.circular(5.0),
-                                          ),
-                                          // padding: const EdgeInsets.all(1),
-                                          child: Icon(
-                                            Icons.edit,
-                                            size: 22.0,
-                                            color: Colors.grey.shade700,
-                                          ),
-                                        ),
+                                        child: Icon(Icons.edit, color: Colors.grey.shade800),
                                       ),
                                     ),
+                                  const SizedBox(width: 15.0),
                                 ]
                             ),
                             const SizedBox(height: 10.0,),
@@ -327,7 +316,7 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            "Table",
+                            "Table No.",
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 17.0,
@@ -354,7 +343,7 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            "Total",
+                            "Total Payment",
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 17.0,
@@ -362,15 +351,26 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
                               fontFamily: "Rajdhani",
                             ),
                           ),
-                          Text(
-                            "MYR ${orderList[i].grand_total.toStringAsFixed(2)}",
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 17.0,
-                              color: Colors.grey.shade800,
-                              fontFamily: "Rajdhani",
+                          if (orderList[i].order_status != "RJ")
+                            Text(
+                              "MYR ${orderList[i].grand_total.toStringAsFixed(2)}",
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 17.0,
+                                color: Colors.grey.shade800,
+                                fontFamily: "Rajdhani",
+                              ),
+                            )
+                          else
+                            Text(
+                              " - ",
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 17.0,
+                                color: Colors.grey.shade800,
+                                fontFamily: "Rajdhani",
+                              ),
                             ),
-                          ),
                         ],
                       )
                   ),

@@ -114,6 +114,20 @@ class _VoucherListPageState extends State<VoucherListPage> {
 
   List<Widget> buildAvailableVoucherRedeemedList(List<VoucherAssignUserMoreInfo>? availableVoucherRedeemedList, User? currentUser, Cart currentCart) {
     List<Widget> voucher = [];
+    List<VoucherAssignUserMoreInfo> discountVoucherList = [];
+    List<VoucherAssignUserMoreInfo> freeMenuItemVoucherList = [];
+    List<VoucherAssignUserMoreInfo> buyOneFreeOneVoucherList = [];
+
+    for (int i = 0; i < availableVoucherRedeemedList!.length; i++) {
+      if (availableVoucherRedeemedList[i].voucher_type_name == "Discount") {
+        discountVoucherList.add(availableVoucherRedeemedList[i]);
+      } else if (availableVoucherRedeemedList[i].voucher_type_name == "FreeItem") {
+        freeMenuItemVoucherList.add(availableVoucherRedeemedList[i]);
+      } else if (availableVoucherRedeemedList[i].voucher_type_name == "BuyOneFreeOne") {
+        buyOneFreeOneVoucherList.add(availableVoucherRedeemedList[i]);
+      }
+    }
+
     if (availableVoucherRedeemedList!.isEmpty) {
       voucher.add(
         Column(
@@ -186,10 +200,23 @@ class _VoucherListPageState extends State<VoucherListPage> {
         ),
       );
     } else {
-      for (int i = 0; i < availableVoucherRedeemedList!.length; i++) {
-        DateTime currentDate = DateTime.now();
-        DateTime expiryDateTime = availableVoucherRedeemedList[i].expiry_date;
-        if (availableVoucherRedeemedList[i].is_available && currentDate.isBefore(expiryDateTime)) {
+      if (discountVoucherList.isNotEmpty) {
+        voucher.add(
+          const Align(
+            alignment: Alignment.centerLeft,
+            child: Text(
+              'Discount',
+              style: TextStyle(
+                fontWeight: FontWeight.w500,
+                fontSize: 25.0,
+                fontFamily: 'AsapCondensed',
+              ),
+            ),
+          ),
+        );
+        voucher.add(const SizedBox(height: 15.0),);
+        for (int i = 0; i < discountVoucherList.length; i++) {
+          DateTime expiryDateTime = discountVoucherList[i].expiry_date;
           String formattedDate = DateFormat('yyyy-MM-dd  HH:mm:ss').format(expiryDateTime);
           voucher.add(
             CouponCard(
@@ -215,15 +242,8 @@ class _VoucherListPageState extends State<VoucherListPage> {
                       child: Icon(
                         Icons.discount_rounded,
                         size: 35.0,
-                        color: Colors.grey.shade500,
+                        color: Colors.grey.shade800,
                       ),
-                      // child: Image.asset(
-                      //   "images/voucherLogo.png",
-                      //   width: 50,
-                      //   height: 60,
-                      //   // fit: BoxFit.cover,
-                      //   // height: 500,
-                      // ),
                     ),
                     Expanded(
                       child: Column(
@@ -242,7 +262,7 @@ class _VoucherListPageState extends State<VoucherListPage> {
                                 ),
                               ),
                               Text(
-                                availableVoucherRedeemedList[i].voucher_code,
+                                discountVoucherList[i].voucher_code,
                                 textAlign: TextAlign.center,
                                 style: const TextStyle(
                                   fontSize: 15,
@@ -253,67 +273,27 @@ class _VoucherListPageState extends State<VoucherListPage> {
                             ],
                           ),
                           const SizedBox(height: 3.0,),
-                          if (availableVoucherRedeemedList[i].voucher_type_name ==
-                              "Discount")
-                            Row(
-                              children: [
-                                Text(
-                                  'MYR ${availableVoucherRedeemedList[i].cost_off
-                                      .toStringAsFixed(0)}',
-                                  style: const TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 22,
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                          Row(
+                            children: [
+                              Text(
+                                'MYR ${discountVoucherList[i].cost_off.toStringAsFixed(0)}',
+                                style: const TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.bold,
                                 ),
-                                const SizedBox(width: 5.0,),
-                                const Text(
-                                  'OFF',
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                              ),
+                              const SizedBox(width: 5.0,),
+                              const Text(
+                                'OFF',
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
                                 ),
-                              ],
-                            ),
-                          if (availableVoucherRedeemedList[i].voucher_type_name ==
-                              "FreeItem")
-                            Row(
-                              children: [
-                                const Text(
-                                  'Free ',
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                Text(
-                                  availableVoucherRedeemedList[i].free_menu_item_name,
-                                  style: const TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                    fontStyle: FontStyle.italic,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          if (availableVoucherRedeemedList[i].voucher_type_name ==
-                              "BuyOneFreeOne")
-                            const Row(
-                              children: [
-                                Text(
-                                  'Buy 1 Free 1',
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 22,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ],
-                            ),
+                              ),
+                            ],
+                          ),
                         ],
                       ),
                     ),
@@ -327,70 +307,32 @@ class _VoucherListPageState extends State<VoucherListPage> {
                   color: const Color(0xFFFFDAB9).withOpacity(0.4),
                 ),
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 30.0, vertical: 10.0),
+                  padding: const EdgeInsets.fromLTRB(30, 10, 15, 10),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      if (availableVoucherRedeemedList[i].voucher_type_name ==
-                          "Discount" ||
-                          availableVoucherRedeemedList[i].voucher_type_name ==
-                              "FreeItem")
-                        Row(
-                          children: [
-                            Text(
-                              'Min. Spend : ',
-                              style: TextStyle(
-                                color: Colors.grey.shade800,
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
+                      Row(
+                        children: [
+                          Text(
+                            'Min. Spend : ',
+                            style: TextStyle(
+                              color: Colors.grey.shade800,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
                             ),
-                            Text(
-                              'MYR ${availableVoucherRedeemedList[i].min_spending
-                                  .toStringAsFixed(0)}',
-                              style: TextStyle(
-                                color: Colors.grey.shade900,
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
+                          ),
+                          Text(
+                            'MYR ${discountVoucherList[i].min_spending.toStringAsFixed(0)}',
+                            style: TextStyle(
+                              color: Colors.grey.shade900,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
                             ),
-                          ],
-                        ),
-                      if (availableVoucherRedeemedList[i].voucher_type_name ==
-                          "BuyOneFreeOne")
-                        Row(
-                          children: [
-                            Text(
-                              'Applicable For ',
-                              style: TextStyle(
-                                color: Colors.grey.shade800,
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            Text(
-                              '${availableVoucherRedeemedList[i]
-                                  .applicable_menu_item_name} ',
-                              style: TextStyle(
-                                color: Colors.grey.shade900,
-                                fontSize: 15,
-                                fontWeight: FontWeight.bold,
-                                fontStyle: FontStyle.italic,
-                              ),
-                            ),
-                            Text(
-                              'Only',
-                              style: TextStyle(
-                                color: Colors.grey.shade800,
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
-                        ),
-                      const SizedBox(height: 8.0,),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 4.0,),
                       Row(
                         children: [
                           Text(
@@ -420,49 +362,387 @@ class _VoucherListPageState extends State<VoucherListPage> {
           voucher.add(const SizedBox(height: 30.0));
         }
       }
-      voucher.add(
-        Padding(
-          padding: const EdgeInsets.fromLTRB(60, 0, 60, 6),
-          child: Container(
-            padding: const EdgeInsets.only(top: 3, left: 3),
-            child: MaterialButton(
-              minWidth: double.infinity,
-              height: 50,
-              onPressed: () {
-                navigateRedeemVoucherPage(currentCart, currentUser!);
-              },
-              color: Colors.white,
-              shape: const RoundedRectangleBorder(
-                side: BorderSide(
-                  color: Colors.orangeAccent, // Border color
-                  width: 5.0, // Border width
+
+      if (freeMenuItemVoucherList.isNotEmpty) {
+        voucher.add(
+          const Align(
+            alignment: Alignment.centerLeft,
+            child: Text(
+              'Free Menu Item',
+              style: TextStyle(
+                fontWeight: FontWeight.w500,
+                fontSize: 25.0,
+                fontFamily: 'AsapCondensed',
+              ),
+            ),
+          ),
+        );
+        voucher.add(const SizedBox(height: 15.0),);
+        for (int i = 0; i < freeMenuItemVoucherList.length; i++) {
+          DateTime expiryDateTime = freeMenuItemVoucherList[i].expiry_date;
+          String formattedDate = DateFormat('yyyy-MM-dd  HH:mm:ss').format(expiryDateTime);
+          voucher.add(
+            CouponCard(
+              height: 150,
+              backgroundColor: Colors.transparent,
+              clockwise: true,
+              curvePosition: 65,
+              curveRadius: 30,
+              curveAxis: Axis.horizontal,
+              borderRadius: 10,
+              border: const BorderSide(
+                color: Colors.grey, // Border color
+                width: 3.0, // Border width
+              ),
+              firstChild: Container(
+                decoration: BoxDecoration(
+                  color: const Color(0xFFFFDAB9).withOpacity(0.7),
+                ),
+                child: Row(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 20.0),
+                      child: Icon(
+                        Icons.discount_rounded,
+                        size: 35.0,
+                        color: Colors.grey.shade800,
+                      ),
+                    ),
+                    Expanded(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              const Text(
+                                'Code : ',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black54,
+                                ),
+                              ),
+                              Text(
+                                freeMenuItemVoucherList[i].voucher_code,
+                                textAlign: TextAlign.center,
+                                style: const TextStyle(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black54,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 3.0,),
+                          Row(
+                            children: [
+                              const Text(
+                                'Free ',
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              Text(
+                                freeMenuItemVoucherList[i].free_menu_item_name,
+                                style: const TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  fontStyle: FontStyle.italic,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
               ),
-              child: const Text(
-                "Redeem",
-                style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 20,
-                    color: Colors.orangeAccent
+              secondChild: Container(
+                width: double.maxFinite,
+                // padding: const EdgeInsets.all(18),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFFFDAB9).withOpacity(0.4),
                 ),
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(30, 10, 15, 10),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Text(
+                            'Min. Spend : ',
+                            style: TextStyle(
+                              color: Colors.grey.shade800,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          Text(
+                            'MYR ${freeMenuItemVoucherList[i].min_spending.toStringAsFixed(0)}',
+                            style: TextStyle(
+                              color: Colors.grey.shade900,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 4.0,),
+                      Row(
+                        children: [
+                          Text(
+                            'Valid Until ',
+                            style: TextStyle(
+                              color: Colors.grey.shade800,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          Text(
+                            formattedDate,
+                            style: const TextStyle(
+                              color: Colors.red,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          );
+          voucher.add(const SizedBox(height: 30.0));
+        }
+      }
+
+      if (buyOneFreeOneVoucherList.isNotEmpty) {
+        voucher.add(
+          const Align(
+            alignment: Alignment.centerLeft,
+            child: Text(
+              'Buy 1 Free 1',
+              style: TextStyle(
+                fontWeight: FontWeight.w500,
+                fontSize: 25.0,
+                fontFamily: 'AsapCondensed',
+              ),
+            ),
+          ),
+        );
+        voucher.add(const SizedBox(height: 15.0),);
+        for (int i = 0; i < buyOneFreeOneVoucherList.length; i++) {
+          DateTime expiryDateTime = buyOneFreeOneVoucherList[i].expiry_date;
+          String formattedDate = DateFormat('yyyy-MM-dd  HH:mm:ss').format(expiryDateTime);
+          voucher.add(
+            CouponCard(
+              height: 150,
+              backgroundColor: Colors.transparent,
+              clockwise: true,
+              curvePosition: 65,
+              curveRadius: 30,
+              curveAxis: Axis.horizontal,
+              borderRadius: 10,
+              border: const BorderSide(
+                color: Colors.grey, // Border color
+                width: 3.0, // Border width
+              ),
+              firstChild: Container(
+                decoration: BoxDecoration(
+                  color: const Color(0xFFFFDAB9).withOpacity(0.7),
+                ),
+                child: Row(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 20.0),
+                      child: Icon(
+                        Icons.discount_rounded,
+                        size: 35.0,
+                        color: Colors.grey.shade800,
+                      ),
+                      // child: Image.asset(
+                      //   "images/voucherLogo.png",
+                      //   width: 50,
+                      //   height: 60,
+                      //   // fit: BoxFit.cover,
+                      //   // height: 500,
+                      // ),
+                    ),
+                    Expanded(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              const Text(
+                                'Code : ',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black54,
+                                ),
+                              ),
+                              Text(
+                                buyOneFreeOneVoucherList[i].voucher_code,
+                                textAlign: TextAlign.center,
+                                style: const TextStyle(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black54,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 3.0,),
+                          const Row(
+                            children: [
+                              Text(
+                                'Buy 1 Free 1',
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              secondChild: Container(
+                width: double.maxFinite,
+                // padding: const EdgeInsets.all(18),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFFFDAB9).withOpacity(0.4),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(30, 10, 15, 10),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Text(
+                            'Applicable For ',
+                            style: TextStyle(
+                              color: Colors.grey.shade800,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          Text(
+                            '${buyOneFreeOneVoucherList[i].applicable_menu_item_name} ',
+                            style: TextStyle(
+                              color: Colors.grey.shade900,
+                              fontSize: 15,
+                              fontWeight: FontWeight.bold,
+                              fontStyle: FontStyle.italic,
+                            ),
+                          ),
+                          Text(
+                            'Only',
+                            style: TextStyle(
+                              color: Colors.grey.shade800,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 4.0,),
+                      Row(
+                        children: [
+                          Text(
+                            'Valid Until ',
+                            style: TextStyle(
+                              color: Colors.grey.shade800,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          Text(
+                            formattedDate,
+                            style: const TextStyle(
+                              color: Colors.red,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          );
+          voucher.add(const SizedBox(height: 20.0));
+        }
+      }
+    }
+    voucher.add(
+      Padding(
+        padding: const EdgeInsets.symmetric(
+            horizontal: 60, vertical: 6),
+        child: Container(
+          padding: const EdgeInsets.only(top: 3, left: 3),
+          child: MaterialButton(
+            minWidth: double.infinity,
+            height: 50,
+            onPressed: () {
+              navigateRedeemVoucherPage(currentCart, currentUser!);
+            },
+            color: Colors.white,
+            shape: const RoundedRectangleBorder(
+              side: BorderSide(
+                color: Colors.orangeAccent, // Border color
+                width: 5.0, // Border width
+              ),
+            ),
+            child: const Text(
+              "Redeem",
+              style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20,
+                  color: Colors.orangeAccent
               ),
             ),
           ),
         ),
-      );
-    }
+      ),
+    );
     return voucher;
   }
 
   Future<List<VoucherAssignUserMoreInfo>> getAvailableVoucherRedeemedList(User currentUser) async {
     try {
-      final response = await http.get(
+      final response = await http.post(
         // Uri.parse('http://10.0.2.2:8000/order/request_available_voucher_redeemed'),
         Uri.parse('http://localhost:8000/order/request_available_voucher_redeemed'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
+        body: jsonEncode(<dynamic, dynamic> {
+          'current_user_name': currentUser.name,
+        }),
       );
+
 
       if (response.statusCode == 201 || response.statusCode == 200) {
         return VoucherAssignUserMoreInfo.getAvailableVoucherRedeemedList(jsonDecode(response.body));

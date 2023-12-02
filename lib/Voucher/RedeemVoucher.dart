@@ -105,6 +105,20 @@ class _RedeemVoucherPageState extends State<RedeemVoucherPage> {
 
   List<Widget> buildAvailableVoucherList(List<Voucher>? availableVoucherList, User? currentUser, Cart currentCart) {
     List<Widget> voucher = [];
+    List<Voucher> discountVoucherList = [];
+    List<Voucher> freeMenuItemVoucherList = [];
+    List<Voucher> buyOneFreeOneVoucherList = [];
+
+    for (int i = 0; i < availableVoucherList!.length; i++) {
+      if (availableVoucherList[i].voucher_type_name == "Discount") {
+        discountVoucherList.add(availableVoucherList[i]);
+      } else if (availableVoucherList[i].voucher_type_name == "FreeItem") {
+        freeMenuItemVoucherList.add(availableVoucherList[i]);
+      } else if (availableVoucherList[i].voucher_type_name == "BuyOneFreeOne") {
+        buyOneFreeOneVoucherList.add(availableVoucherList[i]);
+      }
+    }
+
     voucher.add(
       Align(
         alignment: Alignment.centerLeft,
@@ -119,8 +133,22 @@ class _RedeemVoucherPageState extends State<RedeemVoucherPage> {
       ),
     );
     voucher.add(const SizedBox(height: 15.0),);
-    for (int i = 0; i < availableVoucherList!.length; i++) {
-      if (availableVoucherList[i].redeem_point > 0 && availableVoucherList[i].is_available) {
+    if (discountVoucherList.isNotEmpty) {
+      voucher.add(
+        const Align(
+          alignment: Alignment.centerLeft,
+          child: Text(
+            'Discount',
+            style: TextStyle(
+              fontWeight: FontWeight.w500,
+              fontSize: 25.0,
+              fontFamily: 'AsapCondensed',
+            ),
+          ),
+        ),
+      );
+      voucher.add(const SizedBox(height: 15.0),);
+      for (int i = 0; i < discountVoucherList.length; i++) {
         voucher.add(
           CouponCard(
             height: 150,
@@ -145,7 +173,7 @@ class _RedeemVoucherPageState extends State<RedeemVoucherPage> {
                     child: Icon(
                       Icons.discount_rounded,
                       size: 35.0,
-                      color: Colors.grey.shade500,
+                      color: Colors.grey.shade800,
                     ),
                     // child: Image.asset(
                     //   "images/voucherLogo.png",
@@ -172,7 +200,7 @@ class _RedeemVoucherPageState extends State<RedeemVoucherPage> {
                               ),
                             ),
                             Text(
-                              availableVoucherList[i].voucher_code,
+                              discountVoucherList[i].voucher_code,
                               textAlign: TextAlign.center,
                               style: const TextStyle(
                                 fontSize: 15,
@@ -184,7 +212,7 @@ class _RedeemVoucherPageState extends State<RedeemVoucherPage> {
                             Padding(
                               padding: const EdgeInsets.symmetric(horizontal: 15.0),
                               child: Text(
-                                '${availableVoucherList[i].redeem_point} points',
+                                '${discountVoucherList[i].redeem_point} points',
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
                                   fontSize: 16,
@@ -196,63 +224,27 @@ class _RedeemVoucherPageState extends State<RedeemVoucherPage> {
                           ],
                         ),
                         const SizedBox(height: 3.0,),
-                        if (availableVoucherList[i].voucher_type_name == "Discount")
-                          Row(
-                            children: [
-                              Text(
-                                'MYR ${availableVoucherList[i].cost_off.toStringAsFixed(0)}',
-                                style: const TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 22,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                        Row(
+                          children: [
+                            Text(
+                              'MYR ${discountVoucherList[i].cost_off.toStringAsFixed(0)}',
+                              style: const TextStyle(
+                                color: Colors.black,
+                                fontSize: 22,
+                                fontWeight: FontWeight.bold,
                               ),
-                              const SizedBox(width: 5.0,),
-                              const Text(
-                                'OFF',
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                            ),
+                            const SizedBox(width: 5.0,),
+                            const Text(
+                              'OFF',
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
                               ),
-                            ],
-                          ),
-                        if (availableVoucherList[i].voucher_type_name == "FreeItem")
-                          Row(
-                            children: [
-                              const Text(
-                                'Free ',
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              Text(
-                                availableVoucherList[i].free_menu_item_name,
-                                style: const TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                  fontStyle: FontStyle.italic,
-                                ),
-                              ),
-                            ],
-                          ),
-                        if (availableVoucherList[i].voucher_type_name == "BuyOneFreeOne")
-                          const Row(
-                            children: [
-                              Text(
-                                'Buy 1 Free 1',
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 22,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ],
-                          ),
+                            ),
+                          ],
+                        ),
                       ],
                     ),
                   ),
@@ -266,63 +258,32 @@ class _RedeemVoucherPageState extends State<RedeemVoucherPage> {
                 color: const Color(0xFFFFDAB9).withOpacity(0.4),
               ),
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 10.0),
+                padding: const EdgeInsets.fromLTRB(30, 10, 15, 10),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    if (availableVoucherList[i].voucher_type_name == "Discount" || availableVoucherList[i].voucher_type_name == "FreeItem")
-                      Row(
-                        children: [
-                          Text(
-                            'Min. Spend : ',
-                            style: TextStyle(
-                              color: Colors.grey.shade800,
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
+                    Row(
+                      children: [
+                        Text(
+                          'Min. Spend : ',
+                          style: TextStyle(
+                            color: Colors.grey.shade800,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
                           ),
-                          Text(
-                            'MYR ${availableVoucherList[i].min_spending.toStringAsFixed(0)}',
-                            style: TextStyle(
-                              color: Colors.grey.shade900,
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
+                        ),
+                        Text(
+                          'MYR ${discountVoucherList[i].min_spending.toStringAsFixed(0)}',
+                          style: TextStyle(
+                            color: Colors.grey.shade900,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
                           ),
-                        ],
-                      ),
-                    if (availableVoucherList[i].voucher_type_name == "BuyOneFreeOne")
-                      Row(
-                        children: [
-                          Text(
-                            'Applicable For ',
-                            style: TextStyle(
-                              color: Colors.grey.shade800,
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          Text(
-                            '${availableVoucherList[i].applicable_menu_item_name} ',
-                            style: TextStyle(
-                              color: Colors.grey.shade900,
-                              fontSize: 15,
-                              fontWeight: FontWeight.bold,
-                              fontStyle: FontStyle.italic,
-                            ),
-                          ),
-                          Text(
-                            'Only',
-                            style: TextStyle(
-                              color: Colors.grey.shade800,
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
-                      ),
-                    const SizedBox(height: 8.0,),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 4.0,),
                     Row(
                       children: [
                         Text(
@@ -352,7 +313,11 @@ class _RedeemVoucherPageState extends State<RedeemVoucherPage> {
                         const Spacer(),
                         TextButton(
                           onPressed: () {
-                            showConfirmationCreateDialog(availableVoucherList[i], currentCart, currentUser!);
+                            if (currentUser!.points >= discountVoucherList[i].redeem_point) {
+                              showConfirmationCreateDialog(discountVoucherList[i], currentCart, currentUser!);
+                            } else {
+                              showPointsNotEnoughDialog(discountVoucherList[i].voucher_code);
+                            }
                           },
                           style: TextButton.styleFrom(
                               padding: EdgeInsets.zero,
@@ -380,6 +345,436 @@ class _RedeemVoucherPageState extends State<RedeemVoucherPage> {
           ),
         );
         voucher.add(const SizedBox(height: 30.0));
+      }
+    }
+
+    if (freeMenuItemVoucherList.isNotEmpty) {
+      voucher.add(
+        const Align(
+          alignment: Alignment.centerLeft,
+          child: Text(
+            'Free Menu Item',
+            style: TextStyle(
+              fontWeight: FontWeight.w500,
+              fontSize: 25.0,
+              fontFamily: 'AsapCondensed',
+            ),
+          ),
+        ),
+      );
+      voucher.add(const SizedBox(height: 15.0),);
+      for (int i = 0; i < freeMenuItemVoucherList.length; i++) {
+        voucher.add(
+          CouponCard(
+            height: 150,
+            backgroundColor: Colors.transparent,
+            clockwise: true,
+            curvePosition: 65,
+            curveRadius: 30,
+            curveAxis: Axis.horizontal,
+            borderRadius: 10,
+            border: const BorderSide(
+              color: Colors.grey, // Border color
+              width: 3.0, // Border width
+            ),
+            firstChild: Container(
+              decoration: BoxDecoration(
+                color: const Color(0xFFFFDAB9).withOpacity(0.7),
+              ),
+              child: Row(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 20.0),
+                    child: Icon(
+                      Icons.discount_rounded,
+                      size: 35.0,
+                      color: Colors.grey.shade800,
+                    ),
+                    // child: Image.asset(
+                    //   "images/voucherLogo.png",
+                    //   width: 50,
+                    //   height: 60,
+                    //   // fit: BoxFit.cover,
+                    //   // height: 500,
+                    // ),
+                  ),
+                  Expanded(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            const Text(
+                              'Code : ',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black54,
+                              ),
+                            ),
+                            Text(
+                              freeMenuItemVoucherList[i].voucher_code,
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black54,
+                              ),
+                            ),
+                            const Spacer(),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                              child: Text(
+                                '${freeMenuItemVoucherList[i].redeem_point} points',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.grey.shade800,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 3.0,),
+                        Row(
+                          children: [
+                            const Text(
+                              'Free ',
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Text(
+                              freeMenuItemVoucherList[i].free_menu_item_name,
+                              style: const TextStyle(
+                                color: Colors.black,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                fontStyle: FontStyle.italic,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            secondChild: Container(
+              width: double.maxFinite,
+              // padding: const EdgeInsets.all(18),
+              decoration: BoxDecoration(
+                color: const Color(0xFFFFDAB9).withOpacity(0.4),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(30, 10, 15, 10),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Text(
+                          'Min. Spend : ',
+                          style: TextStyle(
+                            color: Colors.grey.shade800,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Text(
+                          'MYR ${freeMenuItemVoucherList[i].min_spending.toStringAsFixed(0)}',
+                          style: TextStyle(
+                            color: Colors.grey.shade900,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 4.0,),
+                    Row(
+                      children: [
+                        Text(
+                          'Valid for ',
+                          style: TextStyle(
+                            color: Colors.grey.shade800,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const Text(
+                          '30 ',
+                          style: TextStyle(
+                            color: Colors.red,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Text(
+                          'days Only',
+                          style: TextStyle(
+                            color: Colors.grey.shade800,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const Spacer(),
+                        TextButton(
+                          onPressed: () {
+                            if (currentUser!.points >= freeMenuItemVoucherList[i].redeem_point) {
+                              showConfirmationCreateDialog(freeMenuItemVoucherList[i], currentCart, currentUser!);
+                            } else {
+                              showPointsNotEnoughDialog(freeMenuItemVoucherList[i].voucher_code);
+                            }
+                          },
+                          style: TextButton.styleFrom(
+                              padding: EdgeInsets.zero,
+                              minimumSize: const Size(50, 15),
+                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                              alignment: Alignment.centerLeft),
+                          child: Text(
+                            'Redeem',
+                            style: TextStyle(
+                              decoration: TextDecoration.underline,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.transparent,
+                              shadows: [Shadow(color: Colors.green.shade600, offset: const Offset(0, -2))],
+                              decorationThickness: 3,
+                              decorationColor: Colors.green.shade600,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+        voucher.add(const SizedBox(height: 30.0));
+      }
+    }
+
+    if (buyOneFreeOneVoucherList.isNotEmpty) {
+      voucher.add(
+        const Align(
+          alignment: Alignment.centerLeft,
+          child: Text(
+            'Buy 1 Free 1',
+            style: TextStyle(
+              fontWeight: FontWeight.w500,
+              fontSize: 25.0,
+              fontFamily: 'AsapCondensed',
+            ),
+          ),
+        ),
+      );
+      voucher.add(const SizedBox(height: 15.0),);
+      for (int i = 0; i < buyOneFreeOneVoucherList.length; i++) {
+        voucher.add(
+          CouponCard(
+            height: 150,
+            backgroundColor: Colors.transparent,
+            clockwise: true,
+            curvePosition: 65,
+            curveRadius: 30,
+            curveAxis: Axis.horizontal,
+            borderRadius: 10,
+            border: const BorderSide(
+              color: Colors.grey, // Border color
+              width: 3.0, // Border width
+            ),
+            firstChild: Container(
+              decoration: BoxDecoration(
+                color: const Color(0xFFFFDAB9).withOpacity(0.7),
+              ),
+              child: Row(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 20.0),
+                    child: Icon(
+                      Icons.discount_rounded,
+                      size: 35.0,
+                      color: Colors.grey.shade800,
+                    ),
+                    // child: Image.asset(
+                    //   "images/voucherLogo.png",
+                    //   width: 50,
+                    //   height: 60,
+                    //   // fit: BoxFit.cover,
+                    //   // height: 500,
+                    // ),
+                  ),
+                  Expanded(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            const Text(
+                              'Code : ',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black54,
+                              ),
+                            ),
+                            Text(
+                              buyOneFreeOneVoucherList[i].voucher_code,
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black54,
+                              ),
+                            ),
+                            const Spacer(),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                              child: Text(
+                                '${buyOneFreeOneVoucherList[i].redeem_point} points',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.grey.shade800,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 3.0,),
+                        const Row(
+                          children: [
+                            Text(
+                              'Buy 1 Free 1',
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 22,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            secondChild: Container(
+              width: double.maxFinite,
+              // padding: const EdgeInsets.all(18),
+              decoration: BoxDecoration(
+                color: const Color(0xFFFFDAB9).withOpacity(0.4),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(30, 10, 15, 10),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Text(
+                          'Applicable For ',
+                          style: TextStyle(
+                            color: Colors.grey.shade800,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Text(
+                          '${buyOneFreeOneVoucherList[i].applicable_menu_item_name} ',
+                          style: TextStyle(
+                            color: Colors.grey.shade900,
+                            fontSize: 15,
+                            fontWeight: FontWeight.bold,
+                            fontStyle: FontStyle.italic,
+                          ),
+                        ),
+                        Text(
+                          'Only',
+                          style: TextStyle(
+                            color: Colors.grey.shade800,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 4.0,),
+                    Row(
+                      children: [
+                        Text(
+                          'Valid for ',
+                          style: TextStyle(
+                            color: Colors.grey.shade800,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const Text(
+                          '30 ',
+                          style: TextStyle(
+                            color: Colors.red,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Text(
+                          'days Only',
+                          style: TextStyle(
+                            color: Colors.grey.shade800,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const Spacer(),
+                        TextButton(
+                          onPressed: () {
+                            if (currentUser!.points >= buyOneFreeOneVoucherList[i].redeem_point) {
+                              showConfirmationCreateDialog(buyOneFreeOneVoucherList[i], currentCart, currentUser!);
+                            } else {
+                              showPointsNotEnoughDialog(buyOneFreeOneVoucherList[i].voucher_code);
+                            }
+                          },
+                          style: TextButton.styleFrom(
+                              padding: EdgeInsets.zero,
+                              minimumSize: const Size(50, 15),
+                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                              alignment: Alignment.centerLeft),
+                          child: Text(
+                            'Redeem',
+                            style: TextStyle(
+                              decoration: TextDecoration.underline,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.transparent,
+                              shadows: [Shadow(color: Colors.green.shade600, offset: const Offset(0, -2))],
+                              decorationThickness: 3,
+                              decorationColor: Colors.green.shade600,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+        voucher.add(const SizedBox(height: 20.0));
       }
     }
     return voucher;
@@ -466,6 +861,29 @@ class _RedeemVoucherPageState extends State<RedeemVoucherPage> {
                 backgroundColor: Colors.red,
               ),
               child: const Text('No'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void showPointsNotEnoughDialog(String voucherCode) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Error', style: TextStyle(fontWeight: FontWeight.bold,)),
+          content: Text('Your points is not enough to redeem this voucher (${voucherCode})'),
+          actions: [
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red,
+              ),
+              child: const Text('Ok'),
             ),
           ],
         );

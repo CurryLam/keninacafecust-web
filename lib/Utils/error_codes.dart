@@ -12,6 +12,13 @@ class ErrorCodes {
   static final String UPDATE_NUM_ORDER_FOOD_ITEM_FAIL_API_CONNECTION = 'E-010';
   static final String EDIT_ORDER_FAIL_BACKEND = 'E-011';
   static final String EDIT_ORDER_FAIL_API_CONNECTION = 'E-012';
+  static final String DELETE_ORDER_FAIL_BACKEND = 'E=020';
+  static final String DELETE_ORDER_FAIL_API_CONNECTION = 'E-021';
   static final String REDEEM_VOUCHER_FAIL_BACKEND = 'E-013';
   static final String REDEEM_VOUCHER_FAIL_API_CONNECTION = 'E-014';
+  static final String UPDATE_VOUCHER_AVAILABLE_STATUS_FAIL_BACKEND = 'E-018';
+  static final String UPDATE_VOUCHER_AVAILABLE_STATUS_FAIL_API_CONNECTION = 'E-019';
+  static final String CHANGE_PASSWORD_FAIL_BACKEND = 'E-015';
+  static final String CHANGE_PASSWORD_FAIL_API_CONNECTION = 'E-016';
+  static final String OLD_PASSWORD_DOES_NOT_MATCH_DIALOG = 'E-017';
 }

@@ -16,6 +16,7 @@ import 'package:keninacafecust_web/Order/orderPlaced.dart';
 
 
 import '../Entity/Cart.dart';
+import '../Entity/FoodOrder.dart';
 import '../Entity/MenuItem.dart';
 import '../Entity/User.dart';
 import '../Entity/Voucher.dart';
@@ -61,7 +62,7 @@ class OrderOverviewPage extends StatefulWidget {
 }
 
 class _OrderOverviewPageState extends State<OrderOverviewPage> {
-  bool orderCreated = false;
+  int currentOrderIDGet = 0;
 
   User? getUser() {
     return widget.user;
@@ -114,16 +115,17 @@ class _OrderOverviewPageState extends State<OrderOverviewPage> {
                     Positioned(
                       top: 16,
                       left: 16,
-                      child: GestureDetector(
-                        onTap: () {
-                          Navigator.pop(context);
-                        },
-                        child: Container(
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Colors.grey.withOpacity(0.4),
-                          ),
-                          padding: const EdgeInsets.all(2),
+                      child: Container(
+                        width: 35,
+                        height: 35,
+                        decoration: BoxDecoration(borderRadius: BorderRadius.circular(100), color: Colors.yellow),
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(padding: const EdgeInsets.fromLTRB(0, 1, 0, 0), backgroundColor: Colors.grey.shade300),
+                          onPressed: () async {
+                            setState(() {
+                              Navigator.pop(context);
+                            });
+                          },
                           child: const Icon(
                             Icons.arrow_back,
                             color: Colors.black,
@@ -131,6 +133,23 @@ class _OrderOverviewPageState extends State<OrderOverviewPage> {
                           ),
                         ),
                       ),
+                      // child: GestureDetector(
+                      //   onTap: () {
+                      //     Navigator.pop(context);
+                      //   },
+                      //   child: Container(
+                      //     decoration: BoxDecoration(
+                      //       shape: BoxShape.circle,
+                      //       color: Colors.grey.withOpacity(0.4),
+                      //     ),
+                      //     padding: const EdgeInsets.all(2),
+                      //     child: const Icon(
+                      //       Icons.arrow_back,
+                      //       color: Colors.black,
+                      //       size: 32,
+                      //     ),
+                      //   ),
+                      // ),
                     ),
                   ],
                 ),
@@ -183,11 +202,11 @@ class _OrderOverviewPageState extends State<OrderOverviewPage> {
                   margin: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 10.0),
                   elevation: 20.0,
                   child: Container(
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                       shape: BoxShape.rectangle,
                       color: Colors.white,
                       // border: Border.all(color: Colors.grey),
-                      borderRadius: BorderRadius.circular(120.0),
+                      // borderRadius: BorderRadius.circular(120.0),
                     ),
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 12.5, vertical: 15.0,),
@@ -249,7 +268,7 @@ class _OrderOverviewPageState extends State<OrderOverviewPage> {
                                 ),
                               ),
                               Expanded(
-                                flex: 14,
+                                flex: 15,
                                 child: Text(
                                   'Item',
                                   style: TextStyle(
@@ -261,7 +280,7 @@ class _OrderOverviewPageState extends State<OrderOverviewPage> {
                               ),
                               Spacer(),
                               Expanded(
-                                flex: 4,
+                                flex: 0,
                                 child: Text(
                                   'Price',
                                   style: TextStyle(
@@ -280,7 +299,8 @@ class _OrderOverviewPageState extends State<OrderOverviewPage> {
                               child: Column(
                                 children: [
                                   Row(
-                                    // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
                                       Expanded(
                                         flex: 3,
@@ -289,7 +309,7 @@ class _OrderOverviewPageState extends State<OrderOverviewPage> {
                                           child: Text(
                                             menuItemList[i].numOrder.toString(),
                                             style: TextStyle(
-                                              fontSize: 15.0,
+                                              fontSize: 16.0,
                                               color: Colors.grey.shade700,
                                               fontFamily: 'BebasNeue',
                                               // fontWeight: FontWeight.bold,
@@ -299,14 +319,14 @@ class _OrderOverviewPageState extends State<OrderOverviewPage> {
                                       ),
                                       // const SizedBox(width: 5.0),
                                       Expanded(
-                                        flex: 14,
+                                        flex: 15,
                                         child: Row(
                                           children: [
                                             Flexible(
                                               child: Text(
                                                 menuItemList[i].name,
                                                 style: TextStyle(
-                                                  fontSize: 15.0,
+                                                  fontSize: 16.0,
                                                   color: Colors.grey.shade700,
                                                   fontFamily: 'BebasNeue',
                                                   // fontWeight: FontWeight.bold,
@@ -316,9 +336,9 @@ class _OrderOverviewPageState extends State<OrderOverviewPage> {
                                             ),
                                             if (menuItemList[i].remarks != "")
                                               const Text(
-                                                '*',
+                                                ' *',
                                                 style: TextStyle(
-                                                  fontSize: 15.0,
+                                                  fontSize: 16.0,
                                                   color: Colors.red,
                                                   fontFamily: 'BebasNeue',
                                                   // fontWeight: FontWeight.bold,
@@ -329,12 +349,12 @@ class _OrderOverviewPageState extends State<OrderOverviewPage> {
                                       ),
                                       const Spacer(),
                                       Expanded(
-                                        flex: 4,
+                                        flex: 0,
                                         child: menuItemList[i].sizeChosen == "Standard" || menuItemList[i].sizeChosen == "" ?
                                         Text(
                                           "MYR ${(menuItemList[i].price_standard*menuItemList[i].numOrder).toStringAsFixed(2)}",
                                           style: TextStyle(
-                                            fontSize: 15.0,
+                                            fontSize: 16.0,
                                             color: Colors.grey.shade700,
                                             fontFamily: 'BebasNeue',
                                             // fontWeight: FontWeight.bold,
@@ -342,7 +362,7 @@ class _OrderOverviewPageState extends State<OrderOverviewPage> {
                                         ) : Text(
                                           "MYR ${(menuItemList[i].price_large*menuItemList[i].numOrder).toStringAsFixed(2)}",
                                           style: TextStyle(
-                                            fontSize: 15.0,
+                                            fontSize: 16.0,
                                             color: Colors.grey.shade700,
                                             fontFamily: 'BebasNeue',
                                             // fontWeight: FontWeight.bold,
@@ -363,7 +383,7 @@ class _OrderOverviewPageState extends State<OrderOverviewPage> {
                                         ),
                                       ),
                                       Expanded(
-                                        flex: 14,
+                                        flex: 15,
                                         child: Row(
                                           children: [
                                             if (menuItemList[i].sizeChosen != "" || menuItemList[i].variantChosen != "")
@@ -375,7 +395,7 @@ class _OrderOverviewPageState extends State<OrderOverviewPage> {
                                                       Text(
                                                         menuItemList[i].variantChosen,
                                                         style: const TextStyle(
-                                                          fontSize: 8.0,
+                                                          fontSize: 10.0,
                                                           color: Colors.red,
                                                           // fontFamily: 'YoungSerif',
                                                           fontWeight: FontWeight.bold,
@@ -385,7 +405,7 @@ class _OrderOverviewPageState extends State<OrderOverviewPage> {
                                                       const Text(
                                                         ", ",
                                                         style: TextStyle(
-                                                          fontSize: 8.0,
+                                                          fontSize: 10.0,
                                                           color: Colors.red,
                                                           // fontFamily: 'YoungSerif',
                                                           fontWeight: FontWeight.bold,
@@ -395,7 +415,7 @@ class _OrderOverviewPageState extends State<OrderOverviewPage> {
                                                       Text(
                                                         menuItemList[i].sizeChosen,
                                                         style: const TextStyle(
-                                                          fontSize: 8.0,
+                                                          fontSize: 10.0,
                                                           color: Colors.red,
                                                           // fontFamily: 'YoungSerif',
                                                           fontWeight: FontWeight.bold,
@@ -409,7 +429,7 @@ class _OrderOverviewPageState extends State<OrderOverviewPage> {
                                       ),
                                       const Spacer(),
                                       const Expanded(
-                                        flex: 4,
+                                        flex: 0,
                                         child: Text(
                                           "",
                                         ),
@@ -449,38 +469,67 @@ class _OrderOverviewPageState extends State<OrderOverviewPage> {
                               padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 20.0),
                               child: Align(
                                 alignment: Alignment.centerLeft,
-                                child: GestureDetector(
-                                  onTap: () {
+                                child: TextButton(
+                                  onPressed: () {
                                     navigateApplyVoucherPage(currentCart, currentUser);
                                   },
-                                  child: Container(
-                                    width: double.infinity,
-                                    decoration: const BoxDecoration(
-                                      shape: BoxShape.rectangle,
-                                      color: Colors.transparent,
-                                      // borderRadius: BorderRadius.circular(15.0),
-                                    ),
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.start,
-                                      children: [
-                                        Icon(
-                                          Icons.local_activity_outlined,
+                                  style: TextButton.styleFrom(
+                                      padding: EdgeInsets.zero,
+                                      minimumSize: const Size(50, 15),
+                                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                      alignment: Alignment.centerLeft),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      Icon(
+                                        Icons.local_activity_outlined,
+                                        color: Colors.redAccent.shade200,
+                                        size: 25.0,
+                                      ),
+                                      const SizedBox(width: 8.0), // Add spacing between icon and text
+                                      Text(
+                                        "Apply a voucher",
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 17,
                                           color: Colors.redAccent.shade200,
-                                          size: 25.0,
                                         ),
-                                        const SizedBox(width: 8.0), // Add spacing between icon and text
-                                        Text(
-                                          "Apply a voucher",
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 17,
-                                            color: Colors.redAccent.shade200,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
+                                      ),
+                                    ],
                                   ),
                                 ),
+                                // child: GestureDetector(
+                                //   onTap: () {
+                                //     navigateApplyVoucherPage(currentCart, currentUser);
+                                //   },
+                                //   child: Container(
+                                //     width: double.infinity,
+                                //     decoration: const BoxDecoration(
+                                //       shape: BoxShape.rectangle,
+                                //       color: Colors.transparent,
+                                //       // borderRadius: BorderRadius.circular(15.0),
+                                //     ),
+                                //     child: Row(
+                                //       mainAxisAlignment: MainAxisAlignment.start,
+                                //       children: [
+                                //         Icon(
+                                //           Icons.local_activity_outlined,
+                                //           color: Colors.redAccent.shade200,
+                                //           size: 25.0,
+                                //         ),
+                                //         const SizedBox(width: 8.0), // Add spacing between icon and text
+                                //         Text(
+                                //           "Apply a voucher",
+                                //           style: TextStyle(
+                                //             fontWeight: FontWeight.bold,
+                                //             fontSize: 17,
+                                //             color: Colors.redAccent.shade200,
+                                //           ),
+                                //         ),
+                                //       ],
+                                //     ),
+                                //   ),
+                                // ),
                               ),
                             )
                           else if (voucherAppliedID != 0)
@@ -689,36 +738,32 @@ class _OrderOverviewPageState extends State<OrderOverviewPage> {
                             ),
                           ),
                           const Spacer(),
-                          GestureDetector(
-                            onTap: () {
+                          TextButton(
+                            onPressed: () {
                               setState(() {
                                 currentCart.removeVoucher(voucherAppliedSuccessfully);
                               });
-                              // Navigator.push(context,
-                              //     MaterialPageRoute(builder: (context) => ApplyVoucherPage(user: currentUser, cart: currentCart))
-                              // );
                             },
-                            child: Container(
-                              decoration: const BoxDecoration(
-                                shape: BoxShape.rectangle,
-                                color: Colors.transparent,
-                              ),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    "Remove",
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 15,
-                                      color: Colors.redAccent.shade200,
-                                    ),
+                            style: TextButton.styleFrom(
+                                padding: EdgeInsets.zero,
+                                minimumSize: const Size(50, 15),
+                                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                alignment: Alignment.centerLeft),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Text(
+                                  "Remove",
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 15,
+                                    color: Colors.redAccent.shade200,
                                   ),
-                                  const SizedBox(width: 20.0),
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
                           ),
+                          const SizedBox(width: 20.0),
                         ],
                       ),
                       const SizedBox(height: 3.0,),
@@ -848,7 +893,7 @@ class _OrderOverviewPageState extends State<OrderOverviewPage> {
                         ),
                       ],
                     ),
-                  const SizedBox(height: 8.0,),
+                  const SizedBox(height: 4.0,),
                   Row(
                     children: [
                       Icon(
@@ -862,6 +907,16 @@ class _OrderOverviewPageState extends State<OrderOverviewPage> {
                         style: TextStyle(
                           color: Colors.green.shade800,
                           fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const Spacer(),
+                      Text(
+                        "- MYR ${currentCart.getDiffBetweenPriceGrandAndGross()}",
+                        style: const TextStyle(
+                          fontSize: 16.0,
+                          color: Colors.red,
+                          fontFamily: 'Itim',
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -1094,7 +1149,7 @@ class _OrderOverviewPageState extends State<OrderOverviewPage> {
                         ),
                       ],
                     ),
-                  const SizedBox(height: 8.0,),
+                  const SizedBox(height: 4.0,),
                   Row(
                     children: [
                       Text(
@@ -1162,22 +1217,22 @@ class _OrderOverviewPageState extends State<OrderOverviewPage> {
     return voucherApplied;
   }
 
-  Future<(bool, String)> _submitOrderDetails(Cart currentCart, User currentUser) async {
+  Future<(int, String)> _submitOrderDetails(Cart currentCart, User currentUser) async {
     double gross_total = currentCart.getGrandTotalBeforeDiscount();
     double grand_total = currentCart.getGrandTotalAfterDiscount();
     List<MenuItem> menuItemList = currentCart.getMenuItemList();
     int voucherAppliedID = currentCart.voucherAppliedID;
-    var (success, err_code) = await createSupplier(gross_total, grand_total, menuItemList, voucherAppliedID, currentUser);
-    if (success == false) {
+    var (currentOrderID, err_code) = await createOrder(gross_total, grand_total, menuItemList, voucherAppliedID, currentUser);
+    if (currentOrderID == 0) {
       if (kDebugMode) {
         print("Failed to create order.");
       }
-      return (false, err_code);
+      return (currentOrderID, err_code);
     }
-    return (true, err_code);
+    return (currentOrderID, err_code);
   }
 
-  Future<(bool, String)> createSupplier(double gross_total, double grand_total, List<MenuItem> menuItemList, int voucherAppliedID, User currentUser) async {
+  Future<(int, String)> createOrder(double gross_total, double grand_total, List<MenuItem> menuItemList, int voucherAppliedID, User currentUser) async {
     try {
       final response = await http.post(
         // Uri.parse('http://10.0.2.2:8000/order/create_order'),
@@ -1200,27 +1255,29 @@ class _OrderOverviewPageState extends State<OrderOverviewPage> {
         if (kDebugMode) {
           print("Create Order Successful.");
         }
-        return (true, ErrorCodes.OPERATION_OK);
+        var jsonResp = jsonDecode(response.body);
+        int currentOrderID = jsonResp['data'];
+        return (currentOrderID, ErrorCodes.OPERATION_OK);
       } else {
         if (kDebugMode) {
           print(response.body);
           print('Failed to create order.');
         }
-        return (false, (ErrorCodes.CREATE_ORDER_FAIL_BACKEND));
+        return (0, (ErrorCodes.CREATE_ORDER_FAIL_BACKEND));
       }
     } on Exception catch (e) {
       if (kDebugMode) {
         print('API Connection Error. $e');
       }
-      return (false, (ErrorCodes.CREATE_ORDER_FAIL_API_CONNECTION));
+      return (0, (ErrorCodes.CREATE_ORDER_FAIL_API_CONNECTION));
     }
   }
 
   Future<List<Voucher>> getVoucherAppliedDetails(int voucherAppliedID) async {
     try {
       final response = await http.get(
-        Uri.parse('http://10.0.2.2:8000/order/request_voucher_applied_details/$voucherAppliedID/'),
-        // Uri.parse('http://localhost:8000/menu/request_item_category_list'),
+        // Uri.parse('http://10.0.2.2:8000/order/request_voucher_applied_details/$voucherAppliedID/'),
+        Uri.parse('http://localhost:8000/order/request_voucher_applied_details/$voucherAppliedID/'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
@@ -1230,6 +1287,26 @@ class _OrderOverviewPageState extends State<OrderOverviewPage> {
         return Voucher.getVoucherAppliedDetails(jsonDecode(response.body));
       } else {
         throw Exception('Failed to load the voucher details applied by the user.');
+      }
+    } on Exception catch (e) {
+      throw Exception('API Connection Error. $e');
+    }
+  }
+
+  Future<List<FoodOrder>> getFoodOrderDetails(int currentOrderIDGet) async {
+    try {
+      final response = await http.get(
+        // Uri.parse('http://10.0.2.2:8000/order/request_voucher_applied_details/$voucherAppliedID/'),
+        Uri.parse('http://localhost:8000/order/request_specific_order_details/$currentOrderIDGet/'),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+      );
+
+      if (response.statusCode == 201 || response.statusCode == 200) {
+        return FoodOrder.getOrderList(jsonDecode(response.body));
+      } else {
+        throw Exception('Failed to load the food order details made by the user.');
       }
     } on Exception catch (e) {
       throw Exception('API Connection Error. $e');
@@ -1246,10 +1323,10 @@ class _OrderOverviewPageState extends State<OrderOverviewPage> {
           actions: [
             ElevatedButton(
               onPressed: () async {
-                var (orderCreatedAsync, err_code) = await _submitOrderDetails(currentCart, currentUser);
+                var (currentOrderIDAsync, err_code) = await _submitOrderDetails(currentCart, currentUser);
                 setState(() {
-                  orderCreated = orderCreatedAsync;
-                  if (!orderCreated) {
+                  currentOrderIDGet = currentOrderIDAsync;
+                  if (currentOrderIDGet == 0) {
                     if (err_code == ErrorCodes.CREATE_ORDER_FAIL_BACKEND) {
                       showDialog(context: context, builder: (
                           BuildContext context) =>
@@ -1281,10 +1358,6 @@ class _OrderOverviewPageState extends State<OrderOverviewPage> {
                   } else {
                     currentCart = Cart(id: 0, menuItem: [], numMenuItemOrder: 0, grandTotalBeforeDiscount: 0, grandTotalAfterDiscount: 0, price_discount: 0, voucherAppliedID: 0, voucherApplied_type_name: "", voucherApplied_cost_off: 0, voucherApplied_free_menu_item_name: "", voucherApplied_applicable_menu_item_name: "", voucherApplied_min_spending: 0);
                     Navigator.of(context).pop();
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => OrderPlacedPage(user: currentUser, cart: currentCart)),
-                    );
                     showDialog(context: context, builder: (
                         BuildContext context) =>
                         AlertDialog(
@@ -1295,6 +1368,10 @@ class _OrderOverviewPageState extends State<OrderOverviewPage> {
                               child: const Text('Ok'),
                               onPressed: () {
                                 Navigator.of(context).pop();
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(builder: (context) => OrderPlacedPage(user: currentUser, cart: currentCart, orderID: currentOrderIDGet)),
+                                );
                               },
                             ),
                           ],
