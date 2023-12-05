@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:keninacafecust_web/AppsBar.dart';
 import 'package:http/http.dart' as http;
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 import '../Entity/Cart.dart';
 import '../Entity/FoodOrder.dart';
@@ -87,7 +88,12 @@ class _OrderHistoryDetailsPageState extends State<OrderHistoryDetailsPage> {
                     if (snapshot.hasError) {
                       return Center(child: Text('Error: ${snapshot.error}'));
                     } else {
-                      return const Center(child: Text('Loading....'));
+                      return Center(
+                        child: LoadingAnimationWidget.inkDrop(
+                          color: Colors.white,
+                          size: 50,
+                        ),
+                      );
                     }
                   }
                 }

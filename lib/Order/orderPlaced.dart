@@ -11,6 +11,7 @@ import 'package:http/http.dart' as http;
 import 'package:keninacafecust_web/Menu/menuHome.dart';
 import 'package:coupon_uikit/coupon_uikit.dart';
 import 'package:badges/badges.dart' as badges;
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 
 import '../Entity/Cart.dart';
@@ -117,7 +118,12 @@ class _OrderPlacedPageState extends State<OrderPlacedPage> {
                   if (snapshot.hasError) {
                     return Center(child: Text('Error: ${snapshot.error}'));
                   } else {
-                    return const Center(child: Text('Loading....'));
+                    return Center(
+                      child: LoadingAnimationWidget.inkDrop(
+                        color: Colors.white,
+                        size: 50,
+                      ),
+                    );
                   }
                 }
               }

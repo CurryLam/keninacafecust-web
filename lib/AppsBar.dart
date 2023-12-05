@@ -197,13 +197,9 @@ class AppsBarState extends State<AppsBar> {
               color: Colors.white,
             ),
             onPressed: () {
-              Navigator.pop(context);
-              // Navigator.push(context,
-              //     MaterialPageRoute(builder: (context) => MenuHomePage(user: currentUser, cart: currentCart))
-              // );
-              // Navigator.push(context,
-              //     MaterialPageRoute(builder: (context) => MenuHomePage())
-              // );
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => MenuHomePage(user: currentUser, cart: currentCart))
+              );
             },
           ),
         ),
@@ -621,9 +617,9 @@ class AppsBarState extends State<AppsBar> {
               ),
             ),
             onTap: () => {
-              // Navigator.push(context,
-              //     MaterialPageRoute(builder: (context) => ChangePasswordPage(user: currentUser, cart: currentCart))
-              // ),
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => ChangePasswordPage(user: currentUser, cart: currentCart))
+              ),
             },
           ),
           ListTile(

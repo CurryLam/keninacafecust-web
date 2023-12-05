@@ -9,11 +9,13 @@ class ItemCategory {
   final int id;
   final String name;
   final String itemClass;
+  final String image;
 
   const ItemCategory({
     required this.id,
     required this.name,
     required this.itemClass,
+    required this.image,
   });
 
   factory ItemCategory.fromJson(Map<String, dynamic> json) {
@@ -24,6 +26,7 @@ class ItemCategory {
       id: json['id'],
       name: json['name'],
       itemClass: json['itemClass'],
+      image: json['image'],
     );
   }
 

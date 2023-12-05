@@ -20,6 +20,7 @@ class MenuItem {
   final bool hasSize;
   final String sizes;
   final String category_name;
+  final String category_image;
   final String user_created_name;
   final String user_updated_name;
   int numOrder; // Cart and Order purpose
@@ -42,6 +43,7 @@ class MenuItem {
     required this.hasSize,
     required this.sizes,
     required this.category_name,
+    required this.category_image,
     required this.user_created_name,
     required this.user_updated_name,
     required this.numOrder, // Cart and Order purpose
@@ -69,8 +71,9 @@ class MenuItem {
       hasSize: json['hasSize'],
       sizes: json['sizes'] ?? '',
       category_name: json['category_name'],
-      user_created_name: json['user_created_name'] != null ? json['user_created_name'] : '',
-      user_updated_name: json['user_updated_name'] != null ? json['user_updated_name'] : '',
+      category_image: json['category_image'] ?? '',
+      user_created_name: json['user_created_name'] ?? '',
+      user_updated_name: json['user_updated_name'] ?? '',
       numOrder: 0, // Cart and Order purpose
       // priceNumOrder: 0, // Cart and Order purpose
       sizeChosen: "", // Cart and Order purpose
@@ -93,6 +96,7 @@ class MenuItem {
       'hasSize': hasSize,
       'sizes': sizes,
       'category_name': category_name,
+      'category_image': category_image,
       'numOrder': numOrder, // Cart and Order purpose
       'sizeChosen': sizeChosen, // Cart and Order purpose
       'variantChosen': variantChosen, // Cart and Order purpose
@@ -128,24 +132,24 @@ class MenuItem {
     return itemCategoryExistMenuItemList;
   }
 
-  static Tuple2<List<MenuItem>, List<MenuItem>> getBestSellingMenuItemList(Map<String, dynamic> json) {
-    List<MenuItem> bestSellingFoodsList = [];
-    List<MenuItem> bestSellingDrinksList = [];
-    List<Map<String, dynamic>> bestSellingFoodsListGet = List<Map<String, dynamic>>.from(json['data']['all_stock']);
-    List<Map<String, dynamic>> bestSellingDrinksListGet = List<Map<String, dynamic>>.from(json['data']['all_stock_with_current_supplier']);
-    for (Map<String,dynamic> foods in bestSellingFoodsListGet) {
-      MenuItem oneFoods = MenuItem.fromJson(foods);
-      bestSellingFoodsList.add(oneFoods);
-    }
-    for (Map<String,dynamic> drinks in bestSellingDrinksListGet) {
-      MenuItem oneDrinks = MenuItem.fromJson(drinks);
-      bestSellingDrinksList.add(oneDrinks);
-    }
-    if (kDebugMode) {
-      print(bestSellingFoodsList);
-      print(bestSellingDrinksList);
-    }
-    return Tuple2<List<MenuItem>, List<MenuItem>>(bestSellingFoodsList, bestSellingDrinksList);
-  }
+  // static Tuple2<List<MenuItem>, List<MenuItem>> getBestSellingMenuItemList(Map<String, dynamic> json) {
+  //   List<MenuItem> bestSellingFoodsList = [];
+  //   List<MenuItem> bestSellingDrinksList = [];
+  //   List<Map<String, dynamic>> bestSellingFoodsListGet = List<Map<String, dynamic>>.from(json['data']['all_stock']);
+  //   List<Map<String, dynamic>> bestSellingDrinksListGet = List<Map<String, dynamic>>.from(json['data']['all_stock_with_current_supplier']);
+  //   for (Map<String,dynamic> foods in bestSellingFoodsListGet) {
+  //     MenuItem oneFoods = MenuItem.fromJson(foods);
+  //     bestSellingFoodsList.add(oneFoods);
+  //   }
+  //   for (Map<String,dynamic> drinks in bestSellingDrinksListGet) {
+  //     MenuItem oneDrinks = MenuItem.fromJson(drinks);
+  //     bestSellingDrinksList.add(oneDrinks);
+  //   }
+  //   if (kDebugMode) {
+  //     print(bestSellingFoodsList);
+  //     print(bestSellingDrinksList);
+  //   }
+  //   return Tuple2<List<MenuItem>, List<MenuItem>>(bestSellingFoodsList, bestSellingDrinksList);
+  // }
 
 }
