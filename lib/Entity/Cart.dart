@@ -201,6 +201,7 @@ class Cart {
       hasSize: menuItemAdded.hasSize,
       sizes: menuItemAdded.sizes,
       category_name: menuItemAdded.category_name,
+      category_image: menuItemAdded.category_image,
       user_created_name: menuItemAdded.user_created_name,
       user_updated_name: menuItemAdded.user_updated_name,
       numOrder: numMenuItemAdded,

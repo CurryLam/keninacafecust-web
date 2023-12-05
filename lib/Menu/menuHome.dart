@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:keninacafecust_web/AppsBar.dart';
 import 'package:keninacafecust_web/Entity/Cart.dart';
 import 'package:keninacafecust_web/Menu/viewCart.dart';
@@ -55,6 +56,7 @@ class _MenuHomePageState extends State<MenuHomePage> with SingleTickerProviderSt
   bool searchBoolean = false;
   List<MenuItem>? menuItem;
   List<String> bestSeller = ['Best Selling Foods', 'Best Selling Drinks'];
+  List<String> bestSellerCategoryImage = ['images/best_selling_food.png', 'images/best_selling_drink.png'];
   String? categoryName;
   String? tempCategoryName;
   List<int> _searchIndexList = [];
@@ -78,11 +80,11 @@ class _MenuHomePageState extends State<MenuHomePage> with SingleTickerProviderSt
     setState(() {});
   }
 
-  void navigateViewCartPage(Cart currentCart, User currentUser) {
-    Route route = MaterialPageRoute(builder: (context) => ViewCartPage(cart: currentCart, user: currentUser,));
-    Navigator.push(context, route).then(onGoBack);
-  }
-
+  // void navigateViewCartPage(Cart currentCart, User currentUser) {
+  //   Route route = MaterialPageRoute(builder: (context) => ViewCartPage(cart: currentCart, user: currentUser,));
+  //   Navigator.push(context, route).then(onGoBack);
+  // }
+  //
   void navigateMenuItemDetailsPage(MenuItem currentMenuItem, Cart currentCart, User currentUser){
     Route route = MaterialPageRoute(builder: (context) => MenuItemDetailsPage(cart: currentCart, user: currentUser, menuItem: currentMenuItem,));
     Navigator.push(context, route).then(onGoBack);
@@ -187,9 +189,9 @@ class _MenuHomePageState extends State<MenuHomePage> with SingleTickerProviderSt
                         color: Colors.white,
                         child: TabBar(
                           onTap: (value) {
-                            setState(() {
+                            // setState(() {
                               selectedTabIndex = value;
-                            });
+                            // });
                           },
                           tabs: buildItemCategoryList(snapshot.data, currentUser),
                           isScrollable: true,
@@ -217,10 +219,10 @@ class _MenuHomePageState extends State<MenuHomePage> with SingleTickerProviderSt
                       child: FloatingActionButton(
                         backgroundColor: Colors.orange.shade500,
                         onPressed: () async {
-                          // Navigator.push(context,
-                          //     MaterialPageRoute(builder: (context) => ViewCartPage(user: currentUser, cart: currentCart))
-                          // );
-                          navigateViewCartPage(currentCart, currentUser);
+                          Navigator.push(context,
+                              MaterialPageRoute(builder: (context) => ViewCartPage(user: currentUser, cart: currentCart))
+                          );
+                          // navigateViewCartPage(currentCart, currentUser);
                         },
                         child: const Icon(
                           Icons.shopping_cart_outlined,
@@ -244,10 +246,10 @@ class _MenuHomePageState extends State<MenuHomePage> with SingleTickerProviderSt
                           minWidth: double.infinity,
                           height:60,
                           onPressed: () async {
-                            navigateViewCartPage(currentCart, currentUser);
-                            // Navigator.push(context,
-                            //     MaterialPageRoute(builder: (context) => ViewCartPage(user: currentUser, cart: currentCart))
-                            // );
+                            // navigateViewCartPage(currentCart, currentUser);
+                            Navigator.push(context,
+                                MaterialPageRoute(builder: (context) => ViewCartPage(user: currentUser, cart: currentCart))
+                            );
                           },
                           color: Colors.orange.shade500,
                           shape: RoundedRectangleBorder(
@@ -353,7 +355,12 @@ class _MenuHomePageState extends State<MenuHomePage> with SingleTickerProviderSt
           if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}'));
           } else {
-            return const Center(child: Text('Loading....'));
+            return Center(
+              child: LoadingAnimationWidget.inkDrop(
+                color: Colors.white,
+                size: 50,
+              ),
+            );
           }
         }
       }
@@ -390,20 +397,24 @@ class _MenuHomePageState extends State<MenuHomePage> with SingleTickerProviderSt
                         child: Column(
                           children: [
                             const SizedBox(height: 7.5),
-                            CircleAvatar(
-                              // backgroundColor: Colors.grey.shade500,
-                              backgroundColor: selectedTabIndex == i
-                                  ? Colors.orange.shade500 // Selected tab color
-                                  : Colors.grey.shade500,
-                              radius: 30.0,
-                              child: Padding(
-                                padding: const EdgeInsets.all(2),
-                                // Border radius
-                                child: ClipOval(
-                                    child: Image.asset(
-                                        'images/KE_Nina_Cafe_logo.jpg')
-                                ),
-                              ),
+                            // CircleAvatar(
+                            //   // backgroundColor: Colors.grey.shade500,
+                            //   // backgroundColor: selectedTabIndex == i
+                            //   //     ? Colors.orange.shade500 // Selected tab color
+                            //   //     : Colors.grey.shade500,
+                            //   radius: 30.0,
+                            //   child: Padding(
+                            //     padding: const EdgeInsets.all(2),
+                            //     // Border radius
+                            //     child: ClipOval(
+                            //         child: Image.asset(
+                            //             'images/KE_Nina_Cafe_logo.jpg')
+                            //     ),
+                            //   ),
+                            // ),
+                            ClipOval(
+                              child: Image.asset(bestSellerCategoryImage[i], width: 60, height: 60,)
+
                             ),
                             const SizedBox(height: 5.0),
                             Padding(
@@ -458,20 +469,24 @@ class _MenuHomePageState extends State<MenuHomePage> with SingleTickerProviderSt
                           child: Column(
                             children: [
                               const SizedBox(height: 7.5),
-                              CircleAvatar(
-                                backgroundColor: selectedTabIndex == i + 2
-                                    ? Colors.orange.shade500 // Selected tab color
-                                    : Colors.grey.shade500,
-                                radius: 30.0,
-                                child: Padding(
-                                  padding: const EdgeInsets.all(2),
-                                  // Border radius
-                                  child: ClipOval(
-                                      child: Image.asset(
-                                          'images/KE_Nina_Cafe_logo.jpg')
-                                  ),
-                                ),
+                              // CircleAvatar(
+                              //   backgroundColor: selectedTabIndex == i + 2
+                              //       ? Colors.orange.shade500 // Selected tab color
+                              //       : Colors.grey.shade500,
+                              //   radius: 30.0,
+                              //   child: Padding(
+                              //     padding: const EdgeInsets.all(2),
+                              //     // Border radius
+                              //     child: ClipOval(
+                              //         child: Image.asset(
+                              //             'images/KE_Nina_Cafe_logo.jpg')
+                              //     ),
+                              //   ),
+                              // ),
+                              ClipOval(
+                                child: Image.memory(base64Decode(listItemCategory[i].category_image), width: 60, height: 60,),
                               ),
+
                               const SizedBox(height: 5.0),
                               Padding(
                                 padding: const EdgeInsets.symmetric(horizontal: 2),
@@ -503,167 +518,116 @@ class _MenuHomePageState extends State<MenuHomePage> with SingleTickerProviderSt
   List<Widget> buildMenuItemList(List<MenuItem>? listMenuItem, User? currentUser, Cart currentCart) {
     List<Widget> tabBarView = [];
     tabBarView.add(
-      SingleChildScrollView(
-        child: Column(
-          children: [
-            const Padding(
-              padding: EdgeInsets.fromLTRB(17, 5, 0, 2),
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  'Best Selling Foods',
-                  style: TextStyle(
-                    fontWeight: FontWeight.w500,
-                    fontSize: 20.0,
-                    fontFamily: 'AsapCondensed',
-                  ),
-                ),
-              ),
-            ),
-            for (int i = 0; i < listMenuItem!.length; i += 2)
-              Row(
+      FutureBuilder<List<MenuItem>>(
+        future: getBestSellingFoodList(),
+        builder: (BuildContext context, AsyncSnapshot<List<MenuItem>> snapshot) {
+          if (snapshot.hasData) {
+            return SingleChildScrollView(
+              child: Column(
                 children: [
-                  Expanded(
-                    child: i < listMenuItem.length
-                        ? buildMenuItemCard(listMenuItem[i], currentUser!, currentCart!)
-                        : const SizedBox.shrink(),
+                  const Padding(
+                    padding: EdgeInsets.fromLTRB(17, 5, 0, 2),
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        'Best Selling Foods',
+                        style: TextStyle(
+                          fontWeight: FontWeight.w500,
+                          fontSize: 20.0,
+                          fontFamily: 'AsapCondensed',
+                        ),
+                      ),
+                    ),
                   ),
-                  Expanded(
-                    child: (i + 1) < listMenuItem.length
-                        ? buildMenuItemCard(listMenuItem[i + 1], currentUser!, currentCart!)
-                        : const SizedBox.shrink(),
-                  ),
+                  for (int i = 0; i < snapshot.data!.length; i += 2)
+                    Row(
+                      children: [
+                        Expanded(
+                          child: i < snapshot.data!.length
+                              ? buildMenuItemCard(snapshot.data![i], currentUser!, currentCart!)
+                              : const SizedBox.shrink(),
+                        ),
+                        Expanded(
+                          child: (i + 1) < snapshot.data!.length
+                              ? buildMenuItemCard(snapshot.data![i + 1], currentUser!, currentCart!)
+                              : const SizedBox.shrink(),
+                        ),
+                      ],
+                    ),
                 ],
               ),
-          ],
-        ),
+            );
+          } else {
+            if (snapshot.hasError) {
+              return Center(child: Text('Error: ${snapshot.error}'));
+            } else {
+              return Center(
+                child: LoadingAnimationWidget.inkDrop(
+                  color: Colors.white,
+                  size: 50,
+                ),
+              );
+            }
+          }
+        }
       ),
     );
     tabBarView.add(
-      SingleChildScrollView(
-        child: Column(
-          children: [
-            const Padding(
-              padding: EdgeInsets.fromLTRB(17, 5, 0, 2),
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  'Best Selling Drinks',
-                  style: TextStyle(
-                    fontWeight: FontWeight.w500,
-                    fontSize: 20.0,
-                    fontFamily: 'AsapCondensed',
-                  ),
+      FutureBuilder<List<MenuItem>>(
+          future: getBestSellingDrinkList(),
+          builder: (BuildContext context, AsyncSnapshot<List<MenuItem>> snapshot) {
+            if (snapshot.hasData) {
+              return SingleChildScrollView(
+                child: Column(
+                  children: [
+                    const Padding(
+                      padding: EdgeInsets.fromLTRB(17, 5, 0, 2),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          'Best Selling Drinks',
+                          style: TextStyle(
+                            fontWeight: FontWeight.w500,
+                            fontSize: 20.0,
+                            fontFamily: 'AsapCondensed',
+                          ),
+                        ),
+                      ),
+                    ),
+                    for (int i = 0; i < snapshot.data!.length; i += 2)
+                      Row(
+                        children: [
+                          Expanded(
+                            child: i < snapshot.data!.length
+                                ? buildMenuItemCard(snapshot.data![i], currentUser!, currentCart!)
+                                : const SizedBox.shrink(),
+                          ),
+                          Expanded(
+                            child: (i + 1) < snapshot.data!.length
+                                ? buildMenuItemCard(snapshot.data![i + 1], currentUser!, currentCart!)
+                                : const SizedBox.shrink(),
+                          ),
+                        ],
+                      ),
+                  ],
                 ),
-              ),
-            ),
-            for (int i = 0; i < listMenuItem.length; i += 2)
-              Row(
-                children: [
-                  Expanded(
-                    child: i < listMenuItem.length
-                        ? buildMenuItemCard(listMenuItem[i], currentUser!, currentCart!)
-                        : const SizedBox.shrink(),
+              );
+            } else {
+              if (snapshot.hasError) {
+                return Center(child: Text('Error: ${snapshot.error}'));
+              } else {
+                return Center(
+                  child: LoadingAnimationWidget.inkDrop(
+                    color: Colors.white,
+                    size: 50,
                   ),
-                  Expanded(
-                    child: (i + 1) < listMenuItem.length
-                        ? buildMenuItemCard(listMenuItem[i + 1], currentUser!, currentCart!)
-                        : const SizedBox.shrink(),
-                  ),
-                ],
-              ),
-          ],
-        ),
+                );
+              }
+            }
+          }
       ),
     );
-    // FutureBuilder<Tuple2<List<MenuItem>,List<MenuItem>>>(
-    //     future: getBestSellingMenuItemList(),
-    //     builder: (BuildContext context, AsyncSnapshot<Tuple2<List<MenuItem>,List<MenuItem>>> snapshot) {
-    //       if (snapshot.hasData) {
-    //         tabBarView.add(
-    //           SingleChildScrollView(
-    //             child: Column(
-    //               children: [
-    //                 const Padding(
-    //                   padding: EdgeInsets.fromLTRB(17, 5, 0, 2),
-    //                   child: Align(
-    //                     alignment: Alignment.centerLeft,
-    //                     child: Text(
-    //                       'Best Selling Foods',
-    //                       style: TextStyle(
-    //                         fontWeight: FontWeight.w500,
-    //                         fontSize: 20.0,
-    //                         fontFamily: 'AsapCondensed',
-    //                       ),
-    //                     ),
-    //                   ),
-    //                 ),
-    //                 for (int i = 0; i < listMenuItem!.length; i += 2)
-    //                   Row(
-    //                     children: [
-    //                       Expanded(
-    //                         child: i < listMenuItem.length
-    //                             ? buildMenuItemCard(listMenuItem[i], currentUser!, currentCart!)
-    //                             : const SizedBox.shrink(),
-    //                       ),
-    //                       Expanded(
-    //                         child: (i + 1) < listMenuItem.length
-    //                             ? buildMenuItemCard(listMenuItem[i + 1], currentUser!, currentCart!)
-    //                             : const SizedBox.shrink(),
-    //                       ),
-    //                     ],
-    //                   ),
-    //               ],
-    //             ),
-    //           ),
-    //         );
-    //         tabBarView.add(
-    //           SingleChildScrollView(
-    //             child: Column(
-    //               children: [
-    //                 const Padding(
-    //                   padding: EdgeInsets.fromLTRB(17, 5, 0, 2),
-    //                   child: Align(
-    //                     alignment: Alignment.centerLeft,
-    //                     child: Text(
-    //                       'Best Selling Drinks',
-    //                       style: TextStyle(
-    //                         fontWeight: FontWeight.w500,
-    //                         fontSize: 20.0,
-    //                         fontFamily: 'AsapCondensed',
-    //                       ),
-    //                     ),
-    //                   ),
-    //                 ),
-    //                 for (int i = 0; i < listMenuItem.length; i += 2)
-    //                   Row(
-    //                     children: [
-    //                       Expanded(
-    //                         child: i < listMenuItem.length
-    //                             ? buildMenuItemCard(listMenuItem[i], currentUser!, currentCart!)
-    //                             : const SizedBox.shrink(),
-    //                       ),
-    //                       Expanded(
-    //                         child: (i + 1) < listMenuItem.length
-    //                             ? buildMenuItemCard(listMenuItem[i + 1], currentUser!, currentCart!)
-    //                             : const SizedBox.shrink(),
-    //                       ),
-    //                     ],
-    //                   ),
-    //               ],
-    //             ),
-    //           ),
-    //         );
-    //       } else {
-    //         if (snapshot.hasError) {
-    //           return Center(child: Text('Error: ${snapshot.error}'));
-    //         } else {
-    //           return const Center(child: Text('Loading....'));
-    //         }
-    //       }
-    //     }
-    // );
-    for (int i = 0; i < listMenuItem.length; i++) {
+    for (int i = 0; i < listMenuItem!.length; i++) {
       searchMenuItem?.add(listMenuItem[i]);
       categoryName = listMenuItem[i].category_name;
       if (tempCategoryName != categoryName) {
@@ -772,7 +736,12 @@ class _MenuHomePageState extends State<MenuHomePage> with SingleTickerProviderSt
                 if (snapshot.hasError) {
                   return Center(child: Text('Error: ${snapshot.error}'));
                 } else {
-                  return const Center(child: Text('Loading....'));
+                  return Center(
+                    child: LoadingAnimationWidget.inkDrop(
+                      color: Colors.white,
+                      size: 50,
+                    ),
+                  );
                 }
               }
             }
@@ -958,7 +927,12 @@ class _MenuHomePageState extends State<MenuHomePage> with SingleTickerProviderSt
             if (snapshot.hasError) {
               return Center(child: Text('Error: ${snapshot.error}'));
             } else {
-              return const Center(child: Text('Loading....'));
+              return Center(
+                child: LoadingAnimationWidget.inkDrop(
+                  color: Colors.white,
+                  size: 50,
+                ),
+              );
             }
           }
         }
@@ -986,20 +960,40 @@ class _MenuHomePageState extends State<MenuHomePage> with SingleTickerProviderSt
     }
   }
 
-  Future<Tuple2<List<MenuItem>,List<MenuItem>>> getBestSellingMenuItemList() async {
+  Future<List<MenuItem>> getBestSellingFoodList() async {
     try {
       final response = await http.get(
         // Uri.parse('http://10.0.2.2:8000/menu/request_menu_item_list'),
-        Uri.parse('http://localhost:8000/menu/request_best_selling_menu_item_list'),
+        Uri.parse('http://localhost:8000/menu/request_best_selling_food_list'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
       );
 
       if (response.statusCode == 201 || response.statusCode == 200) {
-        return MenuItem.getBestSellingMenuItemList(jsonDecode(response.body));
+        return MenuItem.getMenuItemDataList(jsonDecode(response.body));
       } else {
-        throw Exception('Failed to load the best selling menu item data list.');
+        throw Exception('Failed to load the best selling food data list.');
+      }
+    } on Exception catch (e) {
+      throw Exception('API Connection Error. $e');
+    }
+  }
+
+  Future<List<MenuItem>> getBestSellingDrinkList() async {
+    try {
+      final response = await http.get(
+        // Uri.parse('http://10.0.2.2:8000/menu/request_menu_item_list'),
+        Uri.parse('http://localhost:8000/menu/request_best_selling_drink_list'),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+      );
+
+      if (response.statusCode == 201 || response.statusCode == 200) {
+        return MenuItem.getMenuItemDataList(jsonDecode(response.body));
+      } else {
+        throw Exception('Failed to load the best selling drink data list.');
       }
     } on Exception catch (e) {
       throw Exception('API Connection Error. $e');

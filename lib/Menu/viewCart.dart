@@ -8,6 +8,7 @@ import 'package:keninacafecust_web/AppsBar.dart';
 import 'package:http/http.dart' as http;
 import 'package:keninacafecust_web/Menu/menuHome.dart';
 import 'package:keninacafecust_web/Order/orderPlaced.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 import '../Entity/Cart.dart';
 import '../Entity/MenuItem.dart';
@@ -130,7 +131,12 @@ class _ViewCartPageState extends State<ViewCartPage> {
                             if (snapshot.hasError) {
                               return Center(child: Text('Error: ${snapshot.error}'));
                             } else {
-                              return const Center(child: Text('Loading....'));
+                              return Center(
+                                child: LoadingAnimationWidget.inkDrop(
+                                  color: Colors.white,
+                                  size: 50,
+                                ),
+                              );
                             }
                           }
                         }

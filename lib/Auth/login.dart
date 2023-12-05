@@ -471,16 +471,16 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
         return (User.fromJWT(jwtToken), (ErrorCodes.OPERATION_OK));
       } else {
         var jsonResp = jsonDecode(response.body);
-        var error = jsonResp['message'];
-        if (error == "User not found") {
+        var error = jsonResp['detail'];
+        if (error == "User not found!") {
           print(error);
           return (User(uid: -1, name: '', is_active: false, email: '', gender: '', dob: DateTime.now(), phone: '', points: 0), (ErrorCodes.LOGIN_FAIL_NO_USER));
         }
-        else if (error == "Incorrect password") {
+        else if (error == "Incorrect password!") {
           print(error);
           return (User(uid: -1, name: '', is_active: false, email: '', gender: '', dob: DateTime.now(), phone: '', points: 0), (ErrorCodes.LOGIN_FAIL_PASSWORD_INCORRECT));
         }
-        else if (error == "User deactivated or deleted") {
+        else if (error == "User deactivated or deleted!") {
           print(error);
           return (User(uid: -1, name: '', is_active: false, email: '', gender: '', dob: DateTime.now(), phone: '', points: 0), (ErrorCodes.LOGIN_FAIL_USER_DEACTIVATED_DELETED));
         }

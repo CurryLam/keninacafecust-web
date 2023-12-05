@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:keninacafecust_web/Entity/OrderFoodItemMoreInfo.dart';
 import 'package:http/http.dart' as http;
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 import '../AppsBar.dart';
 import '../Entity/Cart.dart';
@@ -125,7 +126,12 @@ class _MenuItemDetailsPageState extends State<MenuItemDetailsPage> {
             if (snapshot.hasError) {
               return Center(child: Text('Error: ${snapshot.error}'));
             } else {
-              return const Center(child: Text('Loading....'));
+              return Center(
+                child: LoadingAnimationWidget.inkDrop(
+                  color: Colors.white,
+                  size: 50,
+                ),
+              );
             }
           }
         }
@@ -807,9 +813,9 @@ class _MenuItemDetailsPageState extends State<MenuItemDetailsPage> {
                           InkWell(
                             onTap: () {
                               if (itemCount > 1) {
-                                setState(() {
+                                // setState(() {
                                   itemCount--;
-                                });
+                                // });
                               }
                             },
                             child: Container(
@@ -844,9 +850,9 @@ class _MenuItemDetailsPageState extends State<MenuItemDetailsPage> {
                           const SizedBox(width: 5.0,),
                           InkWell(
                             onTap: () {
-                              setState(() {
+                              // setState(() {
                                 itemCount++;
-                              });
+                              // });
                             },
                             child: Container(
                               decoration: const BoxDecoration(
@@ -874,13 +880,13 @@ class _MenuItemDetailsPageState extends State<MenuItemDetailsPage> {
                   height: 45,
                   child: ElevatedButton(
                     onPressed: isButtonEnabled ? () {
-                      setState(() {
+                      // setState(() {
                         currentCart!.addToCart(itemCount, currentMenuItem);
-                        Navigator.of(context).pop();
-                        // Navigator.push(context,
-                        //   MaterialPageRoute(builder: (context) => MenuHomePage(user: currentUser, cart: currentCart))
-                        // );
-                      });
+                        // Navigator.of(context).pop();
+                        Navigator.push(context,
+                          MaterialPageRoute(builder: (context) => MenuHomePage(user: currentUser, cart: currentCart))
+                        );
+                      // });
                     } : null,
                     style: ElevatedButton.styleFrom(
                       primary: Colors.orange.shade500, // Set your desired background color here
