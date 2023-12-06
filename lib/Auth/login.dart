@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/services.dart';
 import 'package:flutter/gestures.dart';
+import 'package:keninacafecust_web/Auth/passwordResetScreen.dart';
 import 'package:keninacafecust_web/Auth/register.dart';
 import 'package:keninacafecust_web/Security/Encryptor.dart';
 import 'package:keninacafecust_web/Utils/error_codes.dart';
@@ -231,7 +232,7 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
                           padding: const EdgeInsets.fromLTRB(25.0, 5.0, 0, 0),
                           child: TextButton(
                             onPressed: () {
-                              // Handle forgot password button press
+                              Navigator.push(context, MaterialPageRoute(builder: (context) => PasswordResetScreenPage()));
                             },
                             child: Text(
                               'Forgot Password ?',
@@ -494,6 +495,22 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
         print('API Connection Error. $e');
       }
       return (User(uid: -1, name: '', is_active: false, email: '', gender: '', dob: DateTime.now(), phone: '', points: 0), (ErrorCodes.LOGIN_FAIL_API_CONNECTION));
+    }
+  }
+
+  Future<void> forgotPassword(String email) async {
+    final response = await http.post(
+      Uri.parse('https://your-django-backend.com/api/password-reset/'),
+      body: {'email': email},
+    );
+
+    if (response.statusCode == 200) {
+      // Password reset email sent successfully
+      print('Password reset email sent!');
+    } else {
+      // Handle error
+      print('Error: ${response.statusCode}');
+      print('Response: ${response.body}');
     }
   }
 }

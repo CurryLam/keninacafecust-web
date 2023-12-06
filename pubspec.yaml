@@ -47,6 +47,7 @@ dependencies:
   tuple: 2.0.2
   line_awesome_flutter: ^2.0.0
   loading_animation_widget: ^1.2.0+4
+  flutter_bloc: ^8.0.0
 
 dev_dependencies:
   flutter_test:
