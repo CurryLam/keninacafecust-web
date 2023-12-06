@@ -310,7 +310,7 @@ class _MenuHomePageState extends State<MenuHomePage> with SingleTickerProviderSt
                                   mainAxisAlignment: MainAxisAlignment.end,
                                   children: [
                                     Text(
-                                      'CHECKOUT', // Replace with the actual total price.
+                                      'VIEW CART',
                                       style: TextStyle(
                                         fontWeight: FontWeight.bold,
                                         color: Colors.white,
@@ -356,8 +356,8 @@ class _MenuHomePageState extends State<MenuHomePage> with SingleTickerProviderSt
             return Center(child: Text('Error: ${snapshot.error}'));
           } else {
             return Center(
-              child: LoadingAnimationWidget.inkDrop(
-                color: Colors.white,
+              child: LoadingAnimationWidget.threeRotatingDots(
+                color: Colors.black,
                 size: 50,
               ),
             );
@@ -562,8 +562,8 @@ class _MenuHomePageState extends State<MenuHomePage> with SingleTickerProviderSt
               return Center(child: Text('Error: ${snapshot.error}'));
             } else {
               return Center(
-                child: LoadingAnimationWidget.inkDrop(
-                  color: Colors.white,
+                child: LoadingAnimationWidget.threeRotatingDots(
+                  color: Colors.black,
                   size: 50,
                 ),
               );
@@ -617,8 +617,8 @@ class _MenuHomePageState extends State<MenuHomePage> with SingleTickerProviderSt
                 return Center(child: Text('Error: ${snapshot.error}'));
               } else {
                 return Center(
-                  child: LoadingAnimationWidget.inkDrop(
-                    color: Colors.white,
+                  child: LoadingAnimationWidget.threeRotatingDots(
+                    color: Colors.black,
                     size: 50,
                   ),
                 );
@@ -737,8 +737,8 @@ class _MenuHomePageState extends State<MenuHomePage> with SingleTickerProviderSt
                   return Center(child: Text('Error: ${snapshot.error}'));
                 } else {
                   return Center(
-                    child: LoadingAnimationWidget.inkDrop(
-                      color: Colors.white,
+                    child: LoadingAnimationWidget.threeRotatingDots(
+                      color: Colors.black,
                       size: 50,
                     ),
                   );
@@ -928,8 +928,8 @@ class _MenuHomePageState extends State<MenuHomePage> with SingleTickerProviderSt
               return Center(child: Text('Error: ${snapshot.error}'));
             } else {
               return Center(
-                child: LoadingAnimationWidget.inkDrop(
-                  color: Colors.white,
+                child: LoadingAnimationWidget.threeRotatingDots(
+                  color: Colors.black,
                   size: 50,
                 ),
               );

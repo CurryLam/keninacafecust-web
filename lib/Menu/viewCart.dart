@@ -132,8 +132,8 @@ class _ViewCartPageState extends State<ViewCartPage> {
                               return Center(child: Text('Error: ${snapshot.error}'));
                             } else {
                               return Center(
-                                child: LoadingAnimationWidget.inkDrop(
-                                  color: Colors.white,
+                                child: LoadingAnimationWidget.threeRotatingDots(
+                                  color: Colors.black,
                                   size: 50,
                                 ),
                               );

@@ -548,8 +548,8 @@ class _OrderOverviewPageState extends State<OrderOverviewPage> {
                                         return Center(child: Text('Error: ${snapshot.error}'));
                                       } else {
                                         return Center(
-                                          child: LoadingAnimationWidget.inkDrop(
-                                            color: Colors.white,
+                                          child: LoadingAnimationWidget.threeRotatingDots(
+                                            color: Colors.black,
                                             size: 50,
                                           ),
                                         );
