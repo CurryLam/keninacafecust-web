@@ -847,7 +847,7 @@ class _ApplyVoucherInEditOrderPageState extends State<ApplyVoucherInEditOrderPag
           'Content-Type': 'application/json; charset=UTF-8',
         },
         body: jsonEncode(<dynamic, dynamic> {
-          'current_user_name': currentUser.name,
+          'user_id': currentUser.uid,
         }),
       );
 

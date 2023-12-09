@@ -1250,7 +1250,7 @@ class _OrderOverviewPageState extends State<OrderOverviewPage> {
         body: jsonEncode(<dynamic, dynamic> {
           'gross_total': gross_total,
           'grand_total': grand_total,
-          'user_created_name': currentUser.name,
+          'user_id': currentUser.uid,
           'menu_items': menuItemList.map((menuItem) => menuItem.toJson()).toList(),
           'voucher_applied_id': voucherAppliedID,
           'is_done': false,

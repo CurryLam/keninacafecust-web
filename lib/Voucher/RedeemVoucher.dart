@@ -938,7 +938,7 @@ class _RedeemVoucherPageState extends State<RedeemVoucherPage> {
           'Content-Type': 'application/json; charset=UTF-8',
         },
         body: jsonEncode(<dynamic, dynamic> {
-          'user_created_name': currentUser.name,
+          'user_id': currentUser.uid,
         }),
       );
 
