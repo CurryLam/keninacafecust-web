@@ -173,35 +173,35 @@ class _VoucherListPageState extends State<VoucherListPage> {
                 ),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(
-                  horizontal: 60, vertical: 6),
-              child: Container(
-                padding: const EdgeInsets.only(top: 3, left: 3),
-                child: MaterialButton(
-                  minWidth: double.infinity,
-                  height: 50,
-                  onPressed: () {
-                    navigateRedeemVoucherPage(currentCart, currentUser!);
-                  },
-                  color: Colors.white,
-                  shape: const RoundedRectangleBorder(
-                    side: BorderSide(
-                      color: Colors.orangeAccent, // Border color
-                      width: 5.0, // Border width
-                    ),
-                  ),
-                  child: const Text(
-                    "Redeem",
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 20,
-                        color: Colors.orangeAccent
-                    ),
-                  ),
-                ),
-              ),
-            ),
+            // Padding(
+            //   padding: const EdgeInsets.symmetric(
+            //       horizontal: 60, vertical: 6),
+            //   child: Container(
+            //     padding: const EdgeInsets.only(top: 3, left: 3),
+            //     child: MaterialButton(
+            //       minWidth: double.infinity,
+            //       height: 50,
+            //       onPressed: () {
+            //         navigateRedeemVoucherPage(currentCart, currentUser!);
+            //       },
+            //       color: Colors.white,
+            //       shape: const RoundedRectangleBorder(
+            //         side: BorderSide(
+            //           color: Colors.orangeAccent, // Border color
+            //           width: 5.0, // Border width
+            //         ),
+            //       ),
+            //       child: const Text(
+            //         "Redeem",
+            //         style: TextStyle(
+            //             fontWeight: FontWeight.bold,
+            //             fontSize: 20,
+            //             color: Colors.orangeAccent
+            //         ),
+            //       ),
+            //     ),
+            //   ),
+            // ),
           ],
         ),
       );
