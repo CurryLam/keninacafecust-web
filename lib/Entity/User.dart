@@ -42,7 +42,7 @@ class User {
       phone: jwtDecodedToken['phone'],
       gender: jwtDecodedToken['gender'],
       dob: DateTime.parse(jwtDecodedToken['dob']),
-      points: double.parse(jwtDecodedToken['points']),
+      points: jwtDecodedToken['points'],
     );
   }
 }

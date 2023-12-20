@@ -813,9 +813,9 @@ class _MenuItemDetailsPageState extends State<MenuItemDetailsPage> {
                           InkWell(
                             onTap: () {
                               if (itemCount > 1) {
-                                // setState(() {
+                                setState(() {
                                   itemCount--;
-                                // });
+                                });
                               }
                             },
                             child: Container(
@@ -850,9 +850,9 @@ class _MenuItemDetailsPageState extends State<MenuItemDetailsPage> {
                           const SizedBox(width: 5.0,),
                           InkWell(
                             onTap: () {
-                              // setState(() {
+                              setState(() {
                                 itemCount++;
-                              // });
+                              });
                             },
                             child: Container(
                               decoration: const BoxDecoration(
