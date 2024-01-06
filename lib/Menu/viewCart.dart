@@ -1,20 +1,17 @@
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'dart:convert';
 
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:keninacafecust_web/AppsBar.dart';
 import 'package:http/http.dart' as http;
-import 'package:keninacafecust_web/Menu/menuHome.dart';
-import 'package:keninacafecust_web/Order/orderPlaced.dart';
-import 'package:loading_animation_widget/loading_animation_widget.dart';
 
+import 'package:keninacafecust_web/Menu/menuHome.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import '../Entity/Cart.dart';
 import '../Entity/MenuItem.dart';
 import '../Entity/User.dart';
 import '../Order/orderOverview.dart';
-import '../Utils/error_codes.dart';
 
 void main() {
   runApp(const MyApp());
@@ -36,16 +33,24 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const ViewCartPage(user: null, cart: null),
+      home: const ViewCartPage(user: null, cart: null, orderMode: null, orderHistory: null, tableNo: null, tabIndex: null, menuItemList: null, itemCategoryList: null),
     );
   }
 }
 
 class ViewCartPage extends StatefulWidget {
-  const ViewCartPage({super.key, this.user, this.cart});
+  const ViewCartPage({super.key, this.user, this.cart, this.orderMode, this.orderHistory, this.tableNo, this.tabIndex, this.menuItemList, this.itemCategoryList});
 
   final User? user;
   final Cart? cart;
+  final String? orderMode;
+  final List<int>? orderHistory;
+  final int? tableNo;
+  final int? tabIndex;
+  final List<MenuItem>? menuItemList;
+  final List<MenuItem>? itemCategoryList;
+  // final List<MenuItem>? bestSellingFoods;
+  // final List<MenuItem>? bestSellingDrinks;
 
   @override
   State<ViewCartPage> createState() => _ViewCartPageState();
@@ -65,6 +70,38 @@ class _ViewCartPageState extends State<ViewCartPage> {
   Cart? getCart() {
     return widget.cart;
   }
+
+  String? getOrderMode() {
+    return widget.orderMode;
+  }
+
+  List<int>? getOrderHistory() {
+    return widget.orderHistory;
+  }
+
+  int? getTableNo() {
+    return widget.tableNo;
+  }
+
+  int? getTabIndex() {
+    return widget.tabIndex;
+  }
+
+  List<MenuItem>? getMenuItemList() {
+    return widget.menuItemList;
+  }
+
+  List<MenuItem>? getItemCategory() {
+    return widget.itemCategoryList;
+  }
+
+  // List<MenuItem>? getBestSellingFoods() {
+  //   return widget.bestSellingFoods;
+  // }
+  //
+  // List<MenuItem>? getBestSellingDrinks() {
+  //   return widget.bestSellingDrinks;
+  // }
 
   void showConfirmationRemoveItemFromCart(Cart currentCart, MenuItem currentMenuItem) {
     showDialog(
@@ -108,11 +145,19 @@ class _ViewCartPageState extends State<ViewCartPage> {
 
     User? currentUser = getUser();
     Cart? currentCart = getCart();
+    String? currentOrderMode = getOrderMode();
+    List<int>? currentOrderHistory = getOrderHistory();
+    int? currentTableNo = getTableNo();
+    int? currentTabIndex = getTabIndex();
+    List<MenuItem>? currentMenuItemList = getMenuItemList();
+    List<MenuItem>? currentItemCategoryList = getItemCategory();
+    // List<MenuItem>? currentBestSellingFoods = getBestSellingFoods();
+    // List<MenuItem>? currentBestSellingDrinks = getBestSellingDrinks();
     hasMenuItem = currentCart!.containMenuItem();
 
     return Scaffold(
-      appBar: AppsBarState().buildCartAppBar(context, "MY CART", currentUser!, currentCart),
-      drawer: AppsBarState().buildDrawer(context, currentUser!, currentCart!, isMenuHomePage),
+      appBar: AppsBarState().buildCartAppBar(context, "MY CART", currentUser!, currentCart, currentOrderMode!, currentOrderHistory!, currentTableNo, currentTabIndex!, currentMenuItemList!, currentItemCategoryList!),
+      drawer: AppsBarState().buildDrawer(context, currentUser!, currentCart!, isMenuHomePage, currentOrderMode, currentOrderHistory, currentTableNo!, currentTabIndex, currentMenuItemList, currentItemCategoryList),
       body: SafeArea(
         child: SingleChildScrollView (
           child: SizedBox(
@@ -125,7 +170,7 @@ class _ViewCartPageState extends State<ViewCartPage> {
                         builder: (BuildContext context, AsyncSnapshot<List<MenuItem>> snapshot) {
                           if (snapshot.hasData) {
                             return Column(
-                              children: buildCartList(snapshot.data, currentUser, currentCart),
+                              children: buildCartList(snapshot.data, currentUser, currentCart, currentOrderMode, currentOrderHistory, currentTableNo!, currentTabIndex, currentMenuItemList, currentItemCategoryList),
                             );
                           } else {
                             if (snapshot.hasError) {
@@ -188,7 +233,7 @@ class _ViewCartPageState extends State<ViewCartPage> {
                   height: 50,
                   onPressed: () {
                     Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => OrderOverviewPage(user: currentUser, cart: currentCart))
+                        MaterialPageRoute(builder: (context) => OrderOverviewPage(user: currentUser, cart: currentCart, orderMode: currentOrderMode, orderHistory: currentOrderHistory, tableNo: currentTableNo, tabIndex: currentTabIndex, menuItemList: currentMenuItemList, itemCategoryList: currentItemCategoryList,))
                     );
                   },
                   color: Colors.orange.shade500,
@@ -214,7 +259,7 @@ class _ViewCartPageState extends State<ViewCartPage> {
     );
   }
 
-  List<Widget> buildCartList(List<MenuItem>? listCart, User? currentUser, Cart? currentCart) {
+  List<Widget> buildCartList(List<MenuItem>? listCart, User? currentUser, Cart? currentCart, String currentOrderMode, List<int> currentOrderHistory, int currentTableNo, int currentTabIndex, List<MenuItem> currentMenuItemList, List<MenuItem> currentItemCategoryList) {
     List<Widget> cards = [];
     if (listCart!.isEmpty) {
       hasMenuItem = true;
@@ -264,7 +309,7 @@ class _ViewCartPageState extends State<ViewCartPage> {
                   height:50,
                   onPressed: () {
                     Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => MenuHomePage(user: currentUser, cart: currentCart))
+                        MaterialPageRoute(builder: (context) => MenuHomePage(user: currentUser, cart: currentCart, orderMode: currentOrderMode, orderHistory: currentOrderHistory, tableNo: currentTableNo, tabIndex: currentTabIndex, menuItemList: currentMenuItemList, itemCategoryList: currentItemCategoryList))
                     );
                     // Navigator.push(context,
                     //     MaterialPageRoute(builder: (context) => MenuHomePage())

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/services.dart';
 import 'package:flutter/gestures.dart';
+import 'package:keninacafecust_web/Auth/enterEmailToRegister.dart';
 import 'package:keninacafecust_web/Auth/register.dart';
 import 'package:keninacafecust_web/Security/Encryptor.dart';
 import 'package:keninacafecust_web/Utils/error_codes.dart';
@@ -367,7 +368,7 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) => const RegisterPage(),
+                                      builder: (context) => const EnterEmailToRegisterPage(),
                                     ),
                                   );
                                 },
@@ -473,26 +474,26 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
         var error = jsonResp['message'];
         if (error == "User not found") {
           print(error);
-          return (User(uid: -1, name: '', is_active: false, email: '', gender: '', dob: DateTime.now(), phone: '', points: 0), (ErrorCodes.LOGIN_FAIL_NO_USER));
+          return (User(uid: -1, name: '', is_active: false, email: '', gender: '', dob: DateTime.now(), points: 0), (ErrorCodes.LOGIN_FAIL_NO_USER));
         }
         else if (error == "Incorrect password") {
           print(error);
-          return (User(uid: -1, name: '', is_active: false, email: '', gender: '', dob: DateTime.now(), phone: '', points: 0), (ErrorCodes.LOGIN_FAIL_PASSWORD_INCORRECT));
+          return (User(uid: -1, name: '', is_active: false, email: '', gender: '', dob: DateTime.now(), points: 0), (ErrorCodes.LOGIN_FAIL_PASSWORD_INCORRECT));
         }
         else if (error == "User deactivated or deleted") {
           print(error);
-          return (User(uid: -1, name: '', is_active: false, email: '', gender: '', dob: DateTime.now(), phone: '', points: 0), (ErrorCodes.LOGIN_FAIL_USER_DEACTIVATED_DELETED));
+          return (User(uid: -1, name: '', is_active: false, email: '', gender: '', dob: DateTime.now(), points: 0), (ErrorCodes.LOGIN_FAIL_USER_DEACTIVATED_DELETED));
         }
         if (kDebugMode) {
           print('No User found.');
         }
-        return (User(uid: -1, name: '', is_active: false, email: '', gender: '', dob: DateTime.now(), phone: '', points: 0), (ErrorCodes.LOGIN_FAIL_NO_USER));
+        return (User(uid: -1, name: '', is_active: false, email: '', gender: '', dob: DateTime.now(), points: 0), (ErrorCodes.LOGIN_FAIL_NO_USER));
       }
     } on Exception catch (e) {
       if (kDebugMode) {
         print('API Connection Error. $e');
       }
-      return (User(uid: -1, name: '', is_active: false, email: '', gender: '', dob: DateTime.now(), phone: '', points: 0), (ErrorCodes.LOGIN_FAIL_API_CONNECTION));
+      return (User(uid: -1, name: '', is_active: false, email: '', gender: '', dob: DateTime.now(), points: 0), (ErrorCodes.LOGIN_FAIL_API_CONNECTION));
     }
   }
 }

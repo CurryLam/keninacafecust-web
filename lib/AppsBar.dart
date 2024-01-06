@@ -7,6 +7,7 @@ import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 
 import 'Auth/login.dart';
 import 'Entity/Cart.dart';
+import 'Entity/MenuItem.dart';
 import 'Entity/User.dart';
 import 'Menu/menuHome.dart';
 import 'Menu/viewCart.dart';
@@ -57,16 +58,13 @@ class AppsBarState extends State<AppsBar> {
       preferredSize: const Size.fromHeight(80),
       child: AppBar(
         automaticallyImplyLeading: false,
-        // leading: Padding(
-        //   padding: const EdgeInsets.symmetric(horizontal: 20),
-        //   child: IconButton(
-        //     icon: const Icon(Icons.arrow_back_ios_outlined),
-        //     onPressed: () {
-        //       Navigator.of(context).push(
-        //           MaterialPageRoute(builder: (context) => const LoginPage())
-        //       );
-        //     },
-        //   ),
+        // leading: IconButton(
+        //   icon: const Icon(Icons.arrow_back_ios_rounded),
+        //   onPressed: () {
+        //     Navigator.of(context).push(
+        //         MaterialPageRoute(builder: (context) => const LoginPage())
+        //     );
+        //   },
         // ),
         elevation: 0,
         toolbarHeight: 100,
@@ -76,7 +74,7 @@ class AppsBarState extends State<AppsBar> {
             fontSize: 25.0,
           ),
         ),
-        backgroundColor: Colors.blueAccent,
+        backgroundColor: Colors.orange.shade500,
         centerTitle: true,
       ),
     );
@@ -183,7 +181,7 @@ class AppsBarState extends State<AppsBar> {
   }
 
   @override
-  PreferredSizeWidget buildCartAppBar(BuildContext context, String title, User currentUser, Cart currentCart) {
+  PreferredSizeWidget buildCartAppBar(BuildContext context, String title, User currentUser, Cart currentCart, String currentOrderMode, List<int>? currentOrderHistory, int? currentTableNo, int currentTabIndex, List<MenuItem> currentMenuItemList, List<MenuItem> currentItemCategoryList) {
 
     return PreferredSize( //wrap with PreferredSize
       preferredSize: const Size.fromHeight(80),
@@ -198,7 +196,7 @@ class AppsBarState extends State<AppsBar> {
             ),
             onPressed: () {
               Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => MenuHomePage(user: currentUser, cart: currentCart))
+                  MaterialPageRoute(builder: (context) => MenuHomePage(user: currentUser, cart: currentCart, orderMode: currentOrderMode, orderHistory: currentOrderHistory, tableNo: currentTableNo, tabIndex: currentTabIndex, menuItemList: currentMenuItemList, itemCategoryList: currentItemCategoryList,))
               );
             },
           ),
@@ -265,7 +263,7 @@ class AppsBarState extends State<AppsBar> {
   }
 
   @override
-  PreferredSizeWidget buildOrderHistoryDetailsAppBar(BuildContext context, String title, User currentUser, Cart currentCart) {
+  PreferredSizeWidget buildOrderHistoryDetailsAppBar(BuildContext context, String title, User currentUser, Cart currentCart, String currentOrderMode, List<int> currentOrderHistory, int currentTableNo, int currentTabIndex, List<MenuItem> currentMenuItemList, List<MenuItem> currentItemCategoryList) {
 
     return PreferredSize(
       preferredSize: const Size.fromHeight(80),
@@ -273,7 +271,7 @@ class AppsBarState extends State<AppsBar> {
         leading: IconButton(
           onPressed: () => {
             Navigator.push(context,
-                MaterialPageRoute(builder: (context) => OrderHistoryPage(user: currentUser, cart: currentCart))
+                MaterialPageRoute(builder: (context) => OrderHistoryPage(user: currentUser, cart: currentCart, orderMode: currentOrderMode, orderHistory: currentOrderHistory, tableNo: currentTableNo, tabIndex: currentTabIndex, menuItemList: currentMenuItemList, itemCategoryList: currentItemCategoryList,))
             ),
           },
           icon: const Icon(Icons.arrow_back_ios_rounded, color: Colors.white),
@@ -350,10 +348,10 @@ class AppsBarState extends State<AppsBar> {
     return PreferredSize(
       preferredSize: const Size.fromHeight(80),
       child: AppBar(
-        leading: IconButton(
-          onPressed: () => Navigator.pop(context),
-          icon: const Icon(Icons.arrow_back_ios_rounded, color: Colors.white),
-        ),
+        // leading: IconButton(
+        //   onPressed: () => Navigator.pop(context),
+        //   icon: const Icon(Icons.arrow_back_ios_rounded, color: Colors.white),
+        // ),
         // iconTheme: const IconThemeData(color: Colors.white, size: 25.0),
         elevation: 0,
         toolbarHeight: 100,
@@ -468,7 +466,7 @@ class AppsBarState extends State<AppsBar> {
     );
   }
 
-  Widget buildDrawer(BuildContext context, User currentUser, Cart currentCart, bool isMenuHomePage) {
+  Widget buildDrawer(BuildContext context, User currentUser, Cart currentCart, bool isMenuHomePage, String currentOrderMode, List<int> currentOrderHistory, int currentTableNo, int currentTabIndex, List<MenuItem> currentMenuItemList, List<MenuItem> currentItemCategoryList) {
     enterFullScreen();
     return Drawer(
       child: ListView(
@@ -513,7 +511,7 @@ class AppsBarState extends State<AppsBar> {
               ),
               onTap: () => {
                 Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => MenuHomePage(user: currentUser, cart: currentCart))
+                    MaterialPageRoute(builder: (context) => MenuHomePage(user: currentUser, cart: currentCart, orderMode: currentOrderMode, orderHistory: currentOrderHistory, tableNo: currentTableNo, tabIndex: currentTabIndex, menuItemList: currentMenuItemList, itemCategoryList: currentItemCategoryList,))
                 ),
                 // Navigator.push(context,
                 //     MaterialPageRoute(builder: (context) => MenuHomePage())
@@ -535,7 +533,7 @@ class AppsBarState extends State<AppsBar> {
             ),
             onTap: () => {
               Navigator.push(context,
-                MaterialPageRoute(builder: (context) => ViewCartPage(user: currentUser, cart: currentCart))
+                MaterialPageRoute(builder: (context) => ViewCartPage(user: currentUser, cart: currentCart, orderMode: currentOrderMode, orderHistory: currentOrderHistory, tableNo: currentTableNo, tabIndex: currentTabIndex, menuItemList: currentMenuItemList, itemCategoryList: currentItemCategoryList,))
               ),
             },
           ),
@@ -554,29 +552,30 @@ class AppsBarState extends State<AppsBar> {
             ),
             onTap: () => {
               Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => OrderHistoryPage(user: currentUser, cart: currentCart))
+                  MaterialPageRoute(builder: (context) => OrderHistoryPage(user: currentUser, cart: currentCart, orderMode: currentOrderMode, orderHistory: currentOrderHistory, tableNo: currentTableNo, tabIndex: currentTabIndex, menuItemList: currentMenuItemList, itemCategoryList: currentItemCategoryList,))
               ),
             },
           ),
-          ListTile(
-            leading: Icon(
-                Icons.card_giftcard,
-                color: Colors.deepOrangeAccent.shade700
-            ),
-            title: Text(
-              'Voucher(s)',
-              style: TextStyle(
-                color: Colors.deepOrangeAccent.shade700,
-                fontWeight: FontWeight.bold,
-                fontSize: 17.0,
+          if (currentUser.email != "guestkeninacafe@gmail.com")
+            ListTile(
+              leading: Icon(
+                  Icons.card_giftcard,
+                  color: Colors.deepOrangeAccent.shade700
               ),
-            ),
-            onTap: () => {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => VoucherListPage(user: currentUser, cart: currentCart))
+              title: Text(
+                'Voucher(s)',
+                style: TextStyle(
+                  color: Colors.deepOrangeAccent.shade700,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 17.0,
+                ),
               ),
-            },
-          ),
+              onTap: () => {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => VoucherListPage(user: currentUser, cart: currentCart, orderMode: currentOrderMode, orderHistory: currentOrderHistory, tableNo: currentTableNo, tabIndex: currentTabIndex, menuItemList: currentMenuItemList, itemCategoryList: currentItemCategoryList,))
+                ),
+              },
+            ),
           Padding(
             padding: const EdgeInsets.fromLTRB(15, 20, 15, 10),
             child: Text(
@@ -584,67 +583,90 @@ class AppsBarState extends State<AppsBar> {
               style: TextStyle(color: Colors.grey.shade600, fontSize: 19, fontWeight: FontWeight.bold),
             ),
           ),
-          ListTile(
-            leading: FaIcon(
-              FontAwesomeIcons.user,
-              color: Colors.deepOrangeAccent.shade700,
-            ),
-            title: Text(
-              'Profile',
-              style: TextStyle(
+          if (currentUser.email == "guestkeninacafe@gmail.com")
+            ListTile(
+              leading: FaIcon(
+                FontAwesomeIcons.user,
                 color: Colors.deepOrangeAccent.shade700,
-                fontWeight: FontWeight.bold,
-                fontSize: 17.0,
               ),
-            ),
-            onTap: () => {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => ViewPersonalProfilePage(user: currentUser, cart: currentCart))
+              title: Text(
+                'Login',
+                style: TextStyle(
+                  color: Colors.deepOrangeAccent.shade700,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 17.0,
+                ),
               ),
-            },
-          ),
-          ListTile(
-            leading: Icon(
-              Icons.key_outlined,
-              color: Colors.deepOrangeAccent.shade700,
+              onTap: () => {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => const LoginPage())
+                ),
+              },
             ),
-            title: Text(
-              'Change Password',
-              style: TextStyle(
+          if (currentUser.email != "guestkeninacafe@gmail.com")
+            ListTile(
+              leading: FaIcon(
+                FontAwesomeIcons.user,
                 color: Colors.deepOrangeAccent.shade700,
-                fontWeight: FontWeight.bold,
-                fontSize: 17.0,
               ),
-            ),
-            onTap: () => {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => ChangePasswordPage(user: currentUser, cart: currentCart))
+              title: Text(
+                'Profile',
+                style: TextStyle(
+                  color: Colors.deepOrangeAccent.shade700,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 17.0,
+                ),
               ),
-            },
-          ),
-          ListTile(
-            leading: Icon(
-                Icons.exit_to_app,
-                color: Colors.deepOrangeAccent.shade700
+              onTap: () => {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => ViewPersonalProfilePage(user: currentUser, cart: currentCart, orderMode: currentOrderMode, orderHistory: currentOrderHistory, tableNo: currentTableNo, tabIndex: currentTabIndex, menuItemList: currentMenuItemList, itemCategoryList: currentItemCategoryList,))
+                ),
+              },
             ),
-            title: Text(
-              'Log Out',
-              style: TextStyle(
+          if (currentUser.email != "guestkeninacafe@gmail.com")
+            ListTile(
+              leading: Icon(
+                Icons.key_outlined,
                 color: Colors.deepOrangeAccent.shade700,
-                fontWeight: FontWeight.bold,
-                fontSize: 17.0,
               ),
+              title: Text(
+                'Change Password',
+                style: TextStyle(
+                  color: Colors.deepOrangeAccent.shade700,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 17.0,
+                ),
+              ),
+              onTap: () => {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => ChangePasswordPage(user: currentUser, cart: currentCart, orderMode: currentOrderMode, orderHistory: currentOrderHistory, tableNo: currentTableNo, tabIndex: currentTabIndex, menuItemList: currentMenuItemList, itemCategoryList: currentItemCategoryList,))
+                ),
+              },
             ),
-            onTap: () => {
-              showConfirmationLogOutDialog(context)
-            },
-          ),
+          if (currentUser.email != "guestkeninacafe@gmail.com")
+            ListTile(
+              leading: Icon(
+                  Icons.exit_to_app,
+                  color: Colors.deepOrangeAccent.shade700
+              ),
+              title: Text(
+                'Log Out',
+                style: TextStyle(
+                  color: Colors.deepOrangeAccent.shade700,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 17.0,
+                ),
+              ),
+              onTap: () => {
+                showConfirmationLogOutDialog(context, currentTableNo)
+              },
+            ),
         ],
       ),
     );
   }
 
-  void showConfirmationLogOutDialog(BuildContext context) {
+  void showConfirmationLogOutDialog(BuildContext context, int currentTableNo) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -667,7 +689,7 @@ class AppsBarState extends State<AppsBar> {
                     ),
                 );
                 Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => const LoginPage())
+                    MaterialPageRoute(builder: (context) => LoginPage())
                 );
               },
               style: ElevatedButton.styleFrom(

@@ -31,17 +31,23 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const MenuItemDetailsPage(user: null, menuItem: null, cart: null),
+      home: const MenuItemDetailsPage(user: null, menuItem: null, cart: null, orderMode: null, orderHistory: null, tableNo: null, tabIndex: null, menuItemList: null, itemCategoryList: null),
     );
   }
 }
 
 class MenuItemDetailsPage extends StatefulWidget {
-  const MenuItemDetailsPage({super.key, this.user, this.menuItem, this.cart});
+  const MenuItemDetailsPage({super.key, this.user, this.menuItem, this.cart, this.orderMode, this.orderHistory, this.tableNo, this.tabIndex, this.menuItemList, this.itemCategoryList});
 
   final User? user;
   final MenuItem? menuItem;
   final Cart? cart;
+  final String? orderMode;
+  final List<int>? orderHistory;
+  final int? tableNo;
+  final int? tabIndex;
+  final List<MenuItem>? menuItemList;
+  final List<MenuItem>? itemCategoryList;
 
   @override
   State<MenuItemDetailsPage> createState() => _MenuItemDetailsPageState();
@@ -74,6 +80,30 @@ class _MenuItemDetailsPageState extends State<MenuItemDetailsPage> {
     return widget.cart;
   }
 
+  String? getOrderMode() {
+    return widget.orderMode;
+  }
+
+  List<int>? getOrderHistory() {
+    return widget.orderHistory;
+  }
+
+  int? getTableNo() {
+    return widget.tableNo;
+  }
+
+  int? getTabIndex() {
+    return widget.tabIndex;
+  }
+
+  List<MenuItem>? getMenuItemStoredList() {
+    return widget.menuItemList;
+  }
+
+  List<MenuItem>? getItemCategory() {
+    return widget.itemCategoryList;
+  }
+
   @override
   void initState() {
     super.initState();
@@ -88,6 +118,12 @@ class _MenuItemDetailsPageState extends State<MenuItemDetailsPage> {
     User? currentUser = getUser();
     MenuItem? currentMenuItem = getMenuItem();
     Cart? currentCart = getCart();
+    String? currentOrderMode = getOrderMode();
+    List<int>? currentOrderHistory = getOrderHistory();
+    int? currentTableNo = getTableNo();
+    int? currentTabIndex = getTabIndex();
+    List<MenuItem>? currentMenuItemList = getMenuItemStoredList();
+    List<MenuItem>? currentItemCategoryList = getItemCategory();
 
     if (base64Image == "") {
       base64Image = currentMenuItem!.image;
@@ -117,169 +153,54 @@ class _MenuItemDetailsPageState extends State<MenuItemDetailsPage> {
       }
     });
 
-    return FutureBuilder<List<OrderFoodItemMoreInfo>>(
-        future: getMenuItemOrderDetailsBefore(currentMenuItem, currentUser!),
-        builder: (BuildContext context, AsyncSnapshot<List<OrderFoodItemMoreInfo>> snapshot) {
-          if (snapshot.hasData) {
-            return snapshot.data![0].id == 0 ? buildMenuItemDetails(currentMenuItem, currentCart!, currentUser) : buildMenuItemDetailsOrderBefore(snapshot.data, currentMenuItem, currentCart!, currentUser);
-          } else {
-            if (snapshot.hasError) {
-              return Center(child: Text('Error: ${snapshot.error}'));
+    if (currentUser?.email != "guestkeninacafe@gmail.com") {
+      return FutureBuilder<List<OrderFoodItemMoreInfo>>(
+          future: getMenuItemOrderDetailsBefore(currentMenuItem, currentUser!),
+          builder: (BuildContext context, AsyncSnapshot<List<OrderFoodItemMoreInfo>> snapshot) {
+            if (snapshot.hasData) {
+              return snapshot.data![0].id == 0 ? buildMenuItemDetails(currentMenuItem, currentCart!, currentUser, currentOrderMode!, currentOrderHistory!, currentTableNo!, currentTabIndex!, currentMenuItemList!, currentItemCategoryList!) : buildMenuItemDetailsOrderBefore(snapshot.data, currentMenuItem, currentCart!, currentUser, currentOrderMode!, currentOrderHistory!, currentTableNo!, currentTabIndex!, currentMenuItemList!, currentItemCategoryList!);
             } else {
-              return Center(
-                child: LoadingAnimationWidget.threeRotatingDots(
-                  color: Colors.black,
-                  size: 50,
-                ),
-              );
+              if (snapshot.hasError) {
+                return Center(child: Text('Error: ${snapshot.error}'));
+              } else {
+                return Center(
+                  child: LoadingAnimationWidget.threeRotatingDots(
+                    color: Colors.black,
+                    size: 50,
+                  ),
+                );
+              }
             }
           }
-        }
-    );
-
-
-    // return Scaffold(
-    //   extendBodyBehindAppBar: true,
-    //   appBar: AppsBarState().buildMenuItemDetailsAppBar(context, "Item Details", currentUser!),
-    //   body: SafeArea(
-    //     child: SingleChildScrollView (
-    //       child: FutureBuilder<List<OrderFoodItemMoreInfo>>(
-    //           future: getMenuItemOrderDetailsBefore(currentMenuItem, currentUser),
-    //           builder: (BuildContext context, AsyncSnapshot<List<OrderFoodItemMoreInfo>> snapshot) {
-    //             if (snapshot.hasData) {
-    //               return Column(
-    //                 children: snapshot.data![0].id == 0 ? [buildMenuItemDetails(currentMenuItem, currentCart!, currentUser)] : [buildMenuItemDetailsOrderBefore(snapshot.data, currentMenuItem, currentCart!, currentUser)],
-    //               );
-    //             } else {
-    //               if (snapshot.hasError) {
-    //                 return Center(child: Text('Error: ${snapshot.error}'));
-    //               } else {
-    //                 return const Center(child: Text('Loading....'));
-    //               }
-    //             }
-    //           }
-    //       ),
-    //     ),
-    //   ),
-    //
-    //   bottomNavigationBar: SizedBox(
-    //     height: 70,
-    //     child: BottomAppBar(
-    //       child: Row(
-    //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-    //         children: [
-    //           Row(
-    //             children: [
-    //               Padding(
-    //                 padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 6),
-    //                 child: Container(
-    //                   // padding: const EdgeInsets.all(3),
-    //                   // decoration: BoxDecoration(
-    //                   //     borderRadius: BorderRadius.circular(5),
-    //                   //     color: Colors.red,
-    //                   // ),
-    //                   child: Row(
-    //                     children: [
-    //                       InkWell(
-    //                         onTap: () {
-    //                           if (itemCount > 1) {
-    //                             setState(() {
-    //                               itemCount--;
-    //                             });
-    //                           }
-    //                         },
-    //                         child: Container(
-    //                           decoration: const BoxDecoration(
-    //                             shape: BoxShape.circle,
-    //                             color: Colors.red,
-    //                           ),
-    //                           padding: const EdgeInsets.all(2),
-    //                           child: const Icon(
-    //                             Icons.remove,
-    //                             color: Colors.white,
-    //                             size: 30,
-    //                           ),
-    //                         ),
-    //                       ),
-    //                       const SizedBox(width: 5.0,),
-    //                       Container(
-    //                         margin: const EdgeInsets.symmetric(horizontal: 3),
-    //                         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
-    //                         decoration: BoxDecoration(
-    //                           borderRadius: BorderRadius.circular(3),
-    //                           color: Colors.transparent,
-    //                         ),
-    //                         child: Text(
-    //                           itemCount.toString(),
-    //                           style: const TextStyle(
-    //                             color: Colors.black,
-    //                             fontSize: 23,
-    //                           ),
-    //                         ),
-    //                       ),
-    //                       const SizedBox(width: 5.0,),
-    //                       InkWell(
-    //                         onTap: () {
-    //                           setState(() {
-    //                             itemCount++;
-    //                           });
-    //                         },
-    //                         child: Container(
-    //                           decoration: const BoxDecoration(
-    //                             shape: BoxShape.circle, // Make the container circular
-    //                             color: Colors.green, // Set the background color
-    //                           ),
-    //                           padding: const EdgeInsets.all(2), // Adjust padding as needed
-    //                           child: const Icon(
-    //                             Icons.add,
-    //                             color: Colors.white,
-    //                             size: 30,
-    //                           ),
-    //                         ),
-    //                       ),
-    //                     ],
-    //                   ),
-    //                 ),
-    //               ),
-    //             ],
-    //           ),
-    //           Padding(
-    //             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-    //             child: SizedBox(
-    //               width: 220,
-    //               height: 45,
-    //               child: ElevatedButton(
-    //                 onPressed: isButtonEnabled ? () {
-    //                   setState(() {
-    //                     currentCart!.addToCart(itemCount, currentMenuItem);
-    //                     Navigator.of(context).pop();
-    //                     // Navigator.push(context,
-    //                     //   MaterialPageRoute(builder: (context) => MenuHomePage(user: currentUser, cart: currentCart))
-    //                     // );
-    //                   });
-    //                 } : null,
-    //                 style: ElevatedButton.styleFrom(
-    //                   primary: Colors.orange.shade500, // Set your desired background color here
-    //                 ),
-    //                 child: const Text(
-    //                   "Add to cart",
-    //                   style: TextStyle(
-    //                     fontSize: 17,
-    //                     color: Colors.white,
-    //                     fontWeight: FontWeight.bold,
-    //                   ),
-    //                 ),
-    //               ),
-    //             ),
-    //           ),
-    //         ],
-    //       ),
-    //     ),
-    //   ),
-    // );
+      );
+    } else {
+      if (currentOrderHistory!.isEmpty) {
+        return buildMenuItemDetails(currentMenuItem, currentCart!, currentUser!, currentOrderMode!, currentOrderHistory!, currentTableNo!, currentTabIndex!, currentMenuItemList!, currentItemCategoryList!);
+      } else {
+        return FutureBuilder<List<OrderFoodItemMoreInfo>>(
+            future: getMenuItemOrderDetailsBeforeByGuest(currentOrderHistory[currentOrderHistory.length - 1], currentMenuItem, currentUser!),
+            builder: (BuildContext context, AsyncSnapshot<List<OrderFoodItemMoreInfo>> snapshot) {
+              if (snapshot.hasData) {
+                return snapshot.data![0].id == 0 ? buildMenuItemDetails(currentMenuItem, currentCart!, currentUser, currentOrderMode!, currentOrderHistory!, currentTableNo!, currentTabIndex!, currentMenuItemList!, currentItemCategoryList!) : buildMenuItemDetailsOrderBefore(snapshot.data, currentMenuItem, currentCart!, currentUser, currentOrderMode!, currentOrderHistory!, currentTableNo!, currentTabIndex!, currentMenuItemList!, currentItemCategoryList!);
+              } else {
+                if (snapshot.hasError) {
+                  return Center(child: Text('Error: ${snapshot.error}'));
+                } else {
+                  return Center(
+                    child: LoadingAnimationWidget.threeRotatingDots(
+                      color: Colors.black,
+                      size: 50,
+                    ),
+                  );
+                }
+              }
+            }
+        );
+      }
+    }
   }
 
-  Widget buildMenuItemDetails (MenuItem currentMenuItem, Cart currentCart, User currentUser) {
+  Widget buildMenuItemDetails (MenuItem currentMenuItem, Cart currentCart, User currentUser, String currentOrderMode, List<int> currentOrderHistory, int currentTableNo, int currentTabIndex, List<MenuItem> currentMenuItemList, List<MenuItem> currentItemCategoryList) {
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppsBarState().buildMenuItemDetailsAppBar(context, "Item Details", currentUser!),
@@ -774,22 +695,6 @@ class _MenuItemDetailsPageState extends State<MenuItemDetailsPage> {
               ),
             ],
           ),
-          // child: FutureBuilder<List<OrderFoodItemMoreInfo>>(
-          //     future: getMenuItemOrderDetailsBefore(currentMenuItem, currentUser),
-          //     builder: (BuildContext context, AsyncSnapshot<List<OrderFoodItemMoreInfo>> snapshot) {
-          //       if (snapshot.hasData) {
-          //         return Column(
-          //           children: snapshot.data![0].id == 0 ? [buildMenuItemDetails(currentMenuItem, currentCart!, currentUser)] : [buildMenuItemDetailsOrderBefore(snapshot.data, currentMenuItem, currentCart!, currentUser)],
-          //         );
-          //       } else {
-          //         if (snapshot.hasError) {
-          //           return Center(child: Text('Error: ${snapshot.error}'));
-          //         } else {
-          //           return const Center(child: Text('Loading....'));
-          //         }
-          //       }
-          //     }
-          // ),
         ),
       ),
       bottomNavigationBar: SizedBox(
@@ -884,7 +789,7 @@ class _MenuItemDetailsPageState extends State<MenuItemDetailsPage> {
                         currentCart!.addToCart(itemCount, currentMenuItem);
                         // Navigator.of(context).pop();
                         Navigator.push(context,
-                          MaterialPageRoute(builder: (context) => MenuHomePage(user: currentUser, cart: currentCart))
+                          MaterialPageRoute(builder: (context) => MenuHomePage(user: currentUser, cart: currentCart, orderMode: currentOrderMode, orderHistory: currentOrderHistory, tableNo: currentTableNo, tabIndex: currentTabIndex, menuItemList: currentMenuItemList, itemCategoryList: currentItemCategoryList,))
                         );
                       // });
                     } : null,
@@ -909,7 +814,7 @@ class _MenuItemDetailsPageState extends State<MenuItemDetailsPage> {
     );
   }
 
-  Widget buildMenuItemDetailsOrderBefore (List<OrderFoodItemMoreInfo>? currentMenuItemMoreInfo, MenuItem currentMenuItem, Cart currentCart, User currentUser) {
+  Widget buildMenuItemDetailsOrderBefore (List<OrderFoodItemMoreInfo>? currentMenuItemMoreInfo, MenuItem currentMenuItem, Cart currentCart, User currentUser, String currentOrderMode, List<int> currentOrderHistory, int currentTableNo, int currentTabIndex, List<MenuItem> currentMenuItemList, List<MenuItem> currentItemCategoryList) {
     if (!isEditPreviousOrderItemDetails) {
       remarkController.text = currentMenuItemMoreInfo![0].remarks;
       selectedVariant = currentMenuItemMoreInfo[0].variant;
@@ -1483,10 +1388,10 @@ class _MenuItemDetailsPageState extends State<MenuItemDetailsPage> {
                         currentMenuItem.sizeChosen = selectedSize;
                         currentMenuItem.remarks = remarkController.text;
                         currentCart!.addToCart(itemCount, currentMenuItem);
-                        Navigator.of(context).pop();
-                        // Navigator.push(context,
-                        //   MaterialPageRoute(builder: (context) => MenuHomePage(user: currentUser, cart: currentCart))
-                        // );
+                        // Navigator.of(context).pop();
+                        Navigator.push(context,
+                          MaterialPageRoute(builder: (context) => MenuHomePage(user: currentUser, cart: currentCart, orderMode: currentOrderMode, orderHistory: currentOrderHistory, tableNo: currentTableNo, tabIndex: currentTabIndex, menuItemList: currentMenuItemList, itemCategoryList: currentItemCategoryList,))
+                        );
                       });
                     } : null,
                     style: ElevatedButton.styleFrom(
@@ -1513,12 +1418,45 @@ class _MenuItemDetailsPageState extends State<MenuItemDetailsPage> {
   Future<List<OrderFoodItemMoreInfo>> getMenuItemOrderDetailsBefore(MenuItem currentMenuItem, User currentUser) async {
     try {
       final response = await http.post(
-        // Uri.parse('http://10.0.2.2:8000/order/request_order_list'),
         Uri.parse('http://localhost:8000/order/request_menu_item_order_details_before'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
         body: jsonEncode(<String, dynamic> {
+          'current_menu_item_id': currentMenuItem.id,
+          'user_id': currentUser.uid,
+        }),
+      );
+
+      if (response.statusCode == 201 || response.statusCode == 200) {
+        return OrderFoodItemMoreInfo.getOrderFoodItemDataList(jsonDecode(response.body));
+      } else {
+        var jsonResp = jsonDecode(response.body);
+        var error = jsonResp['error'];
+        if (kDebugMode) {
+          print('Failed to get the menu item details ordered before.');
+        }
+        if (error == "This menu item is not ordered before by the user.") {
+          return ([OrderFoodItemMoreInfo(id: 0, remarks: "", size: "", variant: "", is_done: false, food_order: 0, menu_item_image: "", menu_item_name: "", menu_item_price_standard: 0, menu_item_price_large: 0, numOrder: 0)]);
+        } else {
+          return ([OrderFoodItemMoreInfo(id: 0, remarks: "", size: "", variant: "", is_done: false, food_order: 0, menu_item_image: "", menu_item_name: "", menu_item_price_standard: 0, menu_item_price_large: 0, numOrder: 0)]);
+        }
+        throw Exception('Failed to load the order history list of the current user.');
+      }
+    } on Exception catch (e) {
+      throw Exception('API Connection Error. $e');
+    }
+  }
+
+  Future<List<OrderFoodItemMoreInfo>> getMenuItemOrderDetailsBeforeByGuest(int foodOrderID, MenuItem currentMenuItem, User currentUser) async {
+    try {
+      final response = await http.post(
+        Uri.parse('http://localhost:8000/order/request_menu_item_order_details_before_by_guest'),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(<String, dynamic> {
+          'food_order_id': foodOrderID,
           'current_menu_item_id': currentMenuItem.id,
           'user_id': currentUser.uid,
         }),

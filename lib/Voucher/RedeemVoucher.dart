@@ -6,19 +6,15 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:keninacafecust_web/AppsBar.dart';
 import 'package:http/http.dart' as http;
-import 'package:intl/intl.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 
+import 'package:keninacafecust_web/AppsBar.dart';
 import '../Entity/Cart.dart';
-import '../Entity/CartForOrderFoodItemMoreInfo.dart';
-import '../Entity/FoodOrder.dart';
 import '../Entity/MenuItem.dart';
 import '../Entity/User.dart';
 import '../Entity/Voucher.dart';
 import '../Utils/error_codes.dart';
-import '../Widget/DottedLine.dart';
 
 void main() {
   runApp(const MyApp());
@@ -40,16 +36,22 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: RedeemVoucherPage(user: null, cart: null,),
+      home: RedeemVoucherPage(user: null, cart: null, orderMode: null, orderHistory: null, tableNo: null, tabIndex: null, menuItemList: null, itemCategoryList: null),
     );
   }
 }
 
 class RedeemVoucherPage extends StatefulWidget {
-  RedeemVoucherPage({super.key, this.user, this.cart});
+  RedeemVoucherPage({super.key, this.user, this.cart, this.orderMode, this.orderHistory, this.tableNo, this.tabIndex, this.menuItemList, this.itemCategoryList});
 
   User? user;
   final Cart? cart;
+  final String? orderMode;
+  final List<int>? orderHistory;
+  final int? tableNo;
+  final int? tabIndex;
+  final List<MenuItem>? menuItemList;
+  final List<MenuItem>? itemCategoryList;
 
   @override
   State<RedeemVoucherPage> createState() => _RedeemVoucherPageState();
@@ -67,16 +69,46 @@ class _RedeemVoucherPageState extends State<RedeemVoucherPage> {
     return widget.cart;
   }
 
+  String? getOrderMode() {
+    return widget.orderMode;
+  }
+
+  List<int>? getOrderHistory() {
+    return widget.orderHistory;
+  }
+
+  int? getTableNo() {
+    return widget.tableNo;
+  }
+
+  int? getTabIndex() {
+    return widget.tabIndex;
+  }
+
+  List<MenuItem>? getMenuItemStoredList() {
+    return widget.menuItemList;
+  }
+
+  List<MenuItem>? getItemCategory() {
+    return widget.itemCategoryList;
+  }
+
   @override
   Widget build(BuildContext context) {
     enterFullScreen();
 
     User? currentUser = getUser();
     Cart? currentCart = getCart();
+    String? currentOrderMode = getOrderMode();
+    List<int>? currentOrderHistory = getOrderHistory();
+    int? currentTableNo = getTableNo();
+    int? currentTabIndex = getTabIndex();
+    List<MenuItem>? currentMenuItemList = getMenuItemStoredList();
+    List<MenuItem>? currentItemCategoryList = getItemCategory();
 
     return Scaffold(
       appBar: AppsBarState().buildRedeemVoucherAppBar(context, "Redeem Voucher", currentUser!, currentCart!),
-      drawer: AppsBarState().buildDrawer(context, currentUser!, currentCart!, isMenuHomePage),
+      drawer: AppsBarState().buildDrawer(context, currentUser!, currentCart!, isMenuHomePage, currentOrderMode!, currentOrderHistory!, currentTableNo!, currentTabIndex!, currentMenuItemList!, currentItemCategoryList!),
       body: SafeArea(
         child: SingleChildScrollView (
           child: Padding(
@@ -129,7 +161,7 @@ class _RedeemVoucherPageState extends State<RedeemVoucherPage> {
       Align(
         alignment: Alignment.centerLeft,
         child: Text(
-          'Points : ${currentUser?.points}',
+          'Points : ${currentUser?.points.toStringAsFixed(2)}',
           style: const TextStyle(
             fontWeight: FontWeight.w500,
             fontSize: 25.0,
@@ -873,6 +905,7 @@ class _RedeemVoucherPageState extends State<RedeemVoucherPage> {
       },
     );
   }
+  
 
   void showPointsNotEnoughDialog(String voucherCode) {
     showDialog(

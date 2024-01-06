@@ -1,31 +1,23 @@
 import 'dart:async';
-// import 'dart:ffi';
+import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'dart:convert';
-
 import 'package:flutter/services.dart';
-import 'package:keninacafecust_web/AppsBar.dart';
 import 'package:http/http.dart' as http;
-import 'package:keninacafecust_web/Menu/menuHome.dart';
 import 'package:coupon_uikit/coupon_uikit.dart';
-import 'package:badges/badges.dart' as badges;
-import 'package:keninacafecust_web/Order/orderPlaced.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 
-
+import 'package:keninacafecust_web/Order/orderPlaced.dart';
 import '../Entity/Cart.dart';
 import '../Entity/FoodOrder.dart';
 import '../Entity/MenuItem.dart';
 import '../Entity/User.dart';
 import '../Entity/Voucher.dart';
-import '../Entity/VoucherAssignUserMoreInfo.dart';
 import '../Menu/viewCart.dart';
 import '../Utils/error_codes.dart';
 import '../Voucher/applyVoucher.dart';
-import '../Widget/DottedLine.dart';
 
 void main() {
   runApp(const MyApp());
@@ -47,16 +39,22 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const OrderOverviewPage(user: null, cart: null,),
+      home: const OrderOverviewPage(user: null, cart: null, orderMode: null, orderHistory: null, tableNo: null, tabIndex: null, menuItemList: null, itemCategoryList: null),
     );
   }
 }
 
 class OrderOverviewPage extends StatefulWidget {
-  const OrderOverviewPage({super.key, this.user, this.cart});
+  const OrderOverviewPage({super.key, this.user, this.cart, this.orderMode, this.orderHistory, this.tableNo, this.tabIndex, this.menuItemList, this.itemCategoryList});
 
   final User? user;
   final Cart? cart;
+  final String? orderMode;
+  final List<int>? orderHistory;
+  final int? tableNo;
+  final int? tabIndex;
+  final List<MenuItem>? menuItemList;
+  final List<MenuItem>? itemCategoryList;
 
   @override
   State<OrderOverviewPage> createState() => _OrderOverviewPageState();
@@ -73,12 +71,36 @@ class _OrderOverviewPageState extends State<OrderOverviewPage> {
     return widget.cart;
   }
 
+  String? getOrderMode() {
+    return widget.orderMode;
+  }
+
+  List<int>? getOrderHistory() {
+    return widget.orderHistory;
+  }
+
+  int? getTableNo() {
+    return widget.tableNo;
+  }
+
+  int? getTabIndex() {
+    return widget.tabIndex;
+  }
+
+  List<MenuItem>? getMenuItemStoredList() {
+    return widget.menuItemList;
+  }
+
+  List<MenuItem>? getItemCategory() {
+    return widget.itemCategoryList;
+  }
+
   onGoBack(dynamic value) {
     setState(() {});
   }
 
-  void navigateApplyVoucherPage(Cart currentCart, User currentUser) {
-    Route route = MaterialPageRoute(builder: (context) => ApplyVoucherPage(cart: currentCart, user: currentUser,));
+  void navigateApplyVoucherPage(Cart currentCart, User currentUser, String currentOrderMode, List<int> currentOrderHistory, int currentTableNo, int currentTabIndex, List<MenuItem> currentMenuItemList, List<MenuItem> currentItemCategoryList) {
+    Route route = MaterialPageRoute(builder: (context) => ApplyVoucherPage(cart: currentCart, user: currentUser, orderMode: currentOrderMode, orderHistory: currentOrderHistory, tableNo: currentTableNo, tabIndex: currentTabIndex, menuItemList: currentMenuItemList, itemCategoryList: currentItemCategoryList,));
     Navigator.push(context, route).then(onGoBack);
   }
 
@@ -88,8 +110,14 @@ class _OrderOverviewPageState extends State<OrderOverviewPage> {
 
     User? currentUser = getUser();
     Cart? currentCart = getCart();
+    String? currentOrderMode = getOrderMode();
+    int? currentTableNo = getTableNo();
     List<MenuItem> menuItemList = currentCart!.getMenuItemList();
+    List<int>? currentOrderHistory = getOrderHistory() ?? [];
+    int? currentTabIndex = getTabIndex();
     int voucherAppliedID = currentCart!.getVoucherAppliedID();
+    List<MenuItem>? currentMenuItemList = getMenuItemStoredList();
+    List<MenuItem>? currentItemCategoryList = getItemCategory();
 
     return Scaffold(
       body: SafeArea(
@@ -177,13 +205,22 @@ class _OrderOverviewPageState extends State<OrderOverviewPage> {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    Text(
-                      currentUser!.email,
-                      style: const TextStyle(
-                        fontSize: 18.0,
-                        color: Colors.red,
-                      ),
-                    ),
+                    if (currentUser?.email != "guestkeninacafe@gmail.com")
+                      Text(
+                        currentUser!.email,
+                        style: const TextStyle(
+                          fontSize: 18.0,
+                          color: Colors.red,
+                        ),
+                      )
+                    else if (currentUser?.email == "guestkeninacafe@gmail.com")
+                      const Text(
+                        "Guest",
+                        style: TextStyle(
+                          fontSize: 18.0,
+                          color: Colors.red,
+                        ),
+                      )
                   ],
                 ),
                 Padding(
@@ -442,37 +479,38 @@ class _OrderOverviewPageState extends State<OrderOverviewPage> {
                             ),
                           Divider(color: Colors.grey.shade400,),
                           const SizedBox(height: 10.0,),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              const Text(
-                                "Subtotal",
-                                style: TextStyle(
-                                  fontSize: 18.0,
-                                  color: Colors.black,
-                                  fontFamily: 'Itim',
-                                  fontWeight: FontWeight.bold,
+                          if (currentUser?.email != "guestkeninacafe@gmail.com")
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                const Text(
+                                  "Subtotal",
+                                  style: TextStyle(
+                                    fontSize: 18.0,
+                                    color: Colors.black,
+                                    fontFamily: 'Itim',
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
-                              ),
-                              Text(
-                                "MYR ${currentCart.getGrandTotalBeforeDiscount().toStringAsFixed(2)}",
-                                style: const TextStyle(
-                                  fontSize: 18.0,
-                                  color: Colors.black,
-                                  fontFamily: 'Itim',
-                                  fontWeight: FontWeight.bold,
+                                Text(
+                                  "MYR ${currentCart.getGrandTotalBeforeDiscount().toStringAsFixed(2)}",
+                                  style: const TextStyle(
+                                    fontSize: 18.0,
+                                    color: Colors.black,
+                                    fontFamily: 'Itim',
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
-                              ),
-                            ],
-                          ),
-                          if (voucherAppliedID == 0)
+                              ],
+                            ),
+                          if (voucherAppliedID == 0 && currentUser?.email != "guestkeninacafe@gmail.com")
                             Padding(
                               padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 20.0),
                               child: Align(
                                 alignment: Alignment.centerLeft,
                                 child: TextButton(
                                   onPressed: () {
-                                    navigateApplyVoucherPage(currentCart, currentUser);
+                                    navigateApplyVoucherPage(currentCart, currentUser!, currentOrderMode!, currentOrderHistory!, currentTableNo!, currentTabIndex!, currentMenuItemList!, currentItemCategoryList!);
                                   },
                                   style: TextButton.styleFrom(
                                       padding: EdgeInsets.zero,
@@ -533,7 +571,7 @@ class _OrderOverviewPageState extends State<OrderOverviewPage> {
                                 // ),
                               ),
                             )
-                          else if (voucherAppliedID != 0)
+                          else if (voucherAppliedID != 0 && currentUser?.email != "guestkeninacafe@gmail.com")
                             Padding(
                               padding: const EdgeInsets.fromLTRB(0, 20, 0, 0),
                               child: FutureBuilder<List<Voucher>>(
@@ -626,7 +664,7 @@ class _OrderOverviewPageState extends State<OrderOverviewPage> {
                           height:40,
                           onPressed: () {
                             Navigator.push(context,
-                                MaterialPageRoute(builder: (context) => ViewCartPage(user: currentUser, cart: currentCart))
+                                MaterialPageRoute(builder: (context) => ViewCartPage(user: currentUser, cart: currentCart, orderMode: currentOrderMode, orderHistory: currentOrderHistory, tableNo: currentTableNo, tabIndex: currentTabIndex, menuItemList: currentMenuItemList, itemCategoryList: currentItemCategoryList,))
                             );
                           },
                           // color: Colors.red,
@@ -653,7 +691,7 @@ class _OrderOverviewPageState extends State<OrderOverviewPage> {
                           // minWidth: double.infinity,
                           height:40,
                           onPressed: () {
-                            showConfirmationCreateDialog(currentCart, currentUser);
+                            showConfirmationCreateDialog(currentCart, currentUser!, currentOrderMode!, currentOrderHistory!, currentTableNo!, currentTabIndex!, currentMenuItemList!, currentItemCategoryList!);
                           },
                           child: const Text(
                             "Confirm",
@@ -1223,12 +1261,12 @@ class _OrderOverviewPageState extends State<OrderOverviewPage> {
     return voucherApplied;
   }
 
-  Future<(int, String)> _submitOrderDetails(Cart currentCart, User currentUser) async {
+  Future<(int, String)> _submitOrderDetails(Cart currentCart, User currentUser, String currentOrderMode) async {
     double gross_total = currentCart.getGrandTotalBeforeDiscount();
     double grand_total = currentCart.getGrandTotalAfterDiscount();
     List<MenuItem> menuItemList = currentCart.getMenuItemList();
     int voucherAppliedID = currentCart.voucherAppliedID;
-    var (currentOrderID, err_code) = await createOrder(gross_total, grand_total, menuItemList, voucherAppliedID, currentUser);
+    var (currentOrderID, err_code) = await createOrder(gross_total, grand_total, menuItemList, voucherAppliedID, currentUser, currentOrderMode);
     if (currentOrderID == 0) {
       if (kDebugMode) {
         print("Failed to create order.");
@@ -1238,7 +1276,7 @@ class _OrderOverviewPageState extends State<OrderOverviewPage> {
     return (currentOrderID, err_code);
   }
 
-  Future<(int, String)> createOrder(double gross_total, double grand_total, List<MenuItem> menuItemList, int voucherAppliedID, User currentUser) async {
+  Future<(int, String)> createOrder(double gross_total, double grand_total, List<MenuItem> menuItemList, int voucherAppliedID, User currentUser, String currentOrderMode) async {
     try {
       final response = await http.post(
         // Uri.parse('http://10.0.2.2:8000/order/create_order'),
@@ -1254,6 +1292,7 @@ class _OrderOverviewPageState extends State<OrderOverviewPage> {
           'menu_items': menuItemList.map((menuItem) => menuItem.toJson()).toList(),
           'voucher_applied_id': voucherAppliedID,
           'is_done': false,
+          'order_mode': currentOrderMode,
         }),
       );
 
@@ -1319,7 +1358,7 @@ class _OrderOverviewPageState extends State<OrderOverviewPage> {
     }
   }
 
-  void showConfirmationCreateDialog(Cart currentCart, User currentUser) {
+  void showConfirmationCreateDialog(Cart currentCart, User currentUser, String currentOrderMode, List<int> currentOrderHistory, int currentTableNo, int currentTabIndex, List<MenuItem> currentMenuItemList, List<MenuItem> currentItemCategoryList) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -1329,7 +1368,7 @@ class _OrderOverviewPageState extends State<OrderOverviewPage> {
           actions: [
             ElevatedButton(
               onPressed: () async {
-                var (currentOrderIDAsync, err_code) = await _submitOrderDetails(currentCart, currentUser);
+                var (currentOrderIDAsync, err_code) = await _submitOrderDetails(currentCart, currentUser, currentOrderMode);
                 setState(() {
                   currentOrderIDGet = currentOrderIDAsync;
                   if (currentOrderIDGet == 0) {
@@ -1364,6 +1403,7 @@ class _OrderOverviewPageState extends State<OrderOverviewPage> {
                   } else {
                     currentCart = Cart(id: 0, menuItem: [], numMenuItemOrder: 0, grandTotalBeforeDiscount: 0, grandTotalAfterDiscount: 0, price_discount: 0, voucherAppliedID: 0, voucherApplied_type_name: "", voucherApplied_cost_off: 0, voucherApplied_free_menu_item_name: "", voucherApplied_applicable_menu_item_name: "", voucherApplied_min_spending: 0);
                     Navigator.of(context).pop();
+                    currentOrderHistory = [...currentOrderHistory, currentOrderIDGet];
                     showDialog(context: context, builder: (
                         BuildContext context) =>
                         AlertDialog(
@@ -1376,7 +1416,7 @@ class _OrderOverviewPageState extends State<OrderOverviewPage> {
                                 Navigator.of(context).pop();
                                 Navigator.push(
                                   context,
-                                  MaterialPageRoute(builder: (context) => OrderPlacedPage(user: currentUser, cart: currentCart, orderID: currentOrderIDGet)),
+                                  MaterialPageRoute(builder: (context) => OrderPlacedPage(user: currentUser, cart: currentCart, orderID: currentOrderIDGet, orderMode: currentOrderMode, orderHistory: currentOrderHistory, tableNo: currentTableNo, tabIndex: currentTabIndex, menuItemList: currentMenuItemList, itemCategoryList: currentItemCategoryList,)),
                                 );
                               },
                             ),

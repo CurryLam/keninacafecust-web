@@ -5,19 +5,16 @@ import 'package:coupon_uikit/coupon_uikit.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:keninacafecust_web/AppsBar.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 
+import 'package:keninacafecust_web/AppsBar.dart';
 import '../Entity/Cart.dart';
 import '../Entity/CartForOrderFoodItemMoreInfo.dart';
-import '../Entity/FoodOrder.dart';
 import '../Entity/MenuItem.dart';
 import '../Entity/User.dart';
-import '../Entity/Voucher.dart';
 import '../Entity/VoucherAssignUserMoreInfo.dart';
-import '../Widget/DottedLine.dart';
 import 'RedeemVoucher.dart';
 
 void main() {
@@ -40,17 +37,23 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const ApplyVoucherInEditOrderPage(user: null, cart: null, cartOrder: null,),
+      home: const ApplyVoucherInEditOrderPage(user: null, cart: null, cartOrder: null, orderMode: null, orderHistory: null, tableNo: null, tabIndex: null, menuItemList: null, itemCategoryList: null),
     );
   }
 }
 
 class ApplyVoucherInEditOrderPage extends StatefulWidget {
-  const ApplyVoucherInEditOrderPage({super.key, this.user, this.cart, this.cartOrder});
+  const ApplyVoucherInEditOrderPage({super.key, this.user, this.cart, this.cartOrder, this.orderMode, this.orderHistory, this.tableNo, this.tabIndex, this.menuItemList, this.itemCategoryList});
 
   final User? user;
   final Cart? cart;
   final CartForOrderFoodItemMoreInfo? cartOrder;
+  final String? orderMode;
+  final List<int>? orderHistory;
+  final int? tableNo;
+  final int? tabIndex;
+  final List<MenuItem>? menuItemList;
+  final List<MenuItem>? itemCategoryList;
 
   @override
   State<ApplyVoucherInEditOrderPage> createState() => _ApplyVoucherInEditOrderPageState();
@@ -71,12 +74,36 @@ class _ApplyVoucherInEditOrderPageState extends State<ApplyVoucherInEditOrderPag
     return widget.cartOrder;
   }
 
+  String? getOrderMode() {
+    return widget.orderMode;
+  }
+
+  List<int>? getOrderHistory() {
+    return widget.orderHistory;
+  }
+
+  int? getTableNo() {
+    return widget.tableNo;
+  }
+
+  int? getTabIndex() {
+    return widget.tabIndex;
+  }
+
+  List<MenuItem>? getMenuItemStoredList() {
+    return widget.menuItemList;
+  }
+
+  List<MenuItem>? getItemCategory() {
+    return widget.itemCategoryList;
+  }
+
   onGoBack(dynamic value) {
     setState(() {});
   }
 
-  void navigateRedeemVoucherPage(Cart currentCart, User currentUser) {
-    Route route = MaterialPageRoute(builder: (context) => RedeemVoucherPage(cart: currentCart, user: currentUser,));
+  void navigateRedeemVoucherPage(Cart currentCart, User currentUser, String currentOrderMode, List<int>? currentOrderHistory, int currentTableNo, int currentTabIndex, List<MenuItem> currentMenuItemList, List<MenuItem> currentItemCategoryList) {
+    Route route = MaterialPageRoute(builder: (context) => RedeemVoucherPage(cart: currentCart, user: currentUser, orderMode: currentOrderMode, orderHistory: currentOrderHistory, tableNo: currentTableNo, tabIndex: currentTabIndex, menuItemList: currentMenuItemList, itemCategoryList: currentItemCategoryList,));
     Navigator.push(context, route).then(onGoBack);
   }
 
@@ -86,12 +113,17 @@ class _ApplyVoucherInEditOrderPageState extends State<ApplyVoucherInEditOrderPag
 
     User? currentUser = getUser();
     Cart? currentCart = getCart();
+    String? currentOrderMode = getOrderMode();
+    List<int>? currentOrderHistory = getOrderHistory();
+    int? currentTableNo = getTableNo();
     CartForOrderFoodItemMoreInfo? currentCartOrder = getCartOrder();
-    List<MenuItem> menuItemList = currentCart!.getMenuItemList();
+    int? currentTabIndex = getTabIndex();
+    List<MenuItem>? currentMenuItemList = getMenuItemStoredList();
+    List<MenuItem>? currentItemCategoryList = getItemCategory();
 
     return Scaffold(
-      appBar: AppsBarState().buildApplyVoucherAppBar(context, "Apply a voucher", currentUser!, currentCart),
-      drawer: AppsBarState().buildDrawer(context, currentUser!, currentCart!, isMenuHomePage),
+      appBar: AppsBarState().buildApplyVoucherAppBar(context, "Apply a voucher", currentUser!, currentCart!),
+      drawer: AppsBarState().buildDrawer(context, currentUser!, currentCart!, isMenuHomePage, currentOrderMode!, currentOrderHistory!, currentTableNo!, currentTabIndex!, currentMenuItemList!, currentItemCategoryList!),
       body: SafeArea(
         child: SingleChildScrollView (
           child: Padding(
@@ -101,7 +133,7 @@ class _ApplyVoucherInEditOrderPageState extends State<ApplyVoucherInEditOrderPag
                 builder: (BuildContext context, AsyncSnapshot<List<VoucherAssignUserMoreInfo>> snapshot) {
                   if (snapshot.hasData) {
                     return Column(
-                      children: buildAvailableVoucherRedeemedList(snapshot.data, currentUser, currentCart, currentCartOrder!),
+                      children: buildAvailableVoucherRedeemedList(snapshot.data, currentUser, currentCart, currentCartOrder!, currentOrderMode, currentOrderHistory!, currentTableNo!, currentTabIndex!, currentMenuItemList!, currentItemCategoryList!),
                     );
                   } else {
                     if (snapshot.hasError) {
@@ -124,7 +156,7 @@ class _ApplyVoucherInEditOrderPageState extends State<ApplyVoucherInEditOrderPag
     );
   }
 
-  List<Widget> buildAvailableVoucherRedeemedList(List<VoucherAssignUserMoreInfo>? availableVoucherRedeemedList, User? currentUser, Cart currentCart, CartForOrderFoodItemMoreInfo currentCartOrder) {
+  List<Widget> buildAvailableVoucherRedeemedList(List<VoucherAssignUserMoreInfo>? availableVoucherRedeemedList, User? currentUser, Cart currentCart, CartForOrderFoodItemMoreInfo currentCartOrder, String currentOrderMode, List<int> currentOrderHistory, int currentTableNo, int currentTabIndex, List<MenuItem> currentMenuItemList, List<MenuItem> currentItemCategoryList) {
     List<Widget> voucher = [];
     List<VoucherAssignUserMoreInfo> validVoucher = [];
     List<VoucherAssignUserMoreInfo> nonValidVoucher = [];
@@ -174,7 +206,7 @@ class _ApplyVoucherInEditOrderPageState extends State<ApplyVoucherInEditOrderPag
                   minWidth: double.infinity,
                   height: 50,
                   onPressed: () {
-                    navigateRedeemVoucherPage(currentCart, currentUser!);
+                    navigateRedeemVoucherPage(currentCart, currentUser!, currentOrderMode, currentOrderHistory, currentTableNo, currentTabIndex, currentMenuItemList, currentItemCategoryList);
                   },
                   color: Colors.white,
                   shape: const RoundedRectangleBorder(
@@ -273,7 +305,7 @@ class _ApplyVoucherInEditOrderPageState extends State<ApplyVoucherInEditOrderPag
                     minWidth: double.infinity,
                     height: 50,
                     onPressed: () {
-                      navigateRedeemVoucherPage(currentCart, currentUser!);
+                      navigateRedeemVoucherPage(currentCart, currentUser!, currentOrderMode, currentOrderHistory, currentTableNo, currentTabIndex, currentMenuItemList, currentItemCategoryList);
                     },
                     color: Colors.white,
                     shape: const RoundedRectangleBorder(
@@ -811,7 +843,7 @@ class _ApplyVoucherInEditOrderPageState extends State<ApplyVoucherInEditOrderPag
                 minWidth: double.infinity,
                 height: 50,
                 onPressed: () {
-                  navigateRedeemVoucherPage(currentCart, currentUser!);
+                  navigateRedeemVoucherPage(currentCart, currentUser!, currentOrderMode, currentOrderHistory, currentTableNo, currentTabIndex, currentMenuItemList, currentItemCategoryList);
                 },
                 color: Colors.white,
                 shape: const RoundedRectangleBorder(

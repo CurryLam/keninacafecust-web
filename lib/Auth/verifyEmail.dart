@@ -6,12 +6,12 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
-
-import 'package:keninacafecust_web/Auth/passwordResetScreen.dart';
+import 'package:keninacafecust_web/Auth/enterEmailToRegister.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 
+import 'package:keninacafecust_web/Auth/passwordResetScreen.dart';
+import 'package:keninacafecust_web/Auth/register.dart';
 import '../Utils/error_codes.dart';
-import 'newPasswordScreen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -33,23 +33,23 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const OtpEnterScreenPage(otp_id: null, uid: null, tableNo: null),
+      home: const VerifyEmailPage(otp_id: null, email: null, tableNo: null),
     );
   }
 }
 
-class OtpEnterScreenPage extends StatefulWidget {
-  const OtpEnterScreenPage({super.key, this.otp_id, this.uid, this.tableNo});
+class VerifyEmailPage extends StatefulWidget {
+  const VerifyEmailPage({super.key, this.otp_id, this.email, this.tableNo});
 
   final String? otp_id;
-  final String? uid;
+  final String? email;
   final int? tableNo;
 
   @override
-  State<OtpEnterScreenPage> createState() => _OtpEnterScreenPageState();
+  State<VerifyEmailPage> createState() => _VerifyEmailPageState();
 }
 
-class _OtpEnterScreenPageState extends State<OtpEnterScreenPage> {
+class _VerifyEmailPageState extends State<VerifyEmailPage> {
   final TextEditingController otpController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   late Timer _otpTimer;
@@ -61,13 +61,14 @@ class _OtpEnterScreenPageState extends State<OtpEnterScreenPage> {
   bool isLoadingVerify = false;
   String? otpIdGet;
 
-  String? getOTPId() {
+  String? getOTPID() {
     return widget.otp_id;
   }
 
-  String? getUidEncode() {
-    return widget.uid;
+  String? getEmail() {
+    return widget.email;
   }
+
   int? getTableNo() {
     return widget.tableNo;
   }
@@ -75,7 +76,7 @@ class _OtpEnterScreenPageState extends State<OtpEnterScreenPage> {
   @override
   void initState() {
     super.initState();
-    otpIdGet = getOTPId();
+    otpIdGet = getOTPID();
     _remainingOTPTime = 300;
     _remainingResendEmailTime = 60;
     _startOTPTimer(getTableNo());
@@ -91,7 +92,7 @@ class _OtpEnterScreenPageState extends State<OtpEnterScreenPage> {
           _otpTimer.cancel();
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => PasswordResetScreenPage(tableNo: currentTableNo)),
+            MaterialPageRoute(builder: (context) => EnterEmailToRegisterPage(tableNo: currentTableNo,)),
           );
           showDialog(context: context, builder: (
               BuildContext context) =>
@@ -142,22 +143,22 @@ class _OtpEnterScreenPageState extends State<OtpEnterScreenPage> {
     super.dispose();
   }
 
-  onGoBack(dynamic value) {
-    setState(() {
-      otpController.text = "";
-    });
-  }
-
-  void navigateNewPasswordScreenPage(String uidEncode, int currentTableNo){
-    Route route = MaterialPageRoute(builder: (context) => NewPasswordScreenPage(uid: uidEncode, tableNo: currentTableNo,));
-    Navigator.push(context, route).then(onGoBack);
-  }
+  // onGoBack(dynamic value) {
+  //   setState(() {
+  //     otpController.text = "";
+  //   });
+  // }
+  //
+  // void navigateNewPasswordScreenPage(String email, int currentTableNo){
+  //   Route route = MaterialPageRoute(builder: (context) => RegisterPage(email: email, tableNo: currentTableNo,));
+  //   Navigator.push(context, route).then(onGoBack);
+  // }
 
   @override
   Widget build(BuildContext context) {
 
-    String? currentOtpId = getOTPId();
-    String? uidEncode = getUidEncode();
+    String? currentOtpId = getOTPID();
+    String? email = getEmail();
     int? currentTableNo = getTableNo();
 
     return WillPopScope(
@@ -290,7 +291,7 @@ class _OtpEnterScreenPageState extends State<OtpEnterScreenPage> {
                               _resendEmailTimer.cancel();
                               Navigator.push(
                                   context,
-                                  MaterialPageRoute(builder: (context) => NewPasswordScreenPage(tableNo: currentTableNo, uid: uidEncode, ),
+                                  MaterialPageRoute(builder: (context) => RegisterPage(tableNo: currentTableNo, email: email),
                                   ));
                             });
                           } else {
@@ -299,31 +300,31 @@ class _OtpEnterScreenPageState extends State<OtpEnterScreenPage> {
                             });
                             if (err_code == ErrorCodes.VERIFY_OTP_FAIL_BACKEND) {
                               showDialog(context: context, builder: (
-                                  BuildContext context) =>
+                                BuildContext context) =>
                                   AlertDialog(
                                     title: const Text('Error'),
                                     content: Text('An Error occurred while trying to verify otp.\n\nError Code: $err_code'),
                                     actions: <Widget>[
                                       TextButton(onPressed: () =>
-                                          Navigator.pop(context, 'Ok'),
-                                          child: const Text('Ok')
+                                        Navigator.pop(context, 'Ok'),
+                                        child: const Text('Ok')
                                       ),
                                     ],
                                   ),
                               );
                             } else if (err_code == ErrorCodes.VERIFY_OTP_FAIL_NOT_MATCHED) {
                               showDialog(context: context, builder: (
-                                  BuildContext context) =>
+                                BuildContext context) =>
                                   AlertDialog(
                                     title: const Text('OTP Verification Failed'),
                                     content: Text('Please check your email with otp number.\n\nError Code: $err_code'),
                                     actions: <Widget>[
                                       TextButton(onPressed: () =>
-                                          Navigator.pop(context, 'Ok'),
-                                          child: const Text('Ok')
+                                        Navigator.pop(context, 'Ok'),
+                                        child: const Text('Ok')
                                       ),
                                     ],
-                                  ),
+                                ),
                               );
                             } else if (err_code == ErrorCodes.VERIFY_OTP_FAIL_API_CONNECTION) {
                               showDialog(context: context, builder: (
@@ -353,9 +354,9 @@ class _OtpEnterScreenPageState extends State<OtpEnterScreenPage> {
                         size: 20,
                       )
                           : const Text("Verify",style:
-                        TextStyle(
-                          fontWeight: FontWeight.bold,fontSize: 16, color: Colors.white,
-                        ),
+                      TextStyle(
+                        fontWeight: FontWeight.bold,fontSize: 16, color: Colors.white,
+                      ),
                       ),
                     ),
                   ),
@@ -372,11 +373,11 @@ class _OtpEnterScreenPageState extends State<OtpEnterScreenPage> {
                 TextButton(
                   onPressed: () async {
                     if (_remainingResendEmailTime == 0) {
-                      var (otpIdLatest, err_code) = await resendEmail(uidEncode!, currentOtpId!);
+                      var (otpLatest, err_code) = await resendEmail(email!, currentOtpId!);
                       if (err_code == ErrorCodes.OPERATION_OK) {
                         setState(() {
                           isLoading = false;
-                          otpIdGet = otpIdLatest;
+                          otpIdGet = otpLatest;
                           _resetTimer();
                         });
                       } else {
@@ -456,19 +457,19 @@ class _OtpEnterScreenPageState extends State<OtpEnterScreenPage> {
     );
   }
 
-  Future<(String, String)> resendEmail(String uidEncode, String otp_id) async {
+  Future<(String, String)> resendEmail(String email, String currentOtpId) async {
     setState(() {
       isLoading = true;
     });
     try {
       final response = await http.post(
-        Uri.parse('http://localhost:8000/users/resend_email'),
+        Uri.parse('http://localhost:8000/users/email_verification'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
         body: jsonEncode(<String, dynamic> {
-          'uidEncode': uidEncode,
-          'current_otp_id': otp_id,
+          'email': email,
+          'current_otp_id': currentOtpId,
         }),
 
       );
@@ -524,4 +525,5 @@ class _OtpEnterScreenPageState extends State<OtpEnterScreenPage> {
       return (false, (ErrorCodes.VERIFY_OTP_FAIL_API_CONNECTION));
     }
   }
+
 }

@@ -6,11 +6,12 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
-import 'package:keninacafecust_web/Entity/CartForOrderFoodItemMoreInfo.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 
+import 'package:keninacafecust_web/Entity/CartForOrderFoodItemMoreInfo.dart';
 import '../Entity/Cart.dart';
 import '../Entity/FoodOrder.dart';
+import '../Entity/MenuItem.dart';
 import '../Entity/OrderFoodItemMoreInfo.dart';
 import '../Entity/User.dart';
 import '../Entity/Voucher.dart';
@@ -38,18 +39,24 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const EditOrderDetailsPage(user: null, order: null, cart: null),
+      home: const EditOrderDetailsPage(user: null, order: null, cart: null, cartOrder: null, orderMode: null, orderHistory: null, tableNo: null, tabIndex: null, menuItemList: null, itemCategoryList: null),
     );
   }
 }
 
 class EditOrderDetailsPage extends StatefulWidget {
-  const EditOrderDetailsPage({super.key, this.user, this.order, this.cart, this.cartOrder});
+  const EditOrderDetailsPage({super.key, this.user, this.order, this.cart, this.cartOrder, this.orderMode, this.orderHistory, this.tableNo, this.tabIndex, this.menuItemList, this.itemCategoryList});
 
   final User? user;
   final FoodOrder? order;
   final Cart? cart;
   final CartForOrderFoodItemMoreInfo? cartOrder;
+  final String? orderMode;
+  final List<int>? orderHistory;
+  final int? tableNo;
+  final int? tabIndex;
+  final List<MenuItem>? menuItemList;
+  final List<MenuItem>? itemCategoryList;
 
   @override
   State<EditOrderDetailsPage> createState() => _EditOrderDetailsPageState();
@@ -77,12 +84,36 @@ class _EditOrderDetailsPageState extends State<EditOrderDetailsPage> {
     return widget.cartOrder;
   }
 
+  String? getOrderMode() {
+    return widget.orderMode;
+  }
+
+  List<int>? getOrderHistory() {
+    return widget.orderHistory;
+  }
+
+  int? getTableNo() {
+    return widget.tableNo;
+  }
+
+  int? getTabIndex() {
+    return widget.tabIndex;
+  }
+
+  List<MenuItem>? getMenuItemStoredList() {
+    return widget.menuItemList;
+  }
+
+  List<MenuItem>? getItemCategory() {
+    return widget.itemCategoryList;
+  }
+
   onGoBack(dynamic value) {
     setState(() {});
   }
 
-  void navigateApplyVoucherInEditOrderPage(Cart currentCart, CartForOrderFoodItemMoreInfo currentCartOrder, User currentUser) {
-    Route route = MaterialPageRoute(builder: (context) => ApplyVoucherInEditOrderPage(cart: currentCart, cartOrder: currentCartOrder, user: currentUser,));
+  void navigateApplyVoucherInEditOrderPage(Cart currentCart, CartForOrderFoodItemMoreInfo currentCartOrder, User currentUser, String currentOrderMode, List<int> currentOrderHistory, int currentTableNo, int currentTabIndex, List<MenuItem> currentMenuItemList, List<MenuItem> currentItemCategoryList) {
+    Route route = MaterialPageRoute(builder: (context) => ApplyVoucherInEditOrderPage(cart: currentCart, cartOrder: currentCartOrder, user: currentUser, orderMode: currentOrderMode, orderHistory: currentOrderHistory, tableNo: currentTableNo, tabIndex: currentTabIndex, menuItemList: currentMenuItemList, itemCategoryList: currentItemCategoryList,));
     Navigator.push(context, route).then(onGoBack);
   }
 
@@ -94,6 +125,13 @@ class _EditOrderDetailsPageState extends State<EditOrderDetailsPage> {
     FoodOrder? currentOrder = getOrder();
     Cart? currentCart = getCart();
     CartForOrderFoodItemMoreInfo? currentCartOrder = getCartOrder();
+    String? currentOrderMode = getOrderMode();
+    List<int>? currentOrderHistory = getOrderHistory();
+    int? currentTableNo = getTableNo();
+    int? currentTabIndex = getTabIndex();
+    List<MenuItem>? currentMenuItemList = getMenuItemStoredList();
+    List<MenuItem>? currentItemCategoryList = getItemCategory();
+
     if (!currentCartOrder!.isEditCartOrder) {
       currentCartOrder?.order_grand_total = currentOrder!.grand_total;
       currentCartOrder?.order_grand_total_before_discount = currentOrder!.gross_total;
@@ -102,112 +140,123 @@ class _EditOrderDetailsPageState extends State<EditOrderDetailsPage> {
       currentCartOrder?.voucherAppliedIDBefore = currentOrder!.voucher_assign_id;
     }
 
-    return Scaffold(
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(80),
-        child: AppBar(
-          leading: IconButton(
-            onPressed: () => {
-              if (currentCartOrder.isEditCartOrder) {
-                showConfirmNoSaveDialog(currentCartOrder),
-              } else {
-                Navigator.of(context).pop(),
-                makeTheVoucherAvailableOrUnavailable(currentCartOrder!.voucherAppliedIDBefore, false),
-              }
-            },
-            icon: const Icon(Icons.arrow_back_ios_rounded, color: Colors.white),
-          ),
-          elevation: 0,
-          toolbarHeight: 100,
-          title: const Row(
-            children: [
-              Icon(
-                Icons.edit,
-                size: 35.0,
-                color: Colors.white,
-              ),
-              SizedBox(width: 8.0,),
-              Text(
-                "Edit Order",
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 27.0,
-                  fontFamily: 'BreeSerif',
+    return WillPopScope(
+      onWillPop: () async {
+        if (currentCartOrder.isEditCartOrder) {
+          showConfirmNoSaveDialog(currentCartOrder);
+        } else {
+          Navigator.of(context).pop();
+          makeTheVoucherAvailableOrUnavailable(currentCartOrder!.voucherAppliedIDBefore, false);
+        }
+        return false;
+      },
+      child: Scaffold(
+        appBar: PreferredSize(
+          preferredSize: const Size.fromHeight(80),
+          child: AppBar(
+            leading: IconButton(
+              onPressed: () => {
+                if (currentCartOrder.isEditCartOrder) {
+                  showConfirmNoSaveDialog(currentCartOrder),
+                } else {
+                  Navigator.of(context).pop(),
+                  makeTheVoucherAvailableOrUnavailable(currentCartOrder!.voucherAppliedIDBefore, false),
+                }
+              },
+              icon: const Icon(Icons.arrow_back_ios_rounded, color: Colors.white),
+            ),
+            elevation: 0,
+            toolbarHeight: 100,
+            title: const Row(
+              children: [
+                Icon(
+                  Icons.edit,
+                  size: 35.0,
                   color: Colors.white,
                 ),
-              ),
-            ],
-          ),
-          backgroundColor: Colors.orange.shade500,
-          centerTitle: true,
-        ),
-      ),
-      body: SafeArea(
-        child: SingleChildScrollView (
-          child: SizedBox(
-            child: Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: FutureBuilder<List<OrderFoodItemMoreInfo>>(
-                    future: getOrderFoodItemDetails(currentOrder!),
-                    builder: (BuildContext context, AsyncSnapshot<List<OrderFoodItemMoreInfo>> snapshot) {
-                      if (snapshot.hasData) {
-                        return Column(
-                          children: buildOrderFoodItemList(snapshot.data, currentUser, currentCart, currentCartOrder!),
-                        );
-                      } else {
-                        if (snapshot.hasError) {
-                          return Center(child: Text('Error: ${snapshot.error}'));
-                        } else {
-                          return Center(
-                            child: LoadingAnimationWidget.threeRotatingDots(
-                              color: Colors.black,
-                              size: 50,
-                            ),
-                          );
-                        }
-                      }
-                    }
-                  )
+                SizedBox(width: 8.0,),
+                Text(
+                  "Edit Order",
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 27.0,
+                    fontFamily: 'BreeSerif',
+                    color: Colors.white,
+                  ),
                 ),
               ],
             ),
+            backgroundColor: Colors.orange.shade500,
+            centerTitle: true,
           ),
         ),
-      ),
-      bottomNavigationBar: FutureBuilder<List<FoodOrder>>(
-          future: getOrderGrandTotal(currentOrder!),
-          builder: (BuildContext context, AsyncSnapshot<List<FoodOrder>> snapshot) {
-            if (snapshot.hasData) {
-              return Container(
-                decoration: const BoxDecoration(
-                  color: Colors.transparent,
-                ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: buildBottomNavigationBar(snapshot.data, currentUser!, currentCart!, currentCartOrder),
-                ),
-              );
-            } else {
-              if (snapshot.hasError) {
-                return Center(child: Text('Error: ${snapshot.error}'));
-              } else {
-                return Center(
-                  child: LoadingAnimationWidget.threeRotatingDots(
-                    color: Colors.black,
-                    size: 50,
+        body: SafeArea(
+          child: SingleChildScrollView (
+            child: SizedBox(
+              child: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: FutureBuilder<List<OrderFoodItemMoreInfo>>(
+                      future: getOrderFoodItemDetails(currentOrder!),
+                      builder: (BuildContext context, AsyncSnapshot<List<OrderFoodItemMoreInfo>> snapshot) {
+                        if (snapshot.hasData) {
+                          return Column(
+                            children: buildOrderFoodItemList(snapshot.data, currentUser, currentCart, currentCartOrder!, currentOrderMode!, currentOrderHistory!, currentTableNo!, currentTabIndex!, currentMenuItemList!, currentItemCategoryList!),
+                          );
+                        } else {
+                          if (snapshot.hasError) {
+                            return Center(child: Text('Error: ${snapshot.error}'));
+                          } else {
+                            return Center(
+                              child: LoadingAnimationWidget.threeRotatingDots(
+                                color: Colors.black,
+                                size: 50,
+                              ),
+                            );
+                          }
+                        }
+                      }
+                    )
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+        bottomNavigationBar: FutureBuilder<List<FoodOrder>>(
+            future: getOrderGrandTotal(currentOrder!),
+            builder: (BuildContext context, AsyncSnapshot<List<FoodOrder>> snapshot) {
+              if (snapshot.hasData) {
+                return Container(
+                  decoration: const BoxDecoration(
+                    color: Colors.transparent,
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: buildBottomNavigationBar(snapshot.data, currentUser!, currentCart!, currentCartOrder, currentOrderMode, currentOrderHistory!, currentTableNo!, currentTabIndex!, currentMenuItemList!, currentItemCategoryList!),
                   ),
                 );
+              } else {
+                if (snapshot.hasError) {
+                  return Center(child: Text('Error: ${snapshot.error}'));
+                } else {
+                  return Center(
+                    child: LoadingAnimationWidget.threeRotatingDots(
+                      color: Colors.black,
+                      size: 50,
+                    ),
+                  );
+                }
               }
             }
-          }
+        ),
+        backgroundColor: Colors.grey.shade100,
       ),
-      backgroundColor: Colors.grey.shade100,
     );
   }
 
-  List<Widget> buildBottomNavigationBar(List<FoodOrder>? currentOrder, User currentUser, Cart currentCart, CartForOrderFoodItemMoreInfo? currentCartOrder) {
+  List<Widget> buildBottomNavigationBar(List<FoodOrder>? currentOrder, User currentUser, Cart currentCart, CartForOrderFoodItemMoreInfo? currentCartOrder, String? currentOrderMode, List<int> currentOrderHistory, int currentTableNo, int currentTabIndex, List<MenuItem> currentMenuItemList, List<MenuItem> currentItemCategoryList) {
     List<Widget> bottomNavigationBar = [];
     // bottomNavigationBar.add(
     //   Padding(
@@ -235,68 +284,70 @@ class _EditOrderDetailsPageState extends State<EditOrderDetailsPage> {
     //     ),
     //   ),
     // );
-    if (currentCartOrder?.voucherAppliedID != 0) {
-      bottomNavigationBar.add(
-        Padding(
-          padding: const EdgeInsets.fromLTRB(20, 10, 20, 0),
-          child: FutureBuilder<List<Voucher>>(
-              future: getVoucherAppliedDetails(currentCartOrder!.voucherAppliedID),
-              builder: (BuildContext context, AsyncSnapshot <List<Voucher>> snapshot) {
-                if (snapshot.hasData) {
-                  return Column(
-                    children: buildVoucherApplied(snapshot.data, currentCartOrder!, currentCart),
-                  );
-                } else {
-                  if (snapshot.hasError) {
-                    return Center(child: Text('Error: ${snapshot.error}'));
-                  } else {
-                    return Center(
-                      child: LoadingAnimationWidget.threeRotatingDots(
-                        color: Colors.black,
-                        size: 50,
-                      ),
+    if (currentUser.email != "guestkeninacafe@gmail.com") {
+      if (currentCartOrder?.voucherAppliedID != 0) {
+        bottomNavigationBar.add(
+          Padding(
+            padding: const EdgeInsets.fromLTRB(20, 10, 20, 0),
+            child: FutureBuilder<List<Voucher>>(
+                future: getVoucherAppliedDetails(currentCartOrder!.voucherAppliedID),
+                builder: (BuildContext context, AsyncSnapshot <List<Voucher>> snapshot) {
+                  if (snapshot.hasData) {
+                    return Column(
+                      children: buildVoucherApplied(snapshot.data, currentCartOrder!, currentCart),
                     );
+                  } else {
+                    if (snapshot.hasError) {
+                      return Center(child: Text('Error: ${snapshot.error}'));
+                    } else {
+                      return Center(
+                        child: LoadingAnimationWidget.threeRotatingDots(
+                          color: Colors.black,
+                          size: 50,
+                        ),
+                      );
+                    }
                   }
                 }
-              }
-          ),
-        ),
-      );
-    } else {
-      bottomNavigationBar.add(
-        Padding(
-          padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
-          child: TextButton(
-            onPressed: () {
-              navigateApplyVoucherInEditOrderPage(currentCart, currentCartOrder!, currentUser);
-            },
-            style: TextButton.styleFrom(
-                padding: EdgeInsets.zero,
-                minimumSize: const Size(50, 15),
-                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                alignment: Alignment.centerLeft),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Icon(
-                  Icons.local_activity_outlined,
-                  color: Colors.redAccent.shade200,
-                  size: 25.0,
-                ),
-                const SizedBox(width: 8.0), // Add spacing between icon and text
-                Text(
-                  "Apply a voucher",
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 17,
-                    color: Colors.redAccent.shade200,
-                  ),
-                ),
-              ],
             ),
           ),
-        ),
-      );
+        );
+      } else {
+        bottomNavigationBar.add(
+          Padding(
+            padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
+            child: TextButton(
+              onPressed: () {
+                navigateApplyVoucherInEditOrderPage(currentCart, currentCartOrder!, currentUser, currentOrderMode!, currentOrderHistory, currentTableNo, currentTabIndex, currentMenuItemList, currentItemCategoryList);
+              },
+              style: TextButton.styleFrom(
+                  padding: EdgeInsets.zero,
+                  minimumSize: const Size(50, 15),
+                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  alignment: Alignment.centerLeft),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Icon(
+                    Icons.local_activity_outlined,
+                    color: Colors.redAccent.shade200,
+                    size: 25.0,
+                  ),
+                  const SizedBox(width: 8.0), // Add spacing between icon and text
+                  Text(
+                    "Apply a voucher",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 17,
+                      color: Colors.redAccent.shade200,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      }
     }
     bottomNavigationBar.add(
       Padding(
@@ -343,7 +394,7 @@ class _EditOrderDetailsPageState extends State<EditOrderDetailsPage> {
             minWidth: double.infinity,
             height: 50,
             onPressed: () {
-              showConfirmationUpdateDialog(currentCart, currentUser, currentCartOrder!);
+              showConfirmationUpdateDialog(currentCart, currentUser, currentCartOrder!, currentOrderMode!, currentOrderHistory, currentTableNo, currentTabIndex, currentMenuItemList, currentItemCategoryList);
             },
             color: Colors.orange.shade500,
             shape: RoundedRectangleBorder(
@@ -364,7 +415,7 @@ class _EditOrderDetailsPageState extends State<EditOrderDetailsPage> {
     return bottomNavigationBar;
   }
 
-  List<Widget> buildOrderFoodItemList(List<OrderFoodItemMoreInfo>? orderFoodItemList, User? currentUser, Cart? currentCart, CartForOrderFoodItemMoreInfo currentCartOrder) {
+  List<Widget> buildOrderFoodItemList(List<OrderFoodItemMoreInfo>? orderFoodItemList, User? currentUser, Cart? currentCart, CartForOrderFoodItemMoreInfo currentCartOrder, String currentOrderMode, List<int> currentOrderHistory, int currentTableNo, int currentTabIndex, List<MenuItem> currentMenuItemList, List<MenuItem> currentItemCategoryList) {
     if (!currentCartOrder.containFoodItem()) {
       for (OrderFoodItemMoreInfo a in orderFoodItemList!) {
         currentCartOrder.addToCartForOrderFoodItemMoreInfo(a);
@@ -444,7 +495,7 @@ class _EditOrderDetailsPageState extends State<EditOrderDetailsPage> {
                                       onPressed: () {
                                         setState(() {
                                           if (currentCartOrder.checkIsLastItem(a)) {
-                                            showDeleteLastItemConfirmationDialog(a, currentCartOrder, currentCart!, currentUser!);
+                                            showDeleteLastItemConfirmationDialog(a, currentCartOrder, currentCart!, currentUser!, currentOrderMode, currentOrderHistory, currentTableNo, currentTabIndex, currentMenuItemList, currentItemCategoryList);
                                           } else if (!currentCartOrder.checkIsLastItem(a)) {
                                             showDeleteSpecificItemConfirmationDialog(currentCartOrder, a);
                                           }
@@ -574,7 +625,7 @@ class _EditOrderDetailsPageState extends State<EditOrderDetailsPage> {
                                     onTap: () {
                                       setState(() {
                                         if (a.numOrder == 1 && currentCartOrder.checkIsLastItem(a)) {
-                                          showDeleteLastItemConfirmationDialog(a, currentCartOrder, currentCart!, currentUser!);
+                                          showDeleteLastItemConfirmationDialog(a, currentCartOrder, currentCart!, currentUser!, currentOrderMode, currentOrderHistory, currentTableNo, currentTabIndex, currentMenuItemList, currentItemCategoryList);
                                         } else if (a.numOrder == 1 && !currentCartOrder.checkIsLastItem(a)) {
                                           showDeleteLastNumOrderItemConfirmationDialog(currentCartOrder, a);
                                         } else if (a.numOrder > 1) {
@@ -1131,7 +1182,7 @@ class _EditOrderDetailsPageState extends State<EditOrderDetailsPage> {
     return voucherApplied;
   }
 
-  void showDeleteLastItemConfirmationDialog(OrderFoodItemMoreInfo orderFoodItemMoreInfo, CartForOrderFoodItemMoreInfo currentCartOrder, Cart currentCart, User currentUser) {
+  void showDeleteLastItemConfirmationDialog(OrderFoodItemMoreInfo orderFoodItemMoreInfo, CartForOrderFoodItemMoreInfo currentCartOrder, Cart currentCart, User currentUser, String currentOrderMode, List<int> currentOrderHistory, int currentTableNo, int currentTabIndex, List<MenuItem> currentMenuItemList, List<MenuItem> currentItemCategoryList) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -1190,7 +1241,7 @@ class _EditOrderDetailsPageState extends State<EditOrderDetailsPage> {
                                   Navigator.of(context).pop();
                                   Navigator.push(
                                     context,
-                                    MaterialPageRoute(builder: (context) => OrderHistoryPage(user: currentUser, cart: currentCart)),
+                                    MaterialPageRoute(builder: (context) => OrderHistoryPage(user: currentUser, cart: currentCart, orderMode: currentOrderMode, orderHistory: currentOrderHistory, tableNo: currentTableNo, tabIndex: currentTabIndex, menuItemList: currentMenuItemList, itemCategoryList: currentItemCategoryList,)),
                                   );
                                 });
                               },
@@ -1333,7 +1384,7 @@ class _EditOrderDetailsPageState extends State<EditOrderDetailsPage> {
     );
   }
 
-  void showConfirmationUpdateDialog(Cart currentCart, User currentUser, CartForOrderFoodItemMoreInfo currentCartOrder) {
+  void showConfirmationUpdateDialog(Cart currentCart, User currentUser, CartForOrderFoodItemMoreInfo currentCartOrder, String currentOrderMode, List<int> currentOrderHistory, int currentTableNo, int currentTabIndex, List<MenuItem> currentMenuItemList, List<MenuItem> currentItemCategoryList) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -1389,7 +1440,7 @@ class _EditOrderDetailsPageState extends State<EditOrderDetailsPage> {
                                 Navigator.of(context).pop();
                                 Navigator.push(
                                   context,
-                                  MaterialPageRoute(builder: (context) => OrderHistoryPage(user: currentUser, cart: currentCart)),
+                                  MaterialPageRoute(builder: (context) => OrderHistoryPage(user: currentUser, cart: currentCart, orderMode: currentOrderMode, orderHistory: currentOrderHistory, tableNo: currentTableNo, tabIndex: currentTabIndex, menuItemList: currentMenuItemList, itemCategoryList: currentItemCategoryList,)),
                                 );
                               },
                             ),

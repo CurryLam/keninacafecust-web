@@ -1,13 +1,13 @@
 import 'dart:convert';
 
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:keninacafecust_web/Auth/verifyEmail.dart';
 
 import 'login.dart';
-import 'otpEnterScreen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -29,21 +29,21 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const PasswordResetScreenPage(tableNo: null),
+      home: const EnterEmailToRegisterPage(tableNo: null),
     );
   }
 }
 
-class PasswordResetScreenPage extends StatefulWidget {
-  const PasswordResetScreenPage({super.key, this.tableNo});
+class EnterEmailToRegisterPage extends StatefulWidget {
+  const EnterEmailToRegisterPage({super.key, this.tableNo,});
 
   final int? tableNo;
 
   @override
-  State<PasswordResetScreenPage> createState() => _PasswordResetScreenPageState();
+  State<EnterEmailToRegisterPage> createState() => _EnterEmailToRegisterPageState();
 }
 
-class _PasswordResetScreenPageState extends State<PasswordResetScreenPage> {
+class _EnterEmailToRegisterPageState extends State<EnterEmailToRegisterPage> {
   final TextEditingController emailController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   bool isLoading = false;
@@ -58,11 +58,11 @@ class _PasswordResetScreenPageState extends State<PasswordResetScreenPage> {
     });
 
     final String email = emailController.text;
-    const String apiUrl = 'http://localhost:8000/users/password_reset_customer';
+    const String apiUrl = 'http://localhost:8000/users/email_verification';
 
     final response = await http.post(
       Uri.parse(apiUrl),
-      body: {'email': email},
+      body: {'email': email, 'current_otp_id': "0",},
     );
 
     final responseData = json.decode(response.body);
@@ -78,9 +78,9 @@ class _PasswordResetScreenPageState extends State<PasswordResetScreenPage> {
               onPressed: () {
                 Navigator.of(ctx).pop();
                 Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => OtpEnterScreenPage(otp_id: responseData['otp_id'].toString(), uid: responseData['uid'], tableNo: currentTableNo,),
-                ));
+                    context,
+                    MaterialPageRoute(builder: (context) => VerifyEmailPage(otp_id: responseData['otp_id'].toString(), tableNo: currentTableNo, email: emailController.text),
+                    ));
               },
               child: Text('OK'),
             ),
@@ -88,20 +88,20 @@ class _PasswordResetScreenPageState extends State<PasswordResetScreenPage> {
         ),
       );
     } else {
-      showDialog(
-        context: context,
-        builder: (ctx) => AlertDialog(
-          title: Text('Email Not Found', style: TextStyle(fontWeight: FontWeight.bold,)),
-          content: Text('Please enter the valid registered email.'),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(ctx).pop();
-              },
-              child: Text('OK'),
-            ),
-          ],
-        ),
+      showDialog(context: context, builder: (BuildContext context) =>
+          AlertDialog(
+            title: const Text('Registration'),
+            content: Text('User already exists! Please Login instead.'),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => LoginPage()));
+                },
+                child: const Text('Login'),
+              ),
+            ],
+          )
       );
     }
     setState(() {
@@ -129,7 +129,7 @@ class _PasswordResetScreenPageState extends State<PasswordResetScreenPage> {
         appBar: PreferredSize( //wrap with PreferredSize
           preferredSize: const Size.fromHeight(80),
           child: AppBar(
-            title: const Text('Forgot Password'),
+            title: const Text('Sign Up'),
             leading: IconButton(
               onPressed: () => {
                 Navigator.push(context,
@@ -143,27 +143,24 @@ class _PasswordResetScreenPageState extends State<PasswordResetScreenPage> {
           ),
         ),
         body: Padding(
-          padding: const EdgeInsets.all(20.0),
+          padding: const EdgeInsets.all(20),
           child: Form(
             key: _formKey,
             child: Column(
               children: [
-                const Padding(
-                  padding: EdgeInsets.fromLTRB(15, 0, 15, 12),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Expanded(
-                        child: Text(
-                          'To reset your password, please enter your email address. An OTP will be sent to you within a few minutes.',
-                          style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500),
-                        ),
-                      ),
-                    ],
-                  ),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    const SizedBox(height: 10,),
+                    Text("Create an Account to get more benefits !",style: TextStyle(
+                      fontSize: 15,
+                      color: Colors.grey[700],
+                    ),),
+                    const SizedBox(height: 10,)
+                  ],
                 ),
                 const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 15, vertical: 6),
+                    padding: EdgeInsets.symmetric(horizontal: 15, vertical: 6),
                     child: Row(
                         children: [
                           Text('Email', style: TextStyle(fontSize: 19, fontWeight: FontWeight.bold),),
@@ -241,9 +238,9 @@ class _PasswordResetScreenPageState extends State<PasswordResetScreenPage> {
                       ),
                       child: isLoading
                           ? LoadingAnimationWidget.threeRotatingDots(
-                              color: Colors.black,
-                              size: 20,
-                            )
+                        color: Colors.black,
+                        size: 20,
+                      )
                           : const Text(
                         "Confirm",
                         style: TextStyle(

@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:tuple/tuple.dart';
@@ -118,7 +119,7 @@ class Cart {
     if (voucherApplied_type_name == "Discount") {
       if (grandTotalBeforeDiscount < voucherApplied_min_spending) {
         requirementsToFulfill = voucherApplied_min_spending - grandTotalBeforeDiscount;
-        return Tuple2(voucherApplied, "Add MYR $requirementsToFulfill more to use this voucher");
+        return Tuple2(voucherApplied, "Add MYR ${requirementsToFulfill.toStringAsFixed(2)} more to use this voucher");
       }
       voucherApplied = true;
       grandTotalAfterDiscount -= price_discount;
@@ -191,6 +192,8 @@ class Cart {
       id: menuItemAdded.id,
       itemClass: menuItemAdded.itemClass,
       image: menuItemAdded.image,
+      hasImageStored: menuItemAdded.hasImageStored,
+      imageStored: menuItemAdded.imageStored,
       name: menuItemAdded.name,
       price_standard: menuItemAdded.price_standard,
       price_large: menuItemAdded.price_large,
@@ -204,6 +207,7 @@ class Cart {
       category_image: menuItemAdded.category_image,
       user_created_name: menuItemAdded.user_created_name,
       user_updated_name: menuItemAdded.user_updated_name,
+      total_num_ordered: menuItemAdded.total_num_ordered,
       numOrder: numMenuItemAdded,
       // priceNumOrder: (menuItemAdded.price * menuItemAdded.numOrder),
       sizeChosen: menuItemAdded.sizeChosen,

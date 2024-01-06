@@ -5,11 +5,10 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+
 import 'package:keninacafecust_web/AppsBar.dart';
 import 'package:keninacafecust_web/Entity/Cart.dart';
 import 'package:keninacafecust_web/Menu/viewCart.dart';
-import 'package:tuple/tuple.dart';
-
 import '../Entity/MenuItem.dart';
 import '../Entity/User.dart';
 import 'menuItemDetails.dart';
@@ -33,30 +32,41 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const MenuHomePage(user: null, cart: null),
+      home: const MenuHomePage(user: null, cart: null, orderMode: null, orderHistory: null, tableNo: null, tabIndex: null, menuItemList: null, itemCategoryList: null),
       // home: const MenuHomePage(),
     );
   }
 }
 
 class MenuHomePage extends StatefulWidget {
-  const MenuHomePage({super.key, this.user, this.cart});
-  // const MenuHomePage({super.key});
+  const MenuHomePage({super.key, this.user, this.cart, this.orderMode, this.orderHistory, this.tableNo, this.tabIndex, this.menuItemList, this.itemCategoryList});
 
   final User? user;
   final Cart? cart;
+  final String? orderMode;
+  final List<int>? orderHistory;
+  final int? tableNo;
+  final int? tabIndex;
+  final List<MenuItem>? menuItemList;
+  final List<MenuItem>? itemCategoryList;
+  // final List<MenuItem>? bestSellingFoods;
+  // final List<MenuItem>? bestSellingDrinks;
 
   @override
   State<MenuHomePage> createState() => _MenuHomePageState();
 }
 
 class _MenuHomePageState extends State<MenuHomePage> with SingleTickerProviderStateMixin{
-  int selectedTabIndex = 0;
+  int selectedTabIndex = 1000;
   int numItemCategory = 6;
   bool searchBoolean = false;
   List<MenuItem>? menuItem;
   List<String> bestSeller = ['Best Selling Foods', 'Best Selling Drinks'];
   List<String> bestSellerCategoryImage = ['images/best_selling_food.png', 'images/best_selling_drink.png'];
+  // List<MenuItem>? bestSellingFoods;
+  // List<MenuItem>? bestSellingDrinks;
+  List<MenuItem>? itemCategoryList;
+  List<MenuItem>? menuItemList;
   String? categoryName;
   String? tempCategoryName;
   List<int> _searchIndexList = [];
@@ -66,6 +76,7 @@ class _MenuHomePageState extends State<MenuHomePage> with SingleTickerProviderSt
   bool isMenuHomePage = true;
   Widget? image;
   String base64Image = "";
+  List<MenuItem>? menuItems;
 
 
   User? getUser() {
@@ -76,17 +87,36 @@ class _MenuHomePageState extends State<MenuHomePage> with SingleTickerProviderSt
     return widget.cart;
   }
 
+  String? getOrderMode() {
+    return widget.orderMode;
+  }
+
+  List<int>? getOrderHistory() {
+    return widget.orderHistory;
+  }
+
+  int? getTableNo() {
+    return widget.tableNo;
+  }
+
+  int? getTabIndex() {
+    return widget.tabIndex;
+  }
+
+  List<MenuItem>? getMenuItemStoredList() {
+    return widget.menuItemList;
+  }
+
+  List<MenuItem>? getItemCategory() {
+    return widget.itemCategoryList;
+  }
+
   onGoBack(dynamic value) {
     setState(() {});
   }
 
-  // void navigateViewCartPage(Cart currentCart, User currentUser) {
-  //   Route route = MaterialPageRoute(builder: (context) => ViewCartPage(cart: currentCart, user: currentUser,));
-  //   Navigator.push(context, route).then(onGoBack);
-  // }
-  //
-  void navigateMenuItemDetailsPage(MenuItem currentMenuItem, Cart currentCart, User currentUser){
-    Route route = MaterialPageRoute(builder: (context) => MenuItemDetailsPage(cart: currentCart, user: currentUser, menuItem: currentMenuItem,));
+  void navigateMenuItemDetailsPage(MenuItem currentMenuItem, Cart currentCart, User currentUser, String currentOrderMode, List<int> currentOrderHistory, int currentTableNo, int selectedTabIndex, List<MenuItem> currentMenuItemList, List<MenuItem> currentItemCategoryList){
+    Route route = MaterialPageRoute(builder: (context) => MenuItemDetailsPage(cart: currentCart, user: currentUser, menuItem: currentMenuItem, orderMode: currentOrderMode, orderHistory: currentOrderHistory, tableNo: currentTableNo, tabIndex: selectedTabIndex, menuItemList: currentMenuItemList, itemCategoryList: currentItemCategoryList,));
     Navigator.push(context, route).then(onGoBack);
   }
 
@@ -99,258 +129,296 @@ class _MenuHomePageState extends State<MenuHomePage> with SingleTickerProviderSt
 
     User? currentUser = getUser();
     Cart? currentCart = getCart();
+    String? currentOrderMode = getOrderMode();
+    List<int>? currentOrderHistory = getOrderHistory();
+    int? currentTableNo = getTableNo();
+    // if (menuItemList == null || menuItemList!.isEmpty) {
+      menuItemList = getMenuItemStoredList();
+    // }
+    // if (itemCategoryList == null || itemCategoryList!.isEmpty) {
+      itemCategoryList = getItemCategory();
+    // }
+    if (selectedTabIndex == 1000) {
+      selectedTabIndex = widget.tabIndex!;
+    }
 
-    return FutureBuilder<List<MenuItem>>(
+    return (itemCategoryList == null || itemCategoryList!.isEmpty) ? FutureBuilder<List<MenuItem>>(
       future: getItemCategoryList(),
       builder: (BuildContext context, AsyncSnapshot<List<MenuItem>> snapshot) {
         if (snapshot.hasData) {
-          return Container(
-            constraints: const BoxConstraints.expand(), // Make the container cover the entire screen
-            decoration: const BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage("images/menuBackground.png"),
-                fit: BoxFit.cover, // This ensures the image covers the entire container
-              ),
-            ),
-            child: DefaultTabController(
-              length: snapshot.data!.length + 2,
-              child: Scaffold(
-                backgroundColor: Colors.transparent,
-                appBar: AppBar(
-                  iconTheme: const IconThemeData(color: Colors.white, size: 25.0),
-                  elevation: 0,
-                  toolbarHeight: 85,
-                  title: !searchBoolean ?
-                  const Row(
-                    children: [
-                      Icon(
-                        Icons.restaurant_menu,
-                        size: 35.0,
-                        color: Colors.white,
-                      ),
-                      SizedBox(width: 8.0,),
-                      Text(
-                        "Menu",
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 27.0,
-                          fontFamily: 'BreeSerif',
-                          color: Colors.white,
-                        ),
-                      ),
-                    ],
-                  ) : searchTextField(currentUser!),
-                  backgroundColor: Colors.orange.shade500,
-                  // centerTitle: true,
-                  actions: !searchBoolean
-                      ?[
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 22),
-                      child: IconButton(
-                        onPressed: () {
-                          setState(() { //add
-                            searchBoolean = true;
-                            _searchIndexList = [];
-                          });
-                        },
-                        icon: const Icon(Icons.search, size: 35,),
-                      ),
-                    ),
-                  ]
-                      :[
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 22),
-                      child: IconButton(
-                        onPressed: () {
-                          setState(() { //add
-                            searchBoolean = false;
-                          });
-                        },
-                        icon: const Icon(Icons.clear, size: 35,),
-                      ),
-                    ),
-                  ],
-                  bottom: PreferredSize(
-                    preferredSize: const Size(106.5,110.5),
-                    child: Container(
-                      height: 116.5,
-                      decoration: BoxDecoration(
-                        border: Border(
-                            top: BorderSide(
-                              color: Colors.grey.shade300,
-                            ),
-                            bottom: BorderSide(
-                              color: Colors.grey.shade300,
-                            )
-                        ),
-                        color: Colors.white,
-                      ),
-                      child: Material(
-                        color: Colors.white,
-                        child: TabBar(
-                          onTap: (value) {
-                            // setState(() {
-                              selectedTabIndex = value;
-                            // });
-                          },
-                          tabs: buildItemCategoryList(snapshot.data, currentUser),
-                          isScrollable: true,
-                          // indicatorSize: TabBarIndicatorSize.label,
-                          labelPadding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
-                          // Space between tabs
-                          indicator: BoxDecoration(
-                            color: Colors.orange.shade500,
-                          ),
-                          unselectedLabelColor: Colors.grey.shade600,
-                          labelColor: Colors.orange.shade500,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                drawer: AppsBarState().buildDrawer(context, currentUser!, currentCart!, isMenuHomePage),
-                body: !searchBoolean ? _defaultListView(currentUser!, currentCart!) : _searchListView(currentUser!, currentCart!),
-                floatingActionButton: currentCart.getMenuItemList().isEmpty
-                    ? Stack(
-                  children: [
-                    Positioned(
-                      // bottom: 25.0,
-                      // right: 16.0,
-                      child: FloatingActionButton(
-                        backgroundColor: Colors.orange.shade500,
-                        onPressed: () async {
-                          Navigator.push(context,
-                              MaterialPageRoute(builder: (context) => ViewCartPage(user: currentUser, cart: currentCart))
-                          );
-                          // navigateViewCartPage(currentCart, currentUser);
-                        },
-                        child: const Icon(
-                          Icons.shopping_cart_outlined,
-                          size: 35,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                  ],
-                ) : Container(height: 0,),
-                bottomNavigationBar: Container(
+          itemCategoryList = snapshot.data;
+          return FutureBuilder<List<MenuItem>>(
+              future: getMenuItemList(),
+              builder: (BuildContext context, AsyncSnapshot<List<MenuItem>> snapshot) {
+                if (snapshot.hasData) {
+                  menuItemList = snapshot.data;
+                  return Container(
+                    constraints: const BoxConstraints.expand(), // Make the container cover the entire screen
                     decoration: const BoxDecoration(
-                      color: Colors.transparent,
+                      image: DecorationImage(
+                        image: AssetImage("images/menuBackground.png"),
+                        fit: BoxFit.cover, // This ensures the image covers the entire container
+                      ),
                     ),
-                    child: currentCart.getMenuItemList().isNotEmpty
-                        ? Padding(
-                      padding: const EdgeInsets.fromLTRB(20, 5, 20, 15),
-                      child: Container(
-                        padding: const EdgeInsets.only(top: 3,left: 3),
-                        child: MaterialButton(
-                          minWidth: double.infinity,
-                          height:60,
-                          onPressed: () async {
-                            // navigateViewCartPage(currentCart, currentUser);
-                            Navigator.push(context,
-                                MaterialPageRoute(builder: (context) => ViewCartPage(user: currentUser, cart: currentCart))
-                            );
-                          },
-                          color: Colors.orange.shade500,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(15)
-                          ),
-                          child: Stack(
-                            alignment: Alignment.topLeft,
+                    child: DefaultTabController(
+                      initialIndex: widget.tabIndex!,
+                      length: itemCategoryList!.length + 2,
+                      child: Scaffold(
+                        backgroundColor: Colors.transparent,
+                        appBar: AppBar(
+                          iconTheme: const IconThemeData(color: Colors.white, size: 25.0),
+                          elevation: 0,
+                          toolbarHeight: 85,
+                          title: !searchBoolean ?
+                          const Row(
                             children: [
-                              FloatingActionButton(
+                              Icon(
+                                Icons.restaurant_menu,
+                                size: 35.0,
+                                color: Colors.white,
+                              ),
+                              SizedBox(width: 8.0,),
+                              Text(
+                                "Menu",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 27.0,
+                                  fontFamily: 'BreeSerif',
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ],
+                          ) : searchTextField(currentUser!),
+                          backgroundColor: Colors.orange.shade500,
+                          // centerTitle: true,
+                          actions: !searchBoolean
+                              ?[
+                            Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 22),
+                              child: IconButton(
                                 onPressed: () {
-                                  // Handle the shopping cart button tap.
+                                  setState(() { //add
+                                    searchBoolean = true;
+                                    _searchIndexList = [];
+                                  });
                                 },
+                                icon: const Icon(Icons.search, size: 35,),
+                              ),
+                            ),
+                          ]
+                              :[
+                            Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 22),
+                              child: IconButton(
+                                onPressed: () {
+                                  setState(() { //add
+                                    searchBoolean = false;
+                                  });
+                                },
+                                icon: const Icon(Icons.clear, size: 35,),
+                              ),
+                            ),
+                          ],
+                          bottom: PreferredSize(
+                            preferredSize: const Size(106.5,110.5),
+                            child: Container(
+                              height: 116.5,
+                              decoration: BoxDecoration(
+                                border: Border(
+                                    top: BorderSide(
+                                      color: Colors.grey.shade300,
+                                    ),
+                                    bottom: BorderSide(
+                                      color: Colors.grey.shade300,
+                                    )
+                                ),
+                                color: Colors.white,
+                              ),
+                              child: Material(
+                                color: Colors.white,
+                                child: TabBar(
+                                  onTap: (value) {
+                                    // setState(() {
+                                    print("onTap: (value) " +value.toString());
+                                    setState(() {
+                                      selectedTabIndex = value;
+                                    });
+                                    // context.read<MyProvider>().updateSelectedIndex(value);
+                                    // });
+                                  },
+                                  tabs: buildItemCategoryList(itemCategoryList, currentUser),
+                                  isScrollable: true,
+                                  // indicatorSize: TabBarIndicatorSize.label,
+                                  labelPadding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                  // Space between tabs
+                                  indicator: BoxDecoration(
+                                    color: Colors.orange.shade500,
+                                  ),
+                                  unselectedLabelColor: Colors.grey.shade600,
+                                  labelColor: Colors.orange.shade500,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        drawer: AppsBarState().buildDrawer(context, currentUser!, currentCart!, isMenuHomePage, currentOrderMode!, currentOrderHistory!, currentTableNo!, selectedTabIndex, menuItemList!, itemCategoryList!),
+                        body: !searchBoolean ? _defaultListView(currentUser!, currentCart!, currentOrderMode!, currentOrderHistory!, currentTableNo!, selectedTabIndex) : _searchListView(currentUser!, currentCart!, currentOrderMode!, currentOrderHistory!, currentTableNo!, selectedTabIndex),
+                        floatingActionButton: currentCart.getMenuItemList().isEmpty
+                            ? Stack(
+                          children: [
+                            Positioned(
+                              // bottom: 25.0,
+                              // right: 16.0,
+                              child: FloatingActionButton(
                                 backgroundColor: Colors.orange.shade500,
-                                elevation: 0.0,
+                                onPressed: () async {
+                                  Navigator.push(context,
+                                      MaterialPageRoute(builder: (context) => ViewCartPage(user: currentUser, cart: currentCart, orderMode: currentOrderMode, orderHistory: currentOrderHistory, tableNo: currentTableNo, tabIndex: selectedTabIndex, menuItemList: menuItemList, itemCategoryList: itemCategoryList))
+                                  );
+                                  // navigateViewCartPage(currentCart, currentUser);
+                                },
                                 child: const Icon(
                                   Icons.shopping_cart_outlined,
                                   size: 35,
                                   color: Colors.white,
                                 ),
                               ),
-                              Positioned(
-                                top: 0,
-                                left: 35,
-                                child: Container(
-                                  padding: const EdgeInsets.all(5),
-                                  decoration: const BoxDecoration(
-                                    color: Colors.white,
-                                    shape: BoxShape.circle,
+                            ),
+                          ],
+                        ) : Container(height: 0,),
+                        bottomNavigationBar: Container(
+                            decoration: const BoxDecoration(
+                              color: Colors.transparent,
+                            ),
+                            child: currentCart.getMenuItemList().isNotEmpty
+                                ? Padding(
+                              padding: const EdgeInsets.fromLTRB(20, 5, 20, 15),
+                              child: Container(
+                                padding: const EdgeInsets.only(top: 3,left: 3),
+                                child: MaterialButton(
+                                  minWidth: double.infinity,
+                                  height:60,
+                                  onPressed: () async {
+                                    // navigateViewCartPage(currentCart, currentUser);
+                                    Navigator.push(context,
+                                        MaterialPageRoute(builder: (context) => ViewCartPage(user: currentUser, cart: currentCart, orderMode: currentOrderMode, orderHistory: currentOrderHistory, tableNo: currentTableNo, tabIndex: selectedTabIndex, menuItemList: menuItemList, itemCategoryList: itemCategoryList))
+                                    );
+                                  },
+                                  color: Colors.orange.shade500,
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(15)
                                   ),
-                                  child: Text(
-                                    currentCart.getNumMenuItemOrder().toString(),
-                                    style: TextStyle(
-                                      color: Colors.orange.shade500,
-                                      fontSize: 12,
-                                    ),
+                                  child: Stack(
+                                    alignment: Alignment.topLeft,
+                                    children: [
+                                      FloatingActionButton(
+                                        onPressed: () {
+                                          // Handle the shopping cart button tap.
+                                        },
+                                        backgroundColor: Colors.orange.shade500,
+                                        elevation: 0.0,
+                                        child: const Icon(
+                                          Icons.shopping_cart_outlined,
+                                          size: 35,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                      Positioned(
+                                        top: 0,
+                                        left: 35,
+                                        child: Container(
+                                          padding: const EdgeInsets.all(5),
+                                          decoration: const BoxDecoration(
+                                            color: Colors.white,
+                                            shape: BoxShape.circle,
+                                          ),
+                                          child: Text(
+                                            currentCart.getNumMenuItemOrder().toString(),
+                                            style: TextStyle(
+                                              color: Colors.orange.shade500,
+                                              fontSize: 12,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.fromLTRB(70, 18, 0, 0),
+                                        child: Row(
+                                          // mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Text(
+                                              'RM ${currentCart.getGrandTotalBeforeDiscount().toStringAsFixed(2)}', // Replace with the actual total price.
+                                              style: const TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 16.5,
+                                                color: Colors.white,
+                                              ),
+                                            ),
+                                            const Spacer(),
+                                          ],
+                                        ),
+                                      ),
+                                      const Padding(
+                                        padding: EdgeInsets.fromLTRB(207, 18, 0, 0),
+                                        child: Row(
+                                          mainAxisAlignment: MainAxisAlignment.end,
+                                          children: [
+                                            Text(
+                                              'VIEW CART',
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.white,
+                                                fontSize: 16.5,
+                                              ),
+                                            ),
+                                            SizedBox(width: 5.0,),
+                                            Padding(
+                                              padding: EdgeInsets.fromLTRB(0, 0, 0, 3.5),
+                                              child: Icon(
+                                                Icons.arrow_forward_ios_sharp,
+                                                size: 20,
+                                                color: Colors.white,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      // const Padding(
+                                      //   padding: EdgeInsets.fromLTRB(297, 16, 0, 0),
+                                      //   child: Row(
+                                      //     mainAxisAlignment: MainAxisAlignment.end,
+                                      //     children: [
+                                      //       Icon(
+                                      //         Icons.arrow_forward_ios_sharp,
+                                      //         size: 20,
+                                      //         color: Colors.white,
+                                      //       )
+                                      //     ],
+                                      //   ),
+                                      // ),
+                                    ],
                                   ),
                                 ),
                               ),
-                              Padding(
-                                padding: const EdgeInsets.fromLTRB(70, 18, 0, 0),
-                                child: Row(
-                                  // mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Text(
-                                      'RM ${currentCart.getGrandTotalBeforeDiscount().toStringAsFixed(2)}', // Replace with the actual total price.
-                                      style: const TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 16.5,
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              const Padding(
-                                padding: EdgeInsets.fromLTRB(207, 18, 0, 0),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  children: [
-                                    Text(
-                                      'VIEW CART',
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.white,
-                                        fontSize: 16.5,
-                                      ),
-                                    ),
-                                    SizedBox(width: 5.0,),
-                                    Padding(
-                                      padding: EdgeInsets.fromLTRB(0, 0, 0, 3.5),
-                                      child: Icon(
-                                        Icons.arrow_forward_ios_sharp,
-                                        size: 20,
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              // const Padding(
-                              //   padding: EdgeInsets.fromLTRB(297, 16, 0, 0),
-                              //   child: Row(
-                              //     mainAxisAlignment: MainAxisAlignment.end,
-                              //     children: [
-                              //       Icon(
-                              //         Icons.arrow_forward_ios_sharp,
-                              //         size: 20,
-                              //         color: Colors.white,
-                              //       )
-                              //     ],
-                              //   ),
-                              // ),
-                            ],
-                          ),
+                            ) : Container(height: 0,)
                         ),
                       ),
-                    ) : Container(height: 0,)
-                  ),
-                ),
-              ),
-            );
+                    ),
+                  );
+                } else {
+                  if (snapshot.hasError) {
+                    return Center(child: Text('Error: ${snapshot.error}'));
+                  } else {
+                    return Center(
+                      child: LoadingAnimationWidget.threeRotatingDots(
+                        color: Colors.black,
+                        size: 50,
+                      ),
+                    );
+                  }
+                }
+              }
+          );
         } else {
           if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}'));
@@ -364,12 +432,280 @@ class _MenuHomePageState extends State<MenuHomePage> with SingleTickerProviderSt
           }
         }
       }
+    ) : Container(
+      constraints: const BoxConstraints.expand(), // Make the container cover the entire screen
+      decoration: const BoxDecoration(
+        image: DecorationImage(
+          image: AssetImage("images/menuBackground.png"),
+          fit: BoxFit.cover, // This ensures the image covers the entire container
+        ),
+      ),
+      child: DefaultTabController(
+        initialIndex: selectedTabIndex,
+        length: itemCategoryList!.length + 2,
+        child: Scaffold(
+          backgroundColor: Colors.transparent,
+          appBar: AppBar(
+            iconTheme: const IconThemeData(color: Colors.white, size: 25.0),
+            elevation: 0,
+            toolbarHeight: 85,
+            title: !searchBoolean ?
+            const Row(
+              children: [
+                Icon(
+                  Icons.restaurant_menu,
+                  size: 35.0,
+                  color: Colors.white,
+                ),
+                SizedBox(width: 8.0,),
+                Text(
+                  "Menu",
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 27.0,
+                    fontFamily: 'BreeSerif',
+                    color: Colors.white,
+                  ),
+                ),
+              ],
+            ) : searchTextField(currentUser!),
+            backgroundColor: Colors.orange.shade500,
+            // centerTitle: true,
+            actions: !searchBoolean
+                ?[
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 22),
+                child: IconButton(
+                  onPressed: () {
+                    setState(() { //add
+                      searchBoolean = true;
+                      _searchIndexList = [];
+                    });
+                  },
+                  icon: const Icon(Icons.search, size: 35,),
+                ),
+              ),
+            ]
+                :[
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 22),
+                child: IconButton(
+                  onPressed: () {
+                    setState(() { //add
+                      searchBoolean = false;
+                    });
+                  },
+                  icon: const Icon(Icons.clear, size: 35,),
+                ),
+              ),
+            ],
+            bottom: PreferredSize(
+              preferredSize: const Size(106.5,110.5),
+              child: Container(
+                height: 116.5,
+                decoration: BoxDecoration(
+                  border: Border(
+                      top: BorderSide(
+                        color: Colors.grey.shade300,
+                      ),
+                      bottom: BorderSide(
+                        color: Colors.grey.shade300,
+                      )
+                  ),
+                  color: Colors.white,
+                ),
+                child: Material(
+                  color: Colors.white,
+                  child: TabBar(
+                    onTap: (value) {
+                      // setState(() {
+                      print("onTap: (value) " +value.toString());
+                      setState(() {
+                        selectedTabIndex = value;
+                      });
+                      // context.read<MyProvider>().updateSelectedIndex(value);
+                      // });
+                    },
+                    tabs: buildItemCategoryList(itemCategoryList, currentUser),
+                    isScrollable: true,
+                    // indicatorSize: TabBarIndicatorSize.label,
+                    labelPadding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+                    // Space between tabs
+                    indicator: BoxDecoration(
+                      color: Colors.orange.shade500,
+                    ),
+                    unselectedLabelColor: Colors.grey.shade600,
+                    labelColor: Colors.orange.shade500,
+                  ),
+                ),
+              ),
+            ),
+          ),
+          drawer: AppsBarState().buildDrawer(context, currentUser!, currentCart!, isMenuHomePage, currentOrderMode!, currentOrderHistory!, currentTableNo!, selectedTabIndex, menuItemList!, itemCategoryList!),
+          body: !searchBoolean ? _defaultListView(currentUser!, currentCart!, currentOrderMode!, currentOrderHistory!, currentTableNo!, selectedTabIndex) : _searchListView(currentUser!, currentCart!, currentOrderMode!, currentOrderHistory, currentTableNo!, selectedTabIndex),
+          floatingActionButton: currentCart.getMenuItemList().isEmpty
+              ? Stack(
+            children: [
+              Positioned(
+                // bottom: 25.0,
+                // right: 16.0,
+                child: FloatingActionButton(
+                  backgroundColor: Colors.orange.shade500,
+                  onPressed: () async {
+                    print(menuItemList);
+                    // print(bestSellingFoods);
+                    // print(bestSellingDrinks);
+                    print(itemCategoryList);
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => ViewCartPage(user: currentUser, cart: currentCart, orderMode: currentOrderMode, orderHistory: currentOrderHistory, tableNo: currentTableNo, tabIndex: selectedTabIndex, menuItemList: menuItemList, itemCategoryList: itemCategoryList))
+                    );
+                    // navigateViewCartPage(currentCart, currentUser);
+                  },
+                  child: const Icon(
+                    Icons.shopping_cart_outlined,
+                    size: 35,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ],
+          ) : Container(height: 0,),
+          bottomNavigationBar: Container(
+              decoration: const BoxDecoration(
+                color: Colors.transparent,
+              ),
+              child: currentCart.getMenuItemList().isNotEmpty
+                  ? Padding(
+                padding: const EdgeInsets.fromLTRB(20, 5, 20, 15),
+                child: Container(
+                  padding: const EdgeInsets.only(top: 3,left: 3),
+                  child: MaterialButton(
+                    minWidth: double.infinity,
+                    height:60,
+                    onPressed: () async {
+                      // navigateViewCartPage(currentCart, currentUser);
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) => ViewCartPage(user: currentUser, cart: currentCart, orderMode: currentOrderMode, orderHistory: currentOrderHistory, tableNo: currentTableNo, tabIndex: selectedTabIndex, menuItemList: menuItemList, itemCategoryList: itemCategoryList))
+                      );
+                    },
+                    color: Colors.orange.shade500,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15)
+                    ),
+                    child: Stack(
+                      alignment: Alignment.topLeft,
+                      children: [
+                        FloatingActionButton(
+                          onPressed: () {
+                            // Handle the shopping cart button tap.
+                          },
+                          backgroundColor: Colors.orange.shade500,
+                          elevation: 0.0,
+                          child: const Icon(
+                            Icons.shopping_cart_outlined,
+                            size: 35,
+                            color: Colors.white,
+                          ),
+                        ),
+                        Positioned(
+                          top: 0,
+                          left: 35,
+                          child: Container(
+                            padding: const EdgeInsets.all(5),
+                            decoration: const BoxDecoration(
+                              color: Colors.white,
+                              shape: BoxShape.circle,
+                            ),
+                            child: Text(
+                              currentCart.getNumMenuItemOrder().toString(),
+                              style: TextStyle(
+                                color: Colors.orange.shade500,
+                                fontSize: 12,
+                              ),
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(70, 18, 0, 0),
+                          child: Row(
+                            // mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                'RM ${currentCart.getGrandTotalBeforeDiscount().toStringAsFixed(2)}', // Replace with the actual total price.
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16.5,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              const Spacer(),
+                            ],
+                          ),
+                        ),
+                        const Padding(
+                          padding: EdgeInsets.fromLTRB(207, 18, 0, 0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              Text(
+                                'VIEW CART',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                  fontSize: 16.5,
+                                ),
+                              ),
+                              SizedBox(width: 5.0,),
+                              Padding(
+                                padding: EdgeInsets.fromLTRB(0, 0, 0, 3.5),
+                                child: Icon(
+                                  Icons.arrow_forward_ios_sharp,
+                                  size: 20,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        // const Padding(
+                        //   padding: EdgeInsets.fromLTRB(297, 16, 0, 0),
+                        //   child: Row(
+                        //     mainAxisAlignment: MainAxisAlignment.end,
+                        //     children: [
+                        //       Icon(
+                        //         Icons.arrow_forward_ios_sharp,
+                        //         size: 20,
+                        //         color: Colors.white,
+                        //       )
+                        //     ],
+                        //   ),
+                        // ),
+                      ],
+                    ),
+                  ),
+                ),
+              ) : Container(height: 0,)
+          ),
+        ),
+      ),
     );
   }
 
   List<Widget> buildItemCategoryList(List<MenuItem>? listItemCategory, User? currentUser) {
+    for (int i = 0; i < listItemCategory!.length; i++) {
+      base64Image = listItemCategory[i]!.image;
+      if (!listItemCategory[i].hasImageStored) {
+        if (base64Image == "") {
+          print("nothing in base64");
+        } else {
+          image = Image.memory(base64Decode(base64Image), width: 60, height: 60,);
+          listItemCategory[i].imageStored = image!;
+          listItemCategory[i].hasImageStored = true;
+        }
+      }
+    }
+
     List<Widget> tabs = [];
-    // numItemCategory = listItemCategory!.length + 2;
     for (int i = 0; i < bestSeller.length; i++) {
       tabs.add(
         SizedBox(
@@ -484,7 +820,7 @@ class _MenuHomePageState extends State<MenuHomePage> with SingleTickerProviderSt
                               //   ),
                               // ),
                               ClipOval(
-                                child: Image.memory(base64Decode(listItemCategory[i].category_image), width: 60, height: 60,),
+                                child: listItemCategory[i].imageStored,
                               ),
 
                               const SizedBox(height: 5.0),
@@ -515,13 +851,14 @@ class _MenuHomePageState extends State<MenuHomePage> with SingleTickerProviderSt
     return tabs;
   }
 
-  List<Widget> buildMenuItemList(List<MenuItem>? listMenuItem, User? currentUser, Cart currentCart) {
+  List<Widget> buildMenuItemList(List<MenuItem>? listMenuItem, User? currentUser, Cart currentCart, String currentOrderMode, List<int> currentOrderHistory, int currentTableNo, int selectedTabIndex) {
     List<Widget> tabBarView = [];
     tabBarView.add(
       FutureBuilder<List<MenuItem>>(
         future: getBestSellingFoodList(),
         builder: (BuildContext context, AsyncSnapshot<List<MenuItem>> snapshot) {
           if (snapshot.hasData) {
+            // bestSellingFoods = snapshot.data;
             return SingleChildScrollView(
               child: Column(
                 children: [
@@ -544,12 +881,12 @@ class _MenuHomePageState extends State<MenuHomePage> with SingleTickerProviderSt
                       children: [
                         Expanded(
                           child: i < snapshot.data!.length
-                              ? buildMenuItemCard(snapshot.data![i], currentUser!, currentCart!)
+                              ? buildMenuItemCard(snapshot.data![i], currentUser!, currentCart!, currentOrderMode!, currentOrderHistory!, currentTableNo, selectedTabIndex, menuItemList!, itemCategoryList!)
                               : const SizedBox.shrink(),
                         ),
                         Expanded(
                           child: (i + 1) < snapshot.data!.length
-                              ? buildMenuItemCard(snapshot.data![i + 1], currentUser!, currentCart!)
+                              ? buildMenuItemCard(snapshot.data![i + 1], currentUser!, currentCart!, currentOrderMode!, currentOrderHistory!, currentTableNo, selectedTabIndex, menuItemList!, itemCategoryList!)
                               : const SizedBox.shrink(),
                         ),
                       ],
@@ -599,12 +936,12 @@ class _MenuHomePageState extends State<MenuHomePage> with SingleTickerProviderSt
                         children: [
                           Expanded(
                             child: i < snapshot.data!.length
-                                ? buildMenuItemCard(snapshot.data![i], currentUser!, currentCart!)
+                                ? buildMenuItemCard(snapshot.data![i], currentUser!, currentCart!, currentOrderMode!, currentOrderHistory!, currentTableNo, selectedTabIndex, menuItemList!, itemCategoryList!)
                                 : const SizedBox.shrink(),
                           ),
                           Expanded(
                             child: (i + 1) < snapshot.data!.length
-                                ? buildMenuItemCard(snapshot.data![i + 1], currentUser!, currentCart!)
+                                ? buildMenuItemCard(snapshot.data![i + 1], currentUser!, currentCart!, currentOrderMode!, currentOrderHistory!, currentTableNo, selectedTabIndex, menuItemList!, itemCategoryList!)
                                 : const SizedBox.shrink(),
                           ),
                         ],
@@ -656,12 +993,12 @@ class _MenuHomePageState extends State<MenuHomePage> with SingleTickerProviderSt
                       children: [
                         Expanded(
                           child: j < listMenuItem.length
-                              ? buildMenuItemCard(listMenuItem[j], currentUser!, currentCart!)
+                              ? buildMenuItemCard(listMenuItem[j], currentUser!, currentCart!, currentOrderMode!, currentOrderHistory!, currentTableNo, selectedTabIndex, menuItemList!, itemCategoryList!)
                               : const SizedBox.shrink(),
                         ),
                         Expanded(
                           child: (j + 1) < listMenuItem.length && listMenuItem[j + 1].category_name == tempCategoryName
-                              ? buildMenuItemCard(listMenuItem[j + 1], currentUser!, currentCart!)
+                              ? buildMenuItemCard(listMenuItem[j + 1], currentUser!, currentCart!, currentOrderMode!, currentOrderHistory!, currentTableNo, selectedTabIndex, menuItemList!, itemCategoryList!)
                               : const SizedBox.shrink(),
                         ),
                       ],
@@ -750,14 +1087,26 @@ class _MenuHomePageState extends State<MenuHomePage> with SingleTickerProviderSt
     );
   }
 
-  Widget buildMenuItemCard(MenuItem currentMenuItem, User currentUser, Cart currentCart) {
+  Widget buildMenuItemCard(MenuItem currentMenuItem, User currentUser, Cart currentCart, String currentOrderMode, List<int> currentOrderHistory, int currentTableNo, int selectedTabIndex, List<MenuItem> currentMenuItemList, List<MenuItem> currentItemCategoryList) {
     base64Image = currentMenuItem!.image;
-    if (base64Image == "") {
-      image = Image.asset('images/KE_Nina_Cafe_logo.jpg');
-      print("nothing in base64");
+    if (!currentMenuItem.hasImageStored) {
+      if (base64Image == "") {
+        image = Image.asset('images/KE_Nina_Cafe_logo.jpg');
+        print("nothing in base64");
+      } else {
+        image = Image.memory(base64Decode(base64Image), fit: BoxFit.contain, width: 250, height: 193,);
+        currentMenuItem.imageStored = image!;
+        currentMenuItem.hasImageStored = true;
+      }
     } else {
-      image = Image.memory(base64Decode(base64Image), fit: BoxFit.contain, width: 250, height: 193,);
+      image = currentMenuItem.imageStored;
     }
+    // if (base64Image == "") {
+    //   image = Image.asset('images/KE_Nina_Cafe_logo.jpg');
+    //   print("nothing in base64");
+    // } else {
+    //   image = Image.memory(base64Decode(base64Image), fit: BoxFit.contain, width: 250, height: 193,);
+    // }
 
     return SizedBox(
       height: 320,
@@ -795,20 +1144,39 @@ class _MenuHomePageState extends State<MenuHomePage> with SingleTickerProviderSt
               ),
 
               const Spacer(),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
-                child: Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    'RM ${currentMenuItem.price_standard.toStringAsFixed(2)}',
-                    style: const TextStyle(
-                        fontSize: 14.0,
-                        fontFamily: "Itim"
+              Row(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        'RM ${currentMenuItem.price_standard.toStringAsFixed(2)}',
+                        style: const TextStyle(
+                            fontSize: 14.0,
+                            fontFamily: "Itim"
+                        ),
+                      ),
                     ),
                   ),
-                ),
+                  const Spacer(),
+                  Icon(
+                    Icons.shopping_cart_outlined,
+                    size: 20.0,
+                    color: Colors.grey.shade700,
+                  ),
+                  const SizedBox(width: 3.0,),
+                  Text(
+                    currentMenuItem.total_num_ordered.toString(),
+                    style: TextStyle(
+                        fontSize: 14.0,
+                        fontFamily: "Itim",
+                        color: Colors.grey.shade700,
+                    ),
+                  ),
+                  const SizedBox(width: 10.0,),
+                ],
               ),
-
               const Spacer(),
               Align(
                 alignment: Alignment.center,
@@ -819,7 +1187,8 @@ class _MenuHomePageState extends State<MenuHomePage> with SingleTickerProviderSt
                       // Navigator.push(context,
                       //     MaterialPageRoute(builder: (context) => MenuItemDetailsPage(user: currentUser, menuItem: currentMenuItem, cart: currentCart))
                       // );
-                      navigateMenuItemDetailsPage(currentMenuItem, currentCart, currentUser);
+                      print("Selected index: " +selectedTabIndex.toString());
+                      navigateMenuItemDetailsPage(currentMenuItem, currentCart, currentUser, currentOrderMode, currentOrderHistory, currentTableNo, selectedTabIndex, currentMenuItemList, currentItemCategoryList);
                       setState(() {
                         currentMenuItem.numOrder = 0;
                         currentMenuItem.sizeChosen = "";
@@ -869,7 +1238,7 @@ class _MenuHomePageState extends State<MenuHomePage> with SingleTickerProviderSt
   //   List
   // }
 
-  Widget _searchListView(User currentUser, Cart currentCart) {
+  Widget _searchListView(User currentUser, Cart currentCart, String currentOrderMode, List<int> currentOrderHistory, int currentTableNo, int selectedTabIndex) {
     final List<MenuItem> menuItems = _searchIndexList.map((index) {
       // return MenuItem(name: searchMenuItem![index].name, price: searchMenuItem![index].price);
       return searchMenuItem![index];
@@ -897,12 +1266,12 @@ class _MenuHomePageState extends State<MenuHomePage> with SingleTickerProviderSt
               children: [
                 Expanded(
                   child: i < menuItems.length
-                      ? buildMenuItemCard(menuItems[i], currentUser!, currentCart!)
+                      ? buildMenuItemCard(menuItems[i], currentUser!, currentCart!, currentOrderMode!, currentOrderHistory, currentTableNo, selectedTabIndex, menuItemList!, itemCategoryList!)
                       : const SizedBox.shrink(),
                 ),
                 Expanded(
                   child: (i + 1) < menuItems.length
-                      ? buildMenuItemCard(menuItems[i + 1], currentUser!, currentCart!)
+                      ? buildMenuItemCard(menuItems[i + 1], currentUser!, currentCart!, currentOrderMode!, currentOrderHistory, currentTableNo, selectedTabIndex, menuItemList!, itemCategoryList!)
                       : const SizedBox.shrink(),
                 ),
               ],
@@ -913,15 +1282,16 @@ class _MenuHomePageState extends State<MenuHomePage> with SingleTickerProviderSt
     );
   }
 
-  Widget _defaultListView(User currentUser, Cart currentCart) {
+  Widget _defaultListView(User currentUser, Cart currentCart, String currentOrderMode, List<int> currentOrderHistory, int currentTableNo, int selectedTabIndex) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 5),
-      child: FutureBuilder<List<MenuItem>>(
+      child: (menuItemList == null || menuItemList!.isEmpty) ? FutureBuilder<List<MenuItem>>(
         future: getMenuItemList(),
         builder: (BuildContext context, AsyncSnapshot<List<MenuItem>> snapshot) {
           if (snapshot.hasData) {
+            menuItemList = snapshot.data;
             return TabBarView(
-              children: buildMenuItemList(snapshot.data, currentUser, currentCart),
+              children: buildMenuItemList(snapshot.data, currentUser, currentCart, currentOrderMode, currentOrderHistory, currentTableNo, selectedTabIndex),
             );
           } else {
             if (snapshot.hasError) {
@@ -936,11 +1306,14 @@ class _MenuHomePageState extends State<MenuHomePage> with SingleTickerProviderSt
             }
           }
         }
-      ),
+      ) : TabBarView(
+        children: buildMenuItemList(menuItemList, currentUser, currentCart, currentOrderMode, currentOrderHistory, currentTableNo, selectedTabIndex),
+      )
     );
   }
 
   Future<List<MenuItem>> getMenuItemList() async {
+
     try {
       final response = await http.get(
         // Uri.parse('http://10.0.2.2:8000/menu/request_menu_item_list'),
@@ -951,6 +1324,7 @@ class _MenuHomePageState extends State<MenuHomePage> with SingleTickerProviderSt
       );
 
       if (response.statusCode == 201 || response.statusCode == 200) {
+        // menuItemList = MenuItem.getMenuItemDataList(jsonDecode(response.body));
         return MenuItem.getMenuItemDataList(jsonDecode(response.body));
       } else {
         throw Exception('Failed to load the menu item data list.');
@@ -971,6 +1345,7 @@ class _MenuHomePageState extends State<MenuHomePage> with SingleTickerProviderSt
       );
 
       if (response.statusCode == 201 || response.statusCode == 200) {
+        // bestSellingFoods = MenuItem.getMenuItemDataList(jsonDecode(response.body));
         return MenuItem.getMenuItemDataList(jsonDecode(response.body));
       } else {
         throw Exception('Failed to load the best selling food data list.');
@@ -991,6 +1366,7 @@ class _MenuHomePageState extends State<MenuHomePage> with SingleTickerProviderSt
       );
 
       if (response.statusCode == 201 || response.statusCode == 200) {
+        // bestSellingDrinks = MenuItem.getMenuItemDataList(jsonDecode(response.body));
         return MenuItem.getMenuItemDataList(jsonDecode(response.body));
       } else {
         throw Exception('Failed to load the best selling drink data list.');
@@ -1011,6 +1387,7 @@ class _MenuHomePageState extends State<MenuHomePage> with SingleTickerProviderSt
       );
 
       if (response.statusCode == 201 || response.statusCode == 200) {
+        // itemCategory = MenuItem.getItemCategoryExistMenuItemList(jsonDecode(response.body));
         return MenuItem.getItemCategoryExistMenuItemList(jsonDecode(response.body));
       } else {
         throw Exception('Failed to load the item category exist menu item list.');
@@ -1020,6 +1397,17 @@ class _MenuHomePageState extends State<MenuHomePage> with SingleTickerProviderSt
     }
   }
 }
+
+// class MyProvider extends ChangeNotifier {
+//   int _selectedTabIndex = 0;
+//
+//   int get selectedTabIndex => _selectedTabIndex;
+//
+//   void updateSelectedIndex(int value) {
+//     _selectedTabIndex = value;
+//     notifyListeners();
+//   }
+// }
 
     // For the expanded tile (just for backup if needed)
     // return Padding(
