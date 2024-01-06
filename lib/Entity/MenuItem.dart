@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:dart_jsonwebtoken/dart_jsonwebtoken.dart';
@@ -10,6 +11,8 @@ class MenuItem {
   final int id;
   final String itemClass;
   final String image;
+  bool hasImageStored;
+  Widget imageStored;
   final String name;
   final double price_standard;
   final double price_large;
@@ -23,6 +26,7 @@ class MenuItem {
   final String category_image;
   final String user_created_name;
   final String user_updated_name;
+  final int total_num_ordered;
   int numOrder; // Cart and Order purpose
   // double priceNumOrder; // Cart and Order purpose
   String sizeChosen; // Cart and Order purpose
@@ -33,6 +37,8 @@ class MenuItem {
     required this.id,
     required this.itemClass,
     required this.image,
+    required this.hasImageStored,
+    required this.imageStored,
     required this.name,
     required this.price_standard,
     required this.price_large,
@@ -46,6 +52,7 @@ class MenuItem {
     required this.category_image,
     required this.user_created_name,
     required this.user_updated_name,
+    required this.total_num_ordered,
     required this.numOrder, // Cart and Order purpose
     // required this.priceNumOrder, // Cart and Order purpose
     required this.sizeChosen, // Cart and Order purpose
@@ -61,6 +68,8 @@ class MenuItem {
       id: json['id'],
       itemClass: json['itemClass'],
       image: json['image'] ?? '',
+      hasImageStored: false,
+      imageStored: Container(),
       name: json['name'],
       price_standard: json['price_standard'],
       price_large: json['price_large'] ?? 0,
@@ -74,6 +83,7 @@ class MenuItem {
       category_image: json['category_image'] ?? '',
       user_created_name: json['user_created_name'] ?? '',
       user_updated_name: json['user_updated_name'] ?? '',
+      total_num_ordered: json['total_num_ordered'] ?? 0,
       numOrder: 0, // Cart and Order purpose
       // priceNumOrder: 0, // Cart and Order purpose
       sizeChosen: "", // Cart and Order purpose
@@ -97,6 +107,7 @@ class MenuItem {
       'sizes': sizes,
       'category_name': category_name,
       'category_image': category_image,
+      'total_num_ordered': total_num_ordered,
       'numOrder': numOrder, // Cart and Order purpose
       'sizeChosen': sizeChosen, // Cart and Order purpose
       'variantChosen': variantChosen, // Cart and Order purpose

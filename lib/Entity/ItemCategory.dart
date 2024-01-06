@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:dart_jsonwebtoken/dart_jsonwebtoken.dart';
@@ -10,12 +11,16 @@ class ItemCategory {
   final String name;
   final String itemClass;
   final String image;
+  bool hasImageStored;
+  Widget imageStored;
 
-  const ItemCategory({
+  ItemCategory({
     required this.id,
     required this.name,
     required this.itemClass,
     required this.image,
+    required this.hasImageStored,
+    required this.imageStored,
   });
 
   factory ItemCategory.fromJson(Map<String, dynamic> json) {
@@ -27,6 +32,8 @@ class ItemCategory {
       name: json['name'],
       itemClass: json['itemClass'],
       image: json['image'],
+      hasImageStored: false,
+      imageStored: Container(),
     );
   }
 

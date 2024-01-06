@@ -1,16 +1,8 @@
-import 'dart:convert';
-import 'dart:io';
-import 'dart:math';
-import 'package:flutter/foundation.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/gestures.dart';
-import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 import '../AppsBar.dart';
 import '../Entity/Cart.dart';
+import '../Entity/MenuItem.dart';
 import '../Entity/User.dart';
 
 void main() {
@@ -33,16 +25,22 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const ViewPersonalProfilePage(user: null, cart: null),
+      home: const ViewPersonalProfilePage(user: null, cart: null, orderMode: null, orderHistory: null, tableNo: null, tabIndex: null, menuItemList: null, itemCategoryList: null),
     );
   }
 }
 
 class ViewPersonalProfilePage extends StatefulWidget {
-  const ViewPersonalProfilePage({super.key, this.user, this.cart});
+  const ViewPersonalProfilePage({super.key, this.user, this.cart, this.orderMode, this.orderHistory, this.tableNo, this.tabIndex, this.menuItemList, this.itemCategoryList});
 
   final User? user;
   final Cart? cart;
+  final String? orderMode;
+  final List<int>? orderHistory;
+  final int? tableNo;
+  final int? tabIndex;
+  final List<MenuItem>? menuItemList;
+  final List<MenuItem>? itemCategoryList;
 
   @override
   State<ViewPersonalProfilePage> createState() => _ViewPersonalProfilePageState();
@@ -51,7 +49,7 @@ class ViewPersonalProfilePage extends StatefulWidget {
 class _ViewPersonalProfilePageState extends State<ViewPersonalProfilePage> {
   final nameController = TextEditingController();
   final emailController = TextEditingController();
-  final phoneNumberController = TextEditingController();
+  // final phoneNumberController = TextEditingController();
   final genderController = TextEditingController();
   final dobController = TextEditingController();
   final pointController = TextEditingController();
@@ -66,22 +64,52 @@ class _ViewPersonalProfilePageState extends State<ViewPersonalProfilePage> {
     return widget.cart;
   }
 
+  String? getOrderMode() {
+    return widget.orderMode;
+  }
+
+  List<int>? getOrderHistory() {
+    return widget.orderHistory;
+  }
+
+  int? getTableNo() {
+    return widget.tableNo;
+  }
+
+  int? getTabIndex() {
+    return widget.tabIndex;
+  }
+
+  List<MenuItem>? getMenuItemStoredList() {
+    return widget.menuItemList;
+  }
+
+  List<MenuItem>? getItemCategory() {
+    return widget.itemCategoryList;
+  }
+
   @override
   Widget build(BuildContext context) {
     enterFullScreen();
 
     User? currentUser = getUser();
     Cart? currentCart = getCart();
+    String? currentOrderMode = getOrderMode();
+    List<int>? currentOrderHistory = getOrderHistory();
+    int? currentTableNo = getTableNo();
+    int? currentTabIndex = getTabIndex();
+    List<MenuItem>? currentMenuItemList = getMenuItemStoredList();
+    List<MenuItem>? currentItemCategoryList = getItemCategory();
     nameController.text = currentUser!.name;
     emailController.text = currentUser.email;
-    phoneNumberController.text = currentUser.phone;
+    // phoneNumberController.text = currentUser.phone;
     genderController.text = currentUser.gender;
     dobController.text = currentUser.dob.toString().substring(0,10);
     pointController.text = currentUser.points.toString();
 
     return Scaffold(
       backgroundColor: Colors.white,
-      drawer: AppsBarState().buildDrawer(context, currentUser!, currentCart!, isHomePage),
+      drawer: AppsBarState().buildDrawer(context, currentUser!, currentCart!, isHomePage, currentOrderMode!, currentOrderHistory!, currentTableNo!, currentTabIndex!, currentMenuItemList!, currentItemCategoryList!),
       appBar: AppsBarState().buildProfileAppBar(context, "PROFILE", currentUser!),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -124,20 +152,20 @@ class _ViewPersonalProfilePageState extends State<ViewPersonalProfilePage> {
                             ),
                           ),
                           const SizedBox(height: 13),
-                          TextFormField(
-                            enabled: false,
-                            controller: phoneNumberController,
-                            decoration: InputDecoration(
-                                label: Text('Phone Number', style: TextStyle(fontSize: 19, fontWeight: FontWeight.bold, color: Colors.grey.shade500),), prefixIcon: Icon(Icons.phone_android, color: Colors.grey.shade700,)
-                            ),
-                            style: TextStyle(
-                              fontSize: 18.0,
-                              color: Colors.grey.shade700,
-                              fontWeight: FontWeight.bold,
-                              fontFamily: "Gabarito",
-                            ),
-                          ),
-                          const SizedBox(height: 13),
+                          // TextFormField(
+                          //   enabled: false,
+                          //   controller: phoneNumberController,
+                          //   decoration: InputDecoration(
+                          //       label: Text('Phone Number', style: TextStyle(fontSize: 19, fontWeight: FontWeight.bold, color: Colors.grey.shade500),), prefixIcon: Icon(Icons.phone_android, color: Colors.grey.shade700,)
+                          //   ),
+                          //   style: TextStyle(
+                          //     fontSize: 18.0,
+                          //     color: Colors.grey.shade700,
+                          //     fontWeight: FontWeight.bold,
+                          //     fontFamily: "Gabarito",
+                          //   ),
+                          // ),
+                          // const SizedBox(height: 13),
                           TextFormField(
                             enabled: false,
                             controller: genderController,

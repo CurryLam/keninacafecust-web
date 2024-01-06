@@ -87,6 +87,7 @@ flutter:
     - images/emptyVoucherList.png
     - images/best_selling_food.png
     - images/best_selling_drink.png
+    - images/emptyOrder.png
 
   fonts:
     - family: AsapCondensed

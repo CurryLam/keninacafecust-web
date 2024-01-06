@@ -1,14 +1,14 @@
 import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
-import 'package:line_awesome_flutter/line_awesome_flutter.dart';
+
 import '../AppsBar.dart';
 import '../Entity/Cart.dart';
+import '../Entity/MenuItem.dart';
 import '../Entity/User.dart';
-import '../Entity/User.dart';
-import '../Menu/menuHome.dart';
 import '../Security/Encryptor.dart';
 import '../Utils/error_codes.dart';
 
@@ -32,18 +32,23 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const ChangePasswordPage(user: null, cart: null),
+      home: const ChangePasswordPage(user: null, cart: null, orderMode: null, orderHistory: null, tableNo: null, tabIndex: null, menuItemList: null, itemCategoryList: null),
       // home: const ChangePasswordPage(),
     );
   }
 }
 
 class ChangePasswordPage extends StatefulWidget {
-  const ChangePasswordPage({super.key, this.user, this.cart});
-  // const ChangePasswordPage({super.key});
+  const ChangePasswordPage({super.key, this.user, this.cart, this.orderMode, this.orderHistory, this.tableNo, this.tabIndex, this.menuItemList, this.itemCategoryList});
 
   final User? user;
   final Cart? cart;
+  final String? orderMode;
+  final List<int>? orderHistory;
+  final int? tableNo;
+  final int? tabIndex;
+  final List<MenuItem>? menuItemList;
+  final List<MenuItem>? itemCategoryList;
 
   @override
   State<ChangePasswordPage> createState() => _ChangePasswordPageState();
@@ -66,6 +71,30 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
 
   Cart? getCart() {
     return widget.cart;
+  }
+
+  String? getOrderMode() {
+    return widget.orderMode;
+  }
+
+  List<int>? getOrderHistory() {
+    return widget.orderHistory;
+  }
+
+  int? getTableNo() {
+    return widget.tableNo;
+  }
+
+  int? getTabIndex() {
+    return widget.tabIndex;
+  }
+
+  List<MenuItem>? getMenuItemStoredList() {
+    return widget.menuItemList;
+  }
+
+  List<MenuItem>? getItemCategory() {
+    return widget.itemCategoryList;
   }
 
   void _toggleOldPasswordView() {
@@ -192,12 +221,18 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
 
     User? currentUser = getUser();
     Cart? currentCart = getCart();
+    String? currentOrderMode = getOrderMode();
+    List<int>? currentOrderHistory = getOrderHistory();
+    int? currentTableNo = getTableNo();
+    int? currentTabIndex = getTabIndex();
+    List<MenuItem>? currentMenuItemList = getMenuItemStoredList();
+    List<MenuItem>? currentItemCategoryList = getItemCategory();
     // User? currentUser = User(uid: 1, name: "Goh Chee Lam", is_active: true, email: "clgoh0726@gmail.com", phone: "0165507208", gender: "Male", dob: DateTime.parse("2001-07-26 00:00:00.000000"), points: 1000);
     // Cart? currentCart = Cart(id: 0, menuItem: [], numMenuItemOrder: 0, grandTotalBeforeDiscount: 0, grandTotalAfterDiscount: 0, price_discount: 0, voucherAppliedID: 0, voucherApplied_type_name: "", voucherApplied_cost_off: 0, voucherApplied_free_menu_item_name: "", voucherApplied_applicable_menu_item_name: "", voucherApplied_min_spending: 0);
 
     return Scaffold(
       backgroundColor: Colors.white,
-      drawer: AppsBarState().buildDrawer(context, currentUser!, currentCart!, isHomePage),
+      drawer: AppsBarState().buildDrawer(context, currentUser!, currentCart!, isHomePage, currentOrderMode!, currentOrderHistory!, currentTableNo!, currentTabIndex!, currentMenuItemList!, currentItemCategoryList!),
       appBar: AppsBarState().buildChangePasswordAppBar(context, 'Change Password', currentUser!),
       body: SafeArea(
           child: SingleChildScrollView(
@@ -507,7 +542,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
               email: '',
               gender: '',
               dob: DateTime.now(),
-              phone: '',
+              // phone: '',
               points: 0), (ErrorCodes.OLD_PASSWORD_DOES_NOT_MATCH_DIALOG));
         } else {
           if (kDebugMode) {
@@ -519,7 +554,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
               email: '',
               gender: '',
               dob: DateTime.now(),
-              phone: '',
+              // phone: '',
               points: 0), (ErrorCodes.CHANGE_PASSWORD_FAIL_BACKEND));
         }
       }
@@ -527,7 +562,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
       if (kDebugMode) {
         print('API Connection Error. $e');
       }
-      return (User(uid: -1, name: '', email: '', gender: '', dob: DateTime.now(), is_active: false, phone: '', points: 0, ), (ErrorCodes.CHANGE_PASSWORD_FAIL_API_CONNECTION));
+      return (User(uid: -1, name: '', email: '', gender: '', dob: DateTime.now(), is_active: false, points: 0, ), (ErrorCodes.CHANGE_PASSWORD_FAIL_API_CONNECTION));
     }
   }
 }

@@ -23,4 +23,9 @@ class ErrorCodes {
   static final String OLD_PASSWORD_DOES_NOT_MATCH_DIALOG = 'E-017';
   static final String FORGOT_PASSWORD_INVALID_USER_FAIL_BACKEND = 'E-018';
   static final String FORGOT_PASSWORD_FAIL_API_CONNECTION = 'E-019';
+  static final String RESEND_EMAIL_FAIL_BACKEND = 'E-022';
+  static final String RESEND_EMAIL_FAIL_API_CONNECTION = 'E-023';
+  static final String VERIFY_OTP_FAIL_BACKEND = 'E-024';
+  static final String VERIFY_OTP_FAIL_API_CONNECTION = 'E-025';
+  static final String VERIFY_OTP_FAIL_NOT_MATCHED = 'E-026';
 }

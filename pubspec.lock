@@ -109,10 +109,10 @@ packages:
     dependency: "direct main"
     description:
       name: dart_jsonwebtoken
-      sha256: "6703695f581fc54d0a7e5f281c5538735167605bb9e5abd208c8b330625a92b1"
+      sha256: "063c20d3cee2b626d8a789ba9df0ad21f35012c4e9bd846ce50e921d77123df7"
       url: "https://pub.dev"
     source: hosted
-    version: "2.12.1"
+    version: "2.12.2"
   ed25519_edwards:
     dependency: transitive
     description:
@@ -162,10 +162,10 @@ packages:
     dependency: "direct dev"
     description:
       name: flutter_search_bar
-      sha256: "80c00de27e2fbb852550d6f0319135af191e5ba7ab7e61cd5173fd4e29611eb3"
+      sha256: "6bc1d82c4caf04f40a9386833d5e2a8d947c89fee5c4c1e735957851677d1012"
       url: "https://pub.dev"
     source: hosted
-    version: "3.0.0-dev.1"
+    version: "3.0.0"
   flutter_test:
     dependency: "direct dev"
     description: flutter

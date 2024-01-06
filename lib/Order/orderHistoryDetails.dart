@@ -4,12 +4,13 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:keninacafecust_web/AppsBar.dart';
 import 'package:http/http.dart' as http;
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 
+import 'package:keninacafecust_web/AppsBar.dart';
 import '../Entity/Cart.dart';
 import '../Entity/FoodOrder.dart';
+import '../Entity/MenuItem.dart';
 import '../Entity/OrderFoodItemMoreInfo.dart';
 import '../Entity/User.dart';
 
@@ -33,17 +34,23 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const OrderHistoryDetailsPage(user: null, order: null, cart: null,),
+      home: const OrderHistoryDetailsPage(user: null, order: null, cart: null, orderMode: null, orderHistory: null, tableNo: null, tabIndex: null, menuItemList: null, itemCategoryList: null),
     );
   }
 }
 
 class OrderHistoryDetailsPage extends StatefulWidget {
-  const OrderHistoryDetailsPage({super.key, this.user, this.order, this.cart});
+  const OrderHistoryDetailsPage({super.key, this.user, this.order, this.cart, this.orderMode, this.orderHistory, this.tableNo, this.tabIndex, this.menuItemList, this.itemCategoryList});
 
   final User? user;
   final FoodOrder? order;
   final Cart? cart;
+  final String? orderMode;
+  final List<int>? orderHistory;
+  final int? tableNo;
+  final int? tabIndex;
+  final List<MenuItem>? menuItemList;
+  final List<MenuItem>? itemCategoryList;
 
   @override
   State<OrderHistoryDetailsPage> createState() => _OrderHistoryDetailsPageState();
@@ -63,6 +70,30 @@ class _OrderHistoryDetailsPageState extends State<OrderHistoryDetailsPage> {
     return widget.cart;
   }
 
+  String? getOrderMode() {
+    return widget.orderMode;
+  }
+
+  List<int>? getOrderHistory() {
+    return widget.orderHistory;
+  }
+
+  int? getTableNo() {
+    return widget.tableNo;
+  }
+
+  int? getTabIndex() {
+    return widget.tabIndex;
+  }
+
+  List<MenuItem>? getMenuItemStoredList() {
+    return widget.menuItemList;
+  }
+
+  List<MenuItem>? getItemCategory() {
+    return widget.itemCategoryList;
+  }
+
   @override
   Widget build(BuildContext context) {
     enterFullScreen();
@@ -70,9 +101,15 @@ class _OrderHistoryDetailsPageState extends State<OrderHistoryDetailsPage> {
     User? currentUser = getUser();
     FoodOrder? currentOrder = getOrder();
     Cart? currentCart = getCart();
+    String? currentOrderMode = getOrderMode();
+    List<int>? currentOrderHistory = getOrderHistory();
+    int? currentTableNo = getTableNo();
+    int? currentTabIndex = getTabIndex();
+    List<MenuItem>? currentMenuItemList = getMenuItemStoredList();
+    List<MenuItem>? currentItemCategoryList = getItemCategory();
 
     return Scaffold(
-      appBar: AppsBarState().buildOrderHistoryDetailsAppBar(context, "ORDER SUMMARY", currentUser!, currentCart!),
+      appBar: AppsBarState().buildOrderHistoryDetailsAppBar(context, "ORDER SUMMARY", currentUser!, currentCart!, currentOrderMode!, currentOrderHistory!, currentTableNo!, currentTabIndex!, currentMenuItemList!, currentItemCategoryList!),
       body: SafeArea(
         child: SingleChildScrollView (
           child: Padding(
