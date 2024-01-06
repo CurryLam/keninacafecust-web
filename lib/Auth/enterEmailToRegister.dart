@@ -71,7 +71,7 @@ class _EnterEmailToRegisterPageState extends State<EnterEmailToRegisterPage> {
       showDialog(
         context: context,
         builder: (ctx) => AlertDialog(
-          title: Text('Success'),
+          title: Text('Success', style: TextStyle(fontWeight: FontWeight.bold,)),
           content: Text(responseData['success']),
           actions: [
             TextButton(
@@ -90,7 +90,7 @@ class _EnterEmailToRegisterPageState extends State<EnterEmailToRegisterPage> {
     } else {
       showDialog(context: context, builder: (BuildContext context) =>
           AlertDialog(
-            title: const Text('Registration'),
+            title: const Text('Registration', style: TextStyle(fontWeight: FontWeight.bold,)),
             content: Text('User already exists! Please Login instead.'),
             actions: [
               TextButton(

@@ -1194,13 +1194,14 @@ class _EditOrderDetailsPageState extends State<EditOrderDetailsPage> {
               onPressed: () async {
                 var (orderDeletedAsync, err_code) = await deleteFoodOrder(orderFoodItemMoreInfo);
                 setState(() {
+                  Navigator.of(context).pop();
                   orderDeleted = orderDeletedAsync;
                   if (!orderDeleted) {
                     if (err_code == ErrorCodes.DELETE_ORDER_FAIL_BACKEND) {
                       showDialog(context: context, builder: (
                           BuildContext context) =>
                           AlertDialog(
-                            title: const Text('Error'),
+                            title: const Text('Error', style: TextStyle(fontWeight: FontWeight.bold,)),
                             content: Text('An Error occurred while trying to delete the order.\n\nError Code: $err_code'),
                             actions: <Widget>[
                               TextButton(onPressed: () =>
@@ -1213,7 +1214,7 @@ class _EditOrderDetailsPageState extends State<EditOrderDetailsPage> {
                       showDialog(context: context, builder: (
                           BuildContext context) =>
                           AlertDialog(
-                            title: const Text('Connection Error'),
+                            title: const Text('Connection Error', style: TextStyle(fontWeight: FontWeight.bold,)),
                             content: Text(
                                 'Unable to establish connection to our services. Please make sure you have an internet connection.\n\nError Code: $err_code'),
                             actions: <Widget>[
@@ -1225,11 +1226,10 @@ class _EditOrderDetailsPageState extends State<EditOrderDetailsPage> {
                       );
                     }
                   } else {
-                    Navigator.of(context).pop();
                     showDialog(context: context, builder: (
                         BuildContext context) =>
                         AlertDialog(
-                          title: const Text('Order Deleted Successful'),
+                          title: const Text('Order Deleted Successful', style: TextStyle(fontWeight: FontWeight.bold,)),
                           content: const Text('New Order can be make in the menu home page.'),
                           actions: <Widget>[
                             TextButton(
@@ -1258,7 +1258,12 @@ class _EditOrderDetailsPageState extends State<EditOrderDetailsPage> {
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.green,
               ),
-              child: const Text('Yes'),
+              child: const Text(
+                'Yes',
+                style: TextStyle(
+                  color: Colors.white,
+                ),
+              ),
 
             ),
             ElevatedButton(
@@ -1268,7 +1273,12 @@ class _EditOrderDetailsPageState extends State<EditOrderDetailsPage> {
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.red,
               ),
-              child: const Text('No'),
+              child: const Text(
+                'No',
+                style: TextStyle(
+                  color: Colors.white,
+                ),
+              ),
             ),
           ],
         );
@@ -1332,7 +1342,12 @@ class _EditOrderDetailsPageState extends State<EditOrderDetailsPage> {
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.green,
               ),
-              child: const Text('Yes'),
+              child: const Text(
+                'Yes',
+                style: TextStyle(
+                  color: Colors.white,
+                ),
+              ),
             ),
             ElevatedButton(
               onPressed: () {
@@ -1341,7 +1356,12 @@ class _EditOrderDetailsPageState extends State<EditOrderDetailsPage> {
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.red,
               ),
-              child: const Text('No'),
+              child: const Text(
+                'No',
+                style: TextStyle(
+                  color: Colors.white,
+                ),
+              ),
             ),
           ],
         );
@@ -1366,7 +1386,12 @@ class _EditOrderDetailsPageState extends State<EditOrderDetailsPage> {
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.green,
               ),
-              child: const Text('Yes'),
+              child: const Text(
+                'Yes',
+                style: TextStyle(
+                  color: Colors.white,
+                ),
+              ),
 
             ),
             ElevatedButton(
@@ -1376,7 +1401,12 @@ class _EditOrderDetailsPageState extends State<EditOrderDetailsPage> {
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.red,
               ),
-              child: const Text('No'),
+              child: const Text(
+                'No',
+                style: TextStyle(
+                  color: Colors.white,
+                ),
+              ),
             ),
           ],
         );
@@ -1402,7 +1432,7 @@ class _EditOrderDetailsPageState extends State<EditOrderDetailsPage> {
                       showDialog(context: context, builder: (
                           BuildContext context) =>
                           AlertDialog(
-                            title: const Text('Error'),
+                            title: const Text('Error', style: TextStyle(fontWeight: FontWeight.bold,)),
                             content: Text('An Error occurred while trying to edit the order.\n\nError Code: $err_code'),
                             actions: <Widget>[
                               TextButton(onPressed: () =>
@@ -1415,7 +1445,7 @@ class _EditOrderDetailsPageState extends State<EditOrderDetailsPage> {
                       showDialog(context: context, builder: (
                           BuildContext context) =>
                           AlertDialog(
-                            title: const Text('Connection Error'),
+                            title: const Text('Connection Error', style: TextStyle(fontWeight: FontWeight.bold,)),
                             content: Text(
                                 'Unable to establish connection to our services. Please make sure you have an internet connection.\n\nError Code: $err_code'),
                             actions: <Widget>[
@@ -1431,7 +1461,7 @@ class _EditOrderDetailsPageState extends State<EditOrderDetailsPage> {
                     showDialog(context: context, builder: (
                         BuildContext context) =>
                         AlertDialog(
-                          title: const Text('Order Edited Successful'),
+                          title: const Text('Order Edited Successful', style: TextStyle(fontWeight: FontWeight.bold,)),
                           content: const Text('Your latest order details can be viewed in the order history'),
                           actions: <Widget>[
                             TextButton(
@@ -1456,7 +1486,12 @@ class _EditOrderDetailsPageState extends State<EditOrderDetailsPage> {
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.green,
               ),
-              child: const Text('Yes'),
+              child: const Text(
+                'Yes',
+                style: TextStyle(
+                  color: Colors.white,
+                ),
+              ),
 
             ),
             ElevatedButton(
@@ -1466,7 +1501,12 @@ class _EditOrderDetailsPageState extends State<EditOrderDetailsPage> {
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.red,
               ),
-              child: const Text('No'),
+              child: const Text(
+                'No',
+                style: TextStyle(
+                  color: Colors.white,
+                ),
+              ),
             ),
           ],
         );

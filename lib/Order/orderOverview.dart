@@ -1370,13 +1370,14 @@ class _OrderOverviewPageState extends State<OrderOverviewPage> {
               onPressed: () async {
                 var (currentOrderIDAsync, err_code) = await _submitOrderDetails(currentCart, currentUser, currentOrderMode);
                 setState(() {
+                  Navigator.of(context).pop();
                   currentOrderIDGet = currentOrderIDAsync;
                   if (currentOrderIDGet == 0) {
                     if (err_code == ErrorCodes.CREATE_ORDER_FAIL_BACKEND) {
                       showDialog(context: context, builder: (
                           BuildContext context) =>
                           AlertDialog(
-                            title: const Text('Error'),
+                            title: const Text('Error', style: TextStyle(fontWeight: FontWeight.bold,)),
                             content: Text('An Error occurred while trying to create a new order.\n\nError Code: $err_code'),
                             actions: <Widget>[
                               TextButton(onPressed: () =>
@@ -1389,7 +1390,7 @@ class _OrderOverviewPageState extends State<OrderOverviewPage> {
                       showDialog(context: context, builder: (
                           BuildContext context) =>
                           AlertDialog(
-                            title: const Text('Connection Error'),
+                            title: const Text('Connection Error', style: TextStyle(fontWeight: FontWeight.bold,)),
                             content: Text(
                                 'Unable to establish connection to our services. Please make sure you have an internet connection.\n\nError Code: $err_code'),
                             actions: <Widget>[
@@ -1402,12 +1403,11 @@ class _OrderOverviewPageState extends State<OrderOverviewPage> {
                     }
                   } else {
                     currentCart = Cart(id: 0, menuItem: [], numMenuItemOrder: 0, grandTotalBeforeDiscount: 0, grandTotalAfterDiscount: 0, price_discount: 0, voucherAppliedID: 0, voucherApplied_type_name: "", voucherApplied_cost_off: 0, voucherApplied_free_menu_item_name: "", voucherApplied_applicable_menu_item_name: "", voucherApplied_min_spending: 0);
-                    Navigator.of(context).pop();
                     currentOrderHistory = [...currentOrderHistory, currentOrderIDGet];
                     showDialog(context: context, builder: (
                         BuildContext context) =>
                         AlertDialog(
-                          title: const Text('Order Placed Successful'),
+                          title: const Text('Order Placed Successful', style: TextStyle(fontWeight: FontWeight.bold,)),
                           content: const Text('Your order placed can be viewed in the order history'),
                           actions: <Widget>[
                             TextButton(
@@ -1432,7 +1432,12 @@ class _OrderOverviewPageState extends State<OrderOverviewPage> {
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.green,
               ),
-              child: const Text('Yes'),
+              child: const Text(
+                'Yes',
+                style: TextStyle(
+                  color: Colors.white,
+                ),
+              ),
 
             ),
             ElevatedButton(
@@ -1442,7 +1447,12 @@ class _OrderOverviewPageState extends State<OrderOverviewPage> {
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.red,
               ),
-              child: const Text('No'),
+              child: const Text(
+                'No',
+                style: TextStyle(
+                  color: Colors.white,
+                ),
+              ),
             ),
           ],
         );

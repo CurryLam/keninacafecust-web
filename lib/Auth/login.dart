@@ -285,7 +285,7 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
                                       showDialog(context: context, builder: (
                                           BuildContext context) =>
                                           AlertDialog(
-                                            title: const Text('User Not Found'),
+                                            title: const Text('User Not Found', style: TextStyle(fontWeight: FontWeight.bold,)),
                                             content: Text(
                                                 'Please sign up first before login.\n\nError Code: $err_code'),
                                             actions: <Widget>[
@@ -299,7 +299,7 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
                                       showDialog(context: context, builder: (
                                           BuildContext context) =>
                                           AlertDialog(
-                                            title: const Text('Details Mismatch'),
+                                            title: const Text('Details Mismatch', style: TextStyle(fontWeight: FontWeight.bold,)),
                                             content: Text(
                                                 'Wrong combination of email and password. Please check your details.\n\nError Code: $err_code'),
                                             actions: <Widget>[
@@ -313,7 +313,7 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
                                       showDialog(context: context, builder: (
                                           BuildContext context) =>
                                           AlertDialog(
-                                            title: const Text('User Deactivated or Deleted'),
+                                            title: const Text('User Deactivated or Deleted', style: TextStyle(fontWeight: FontWeight.bold,)),
                                             content: Text(
                                                 'User have been deactivated or deleted.\n\nError Code: $err_code'),
                                             actions: <Widget>[
@@ -327,7 +327,7 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
                                       showDialog(context: context, builder: (
                                           BuildContext context) =>
                                           AlertDialog(
-                                            title: const Text('Connection Error'),
+                                            title: const Text('Connection Error', style: TextStyle(fontWeight: FontWeight.bold,)),
                                             content: Text(
                                                 'Unable to establish connection to our services. Please make sure you have an internet connection.\n\nError Code: $err_code'),
                                             actions: <Widget>[
@@ -342,7 +342,7 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
                                     showDialog(context: context, builder: (
                                         BuildContext context) =>
                                         AlertDialog(
-                                          title: const Text('Login Successful'),
+                                          title: const Text('Login Successful', style: TextStyle(fontWeight: FontWeight.bold,)),
                                           content: Text(
                                               'Welcome back, ${currentUser.name}!'),
                                           actions: <Widget>[
