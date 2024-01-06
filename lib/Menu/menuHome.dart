@@ -132,12 +132,12 @@ class _MenuHomePageState extends State<MenuHomePage> with SingleTickerProviderSt
     String? currentOrderMode = getOrderMode();
     List<int>? currentOrderHistory = getOrderHistory();
     int? currentTableNo = getTableNo();
-    // if (menuItemList == null || menuItemList!.isEmpty) {
+    if (menuItemList == null || menuItemList!.isEmpty) {
       menuItemList = getMenuItemStoredList();
-    // }
-    // if (itemCategoryList == null || itemCategoryList!.isEmpty) {
+    }
+    if (itemCategoryList == null || itemCategoryList!.isEmpty) {
       itemCategoryList = getItemCategory();
-    // }
+    }
     if (selectedTabIndex == 1000) {
       selectedTabIndex = widget.tabIndex!;
     }
@@ -242,6 +242,9 @@ class _MenuHomePageState extends State<MenuHomePage> with SingleTickerProviderSt
                                     print("onTap: (value) " +value.toString());
                                     setState(() {
                                       selectedTabIndex = value;
+                                      print('I am here');
+                                      print(menuItemList);
+                                      print(itemCategoryList);
                                     });
                                     // context.read<MyProvider>().updateSelectedIndex(value);
                                     // });
