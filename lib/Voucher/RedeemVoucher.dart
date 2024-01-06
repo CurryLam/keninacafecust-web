@@ -830,13 +830,14 @@ class _RedeemVoucherPageState extends State<RedeemVoucherPage> {
               onPressed: () async {
                 var (voucherRedeemedAsync, err_code) = await _submitVoucherRedeem(currentVoucher, currentUser);
                 setState(() {
+                  Navigator.of(context).pop();
                   voucherRedeemed = voucherRedeemedAsync;
                   if (!voucherRedeemed) {
                     if (err_code == ErrorCodes.REDEEM_VOUCHER_FAIL_BACKEND) {
                       showDialog(context: context, builder: (
                           BuildContext context) =>
                           AlertDialog(
-                            title: const Text('Error'),
+                            title: const Text('Error', style: TextStyle(fontWeight: FontWeight.bold,)),
                             content: Text('An Error occurred while trying to redeem this voucher.\n\nError Code: $err_code'),
                             actions: <Widget>[
                               TextButton(onPressed: () =>
@@ -849,7 +850,7 @@ class _RedeemVoucherPageState extends State<RedeemVoucherPage> {
                       showDialog(context: context, builder: (
                           BuildContext context) =>
                           AlertDialog(
-                            title: const Text('Connection Error'),
+                            title: const Text('Connection Error', style: TextStyle(fontWeight: FontWeight.bold,)),
                             content: Text(
                                 'Unable to establish connection to our services. Please make sure you have an internet connection.\n\nError Code: $err_code'),
                             actions: <Widget>[
@@ -861,12 +862,11 @@ class _RedeemVoucherPageState extends State<RedeemVoucherPage> {
                       );
                     }
                   } else {
-                    currentCart = Cart(id: 0, menuItem: [], numMenuItemOrder: 0, grandTotalBeforeDiscount: 0, grandTotalAfterDiscount: 0, price_discount: 0, voucherAppliedID: 0, voucherApplied_type_name: "", voucherApplied_cost_off: 0, voucherApplied_free_menu_item_name: "", voucherApplied_applicable_menu_item_name: "", voucherApplied_min_spending: 0);
-                    Navigator.of(context).pop();
+                    // currentCart = Cart(id: 0, menuItem: [], numMenuItemOrder: 0, grandTotalBeforeDiscount: 0, grandTotalAfterDiscount: 0, price_discount: 0, voucherAppliedID: 0, voucherApplied_type_name: "", voucherApplied_cost_off: 0, voucherApplied_free_menu_item_name: "", voucherApplied_applicable_menu_item_name: "", voucherApplied_min_spending: 0);
                     showDialog(context: context, builder: (
                         BuildContext context) =>
                         AlertDialog(
-                          title: const Text('Voucher Redeemed Successful'),
+                          title: const Text('Voucher Redeemed Successfully', style: TextStyle(fontWeight: FontWeight.bold,)),
                           content: const Text('Your voucher redeemed can be viewed in the voucher list.'),
                           actions: <Widget>[
                             TextButton(
@@ -888,7 +888,12 @@ class _RedeemVoucherPageState extends State<RedeemVoucherPage> {
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.green,
               ),
-              child: const Text('Yes'),
+              child: const Text(
+                'Yes',
+                style: TextStyle(
+                  color: Colors.white,
+                ),
+              ),
 
             ),
             ElevatedButton(
@@ -898,7 +903,12 @@ class _RedeemVoucherPageState extends State<RedeemVoucherPage> {
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.red,
               ),
-              child: const Text('No'),
+              child: const Text(
+                'No',
+                style: TextStyle(
+                  color: Colors.white,
+                ),
+              ),
             ),
           ],
         );

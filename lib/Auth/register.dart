@@ -547,7 +547,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       if (err_code == ErrorCodes.REGISTER_FAIL_USER_EXISTS) {
                         showDialog(context: context, builder: (BuildContext context) =>
                             AlertDialog(
-                              title: const Text('Registration'),
+                              title: const Text('Registration Failed', style: TextStyle(fontWeight: FontWeight.bold,)),
                               content: Text('User already exists! Please Login instead.\n\nError Code: $err_code'),
                               actions: [
                                 TextButton(
@@ -563,8 +563,8 @@ class _RegisterPageState extends State<RegisterPage> {
                       } else {
                         showDialog(context: context, builder: (BuildContext context) =>
                             AlertDialog(
-                              title: const Text('Registration'),
-                              content: Text('Registration failed! Please try again later.\n\nError Code: $err_code'),
+                              title: const Text('Registration Failed', style: TextStyle(fontWeight: FontWeight.bold,)),
+                              content: Text('Please try again later.\n\nError Code: $err_code'),
                               actions: [
                                 TextButton(
                                   onPressed: () {
@@ -579,8 +579,8 @@ class _RegisterPageState extends State<RegisterPage> {
                     } else {
                       showDialog(context: context, builder: (BuildContext context) =>
                           AlertDialog(
-                            title: const Text('Registration'),
-                            content: const Text('Registration successful! Please login.'),
+                            title: const Text('Registration Successfully', style: TextStyle(fontWeight: FontWeight.bold,)),
+                            content: const Text('Please login.'),
                             actions: [
                               TextButton(
                                 onPressed: () {
@@ -599,7 +599,12 @@ class _RegisterPageState extends State<RegisterPage> {
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.green,
               ),
-              child: const Text('Yes'),
+              child: const Text(
+                'Yes',
+                style: TextStyle(
+                  color: Colors.white,
+                ),
+              ),
 
             ),
             ElevatedButton(
@@ -609,7 +614,12 @@ class _RegisterPageState extends State<RegisterPage> {
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.red,
               ),
-              child: const Text('No'),
+              child: const Text(
+                'No',
+                style: TextStyle(
+                  color: Colors.white,
+                ),
+              ),
             ),
           ],
         );
