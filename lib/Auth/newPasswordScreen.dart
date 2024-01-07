@@ -9,7 +9,7 @@ import 'package:http/http.dart' as http;
 
 import '../Security/Encryptor.dart';
 import '../Utils/error_codes.dart';
-import 'login.dart';
+import '../main.dart';
 
 void main() {
   runApp(const MyApp());
