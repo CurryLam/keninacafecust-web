@@ -8,11 +8,11 @@ import 'package:flutter/services.dart';
 import 'package:flutter/gestures.dart';
 
 import 'package:keninacafecust_web/AppsBar.dart';
-import 'package:keninacafecust_web/Auth/login.dart';
 import 'package:keninacafecust_web/Security/Encryptor.dart';
 import 'package:keninacafecust_web/Utils/error_codes.dart';
 
 import '../Entity/User.dart';
+import '../main.dart';
 
 void main() {
   runApp(const MyApp());

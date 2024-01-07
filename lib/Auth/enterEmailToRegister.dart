@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:keninacafecust_web/Auth/verifyEmail.dart';
 
-import 'login.dart';
+import '../main.dart';
 
 void main() {
   runApp(const MyApp());
