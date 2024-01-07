@@ -37,7 +37,7 @@ class MyApp extends StatelessWidget {
 class PasswordResetScreenPage extends StatefulWidget {
   const PasswordResetScreenPage({super.key, this.tableNo});
 
-  final int? tableNo;
+  final String? tableNo;
 
   @override
   State<PasswordResetScreenPage> createState() => _PasswordResetScreenPageState();
@@ -48,11 +48,11 @@ class _PasswordResetScreenPageState extends State<PasswordResetScreenPage> {
   final _formKey = GlobalKey<FormState>();
   bool isLoading = false;
 
-  int? getTableNo() {
+  String? getTableNo() {
     return widget.tableNo;
   }
 
-  Future<void> resetPassword(BuildContext context, int currentTableNo) async {
+  Future<void> resetPassword(BuildContext context, String currentTableNo) async {
     setState(() {
       isLoading = true;
     });
@@ -112,7 +112,7 @@ class _PasswordResetScreenPageState extends State<PasswordResetScreenPage> {
   @override
   Widget build(BuildContext context) {
 
-    int? currentTableNo = getTableNo();
+    String? currentTableNo = getTableNo();
 
     return WillPopScope(
       onWillPop: () async {

@@ -37,7 +37,7 @@ class DineInOrTakeAwayPage extends StatefulWidget {
   final User? user;
   final Cart? cart;
   final List<int>? orderHistory;
-  final int? tableNo;
+  final String? tableNo;
 
   @override
   State<DineInOrTakeAwayPage> createState() => _DineInOrTakeAwayPageState();
@@ -63,7 +63,7 @@ class _DineInOrTakeAwayPageState extends State<DineInOrTakeAwayPage> with Single
     return widget.orderHistory;
   }
 
-  int? getTableNo() {
+  String? getTableNo() {
     return widget.tableNo;
   }
 
@@ -89,7 +89,7 @@ class _DineInOrTakeAwayPageState extends State<DineInOrTakeAwayPage> with Single
     User? currentUser = getUser();
     Cart? currentCart = getCart();
     List<int>? currentOrderHistory = getOrderHistory();
-    int? currentTableNo = getTableNo();
+    String? currentTableNo = getTableNo();
 
     return WillPopScope(
       onWillPop: () async {

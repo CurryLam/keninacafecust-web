@@ -40,7 +40,7 @@ class NewPasswordScreenPage extends StatefulWidget {
   const NewPasswordScreenPage({super.key, this.uid, this.tableNo});
 
   final String? uid;
-  final int? tableNo;
+  final String? tableNo;
 
   @override
   State<NewPasswordScreenPage> createState() => _NewPasswordScreenPageState();
@@ -58,7 +58,7 @@ class _NewPasswordScreenPageState extends State<NewPasswordScreenPage> {
     return widget.uid;
   }
 
-  int? getTableNo() {
+  String? getTableNo() {
     return widget.tableNo;
   }
 
@@ -83,7 +83,7 @@ class _NewPasswordScreenPageState extends State<NewPasswordScreenPage> {
   Widget build(BuildContext context) {
 
     String? uidEncode = getUidEncode();
-    int? currentTableNo = getTableNo();
+    String? currentTableNo = getTableNo();
 
     return WillPopScope(
       onWillPop: () async => false,
@@ -288,7 +288,7 @@ class _NewPasswordScreenPageState extends State<NewPasswordScreenPage> {
     );
   }
 
-  void showConfirmationCreateDialog(String uidEncode, int currentTableNo) {
+  void showConfirmationCreateDialog(String uidEncode, String currentTableNo) {
     showDialog(
       context: context,
       builder: (BuildContext context) {

@@ -50,7 +50,7 @@ class ApplyVoucherInEditOrderPage extends StatefulWidget {
   final CartForOrderFoodItemMoreInfo? cartOrder;
   final String? orderMode;
   final List<int>? orderHistory;
-  final int? tableNo;
+  final String? tableNo;
   final int? tabIndex;
   final List<MenuItem>? menuItemList;
   final List<MenuItem>? itemCategoryList;
@@ -82,7 +82,7 @@ class _ApplyVoucherInEditOrderPageState extends State<ApplyVoucherInEditOrderPag
     return widget.orderHistory;
   }
 
-  int? getTableNo() {
+  String? getTableNo() {
     return widget.tableNo;
   }
 
@@ -102,7 +102,7 @@ class _ApplyVoucherInEditOrderPageState extends State<ApplyVoucherInEditOrderPag
     setState(() {});
   }
 
-  void navigateRedeemVoucherPage(Cart currentCart, User currentUser, String currentOrderMode, List<int>? currentOrderHistory, int currentTableNo, int currentTabIndex, List<MenuItem> currentMenuItemList, List<MenuItem> currentItemCategoryList) {
+  void navigateRedeemVoucherPage(Cart currentCart, User currentUser, String currentOrderMode, List<int>? currentOrderHistory, String currentTableNo, int currentTabIndex, List<MenuItem> currentMenuItemList, List<MenuItem> currentItemCategoryList) {
     Route route = MaterialPageRoute(builder: (context) => RedeemVoucherPage(cart: currentCart, user: currentUser, orderMode: currentOrderMode, orderHistory: currentOrderHistory, tableNo: currentTableNo, tabIndex: currentTabIndex, menuItemList: currentMenuItemList, itemCategoryList: currentItemCategoryList,));
     Navigator.push(context, route).then(onGoBack);
   }
@@ -115,7 +115,7 @@ class _ApplyVoucherInEditOrderPageState extends State<ApplyVoucherInEditOrderPag
     Cart? currentCart = getCart();
     String? currentOrderMode = getOrderMode();
     List<int>? currentOrderHistory = getOrderHistory();
-    int? currentTableNo = getTableNo();
+    String? currentTableNo = getTableNo();
     CartForOrderFoodItemMoreInfo? currentCartOrder = getCartOrder();
     int? currentTabIndex = getTabIndex();
     List<MenuItem>? currentMenuItemList = getMenuItemStoredList();
@@ -156,7 +156,7 @@ class _ApplyVoucherInEditOrderPageState extends State<ApplyVoucherInEditOrderPag
     );
   }
 
-  List<Widget> buildAvailableVoucherRedeemedList(List<VoucherAssignUserMoreInfo>? availableVoucherRedeemedList, User? currentUser, Cart currentCart, CartForOrderFoodItemMoreInfo currentCartOrder, String currentOrderMode, List<int> currentOrderHistory, int currentTableNo, int currentTabIndex, List<MenuItem> currentMenuItemList, List<MenuItem> currentItemCategoryList) {
+  List<Widget> buildAvailableVoucherRedeemedList(List<VoucherAssignUserMoreInfo>? availableVoucherRedeemedList, User? currentUser, Cart currentCart, CartForOrderFoodItemMoreInfo currentCartOrder, String currentOrderMode, List<int> currentOrderHistory, String currentTableNo, int currentTabIndex, List<MenuItem> currentMenuItemList, List<MenuItem> currentItemCategoryList) {
     List<Widget> voucher = [];
     List<VoucherAssignUserMoreInfo> validVoucher = [];
     List<VoucherAssignUserMoreInfo> nonValidVoucher = [];

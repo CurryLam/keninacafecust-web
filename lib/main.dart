@@ -57,6 +57,7 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
   late AnimationController _animationController;
   bool securePasswordText = true;
   bool userFound = false;
+  String? tableParam;
 
   // int? getTableNo() {
   //   return widget.tableNo;
@@ -70,6 +71,11 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
       duration: Duration(seconds: 1),
     );
     _animationController.forward();
+    Uri uri = Uri.base;
+    tableParam = uri.queryParameters['table'];
+    if (tableParam != null) {
+      int tableNo = int.tryParse(tableParam!) ?? 0;
+    }
   }
 
   @override
@@ -92,7 +98,7 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
     enterFullScreen();
 
     // int? currentTableNo = getTableNo();
-    int? currentTableNo = 12;
+    String? currentTableNo = tableParam;
 
     return WillPopScope(
       onWillPop: () async => false,

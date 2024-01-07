@@ -48,7 +48,7 @@ class VoucherListPage extends StatefulWidget {
   final Cart? cart;
   final String? orderMode;
   final List<int>? orderHistory;
-  final int? tableNo;
+  final String? tableNo;
   final int? tabIndex;
   final List<MenuItem>? menuItemList;
   final List<MenuItem>? itemCategoryList;
@@ -76,7 +76,7 @@ class _VoucherListPageState extends State<VoucherListPage> {
     return widget.orderHistory;
   }
 
-  int? getTableNo() {
+  String? getTableNo() {
     return widget.tableNo;
   }
 
@@ -96,7 +96,7 @@ class _VoucherListPageState extends State<VoucherListPage> {
     setState(() {});
   }
 
-  void navigateRedeemVoucherPage(Cart currentCart, User currentUser, String currentOrderMode, List<int> currentOrderHistory, int currentTableNo, int currentTabIndex, List<MenuItem> currentMenuItemList, List<MenuItem> currentItemCategoryList) {
+  void navigateRedeemVoucherPage(Cart currentCart, User currentUser, String currentOrderMode, List<int> currentOrderHistory, String currentTableNo, int currentTabIndex, List<MenuItem> currentMenuItemList, List<MenuItem> currentItemCategoryList) {
     Route route = MaterialPageRoute(builder: (context) => RedeemVoucherPage(cart: currentCart, user: currentUser, orderMode: currentOrderMode, orderHistory: currentOrderHistory, tableNo: currentTableNo, tabIndex: currentTabIndex, menuItemList: currentMenuItemList, itemCategoryList: currentItemCategoryList,));
     Navigator.push(context, route).then(onGoBack);
   }
@@ -109,7 +109,7 @@ class _VoucherListPageState extends State<VoucherListPage> {
     Cart? currentCart = getCart();
     String? currentOrderMode = getOrderMode();
     List<int>? currentOrderHistory = getOrderHistory();
-    int? currentTableNo = getTableNo();
+    String? currentTableNo = getTableNo();
     int? currentTabIndex = getTabIndex();
     List<MenuItem>? currentMenuItemList = getMenuItemStoredList();
     List<MenuItem>? currentItemCategoryList = getItemCategory();
@@ -149,7 +149,7 @@ class _VoucherListPageState extends State<VoucherListPage> {
     );
   }
 
-  List<Widget> buildAvailableVoucherRedeemedList(List<VoucherAssignUserMoreInfo>? availableVoucherRedeemedList, User? currentUser, Cart currentCart, String currentOrderMode, List<int>? currentOrderHistory, int currentTableNo, int currentTabIndex, List<MenuItem> currentMenuItemList, List<MenuItem> currentItemCategoryList) {
+  List<Widget> buildAvailableVoucherRedeemedList(List<VoucherAssignUserMoreInfo>? availableVoucherRedeemedList, User? currentUser, Cart currentCart, String currentOrderMode, List<int>? currentOrderHistory, String currentTableNo, int currentTabIndex, List<MenuItem> currentMenuItemList, List<MenuItem> currentItemCategoryList) {
     List<Widget> voucher = [];
     List<VoucherAssignUserMoreInfo> discountVoucherList = [];
     List<VoucherAssignUserMoreInfo> freeMenuItemVoucherList = [];

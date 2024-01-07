@@ -53,7 +53,7 @@ class EditOrderDetailsPage extends StatefulWidget {
   final CartForOrderFoodItemMoreInfo? cartOrder;
   final String? orderMode;
   final List<int>? orderHistory;
-  final int? tableNo;
+  final String? tableNo;
   final int? tabIndex;
   final List<MenuItem>? menuItemList;
   final List<MenuItem>? itemCategoryList;
@@ -92,7 +92,7 @@ class _EditOrderDetailsPageState extends State<EditOrderDetailsPage> {
     return widget.orderHistory;
   }
 
-  int? getTableNo() {
+  String? getTableNo() {
     return widget.tableNo;
   }
 
@@ -112,7 +112,7 @@ class _EditOrderDetailsPageState extends State<EditOrderDetailsPage> {
     setState(() {});
   }
 
-  void navigateApplyVoucherInEditOrderPage(Cart currentCart, CartForOrderFoodItemMoreInfo currentCartOrder, User currentUser, String currentOrderMode, List<int> currentOrderHistory, int currentTableNo, int currentTabIndex, List<MenuItem> currentMenuItemList, List<MenuItem> currentItemCategoryList) {
+  void navigateApplyVoucherInEditOrderPage(Cart currentCart, CartForOrderFoodItemMoreInfo currentCartOrder, User currentUser, String currentOrderMode, List<int> currentOrderHistory, String currentTableNo, int currentTabIndex, List<MenuItem> currentMenuItemList, List<MenuItem> currentItemCategoryList) {
     Route route = MaterialPageRoute(builder: (context) => ApplyVoucherInEditOrderPage(cart: currentCart, cartOrder: currentCartOrder, user: currentUser, orderMode: currentOrderMode, orderHistory: currentOrderHistory, tableNo: currentTableNo, tabIndex: currentTabIndex, menuItemList: currentMenuItemList, itemCategoryList: currentItemCategoryList,));
     Navigator.push(context, route).then(onGoBack);
   }
@@ -127,7 +127,7 @@ class _EditOrderDetailsPageState extends State<EditOrderDetailsPage> {
     CartForOrderFoodItemMoreInfo? currentCartOrder = getCartOrder();
     String? currentOrderMode = getOrderMode();
     List<int>? currentOrderHistory = getOrderHistory();
-    int? currentTableNo = getTableNo();
+    String? currentTableNo = getTableNo();
     int? currentTabIndex = getTabIndex();
     List<MenuItem>? currentMenuItemList = getMenuItemStoredList();
     List<MenuItem>? currentItemCategoryList = getItemCategory();
@@ -256,7 +256,7 @@ class _EditOrderDetailsPageState extends State<EditOrderDetailsPage> {
     );
   }
 
-  List<Widget> buildBottomNavigationBar(List<FoodOrder>? currentOrder, User currentUser, Cart currentCart, CartForOrderFoodItemMoreInfo? currentCartOrder, String? currentOrderMode, List<int> currentOrderHistory, int currentTableNo, int currentTabIndex, List<MenuItem> currentMenuItemList, List<MenuItem> currentItemCategoryList) {
+  List<Widget> buildBottomNavigationBar(List<FoodOrder>? currentOrder, User currentUser, Cart currentCart, CartForOrderFoodItemMoreInfo? currentCartOrder, String? currentOrderMode, List<int> currentOrderHistory, String currentTableNo, int currentTabIndex, List<MenuItem> currentMenuItemList, List<MenuItem> currentItemCategoryList) {
     List<Widget> bottomNavigationBar = [];
     // bottomNavigationBar.add(
     //   Padding(
@@ -415,7 +415,7 @@ class _EditOrderDetailsPageState extends State<EditOrderDetailsPage> {
     return bottomNavigationBar;
   }
 
-  List<Widget> buildOrderFoodItemList(List<OrderFoodItemMoreInfo>? orderFoodItemList, User? currentUser, Cart? currentCart, CartForOrderFoodItemMoreInfo currentCartOrder, String currentOrderMode, List<int> currentOrderHistory, int currentTableNo, int currentTabIndex, List<MenuItem> currentMenuItemList, List<MenuItem> currentItemCategoryList) {
+  List<Widget> buildOrderFoodItemList(List<OrderFoodItemMoreInfo>? orderFoodItemList, User? currentUser, Cart? currentCart, CartForOrderFoodItemMoreInfo currentCartOrder, String currentOrderMode, List<int> currentOrderHistory, String currentTableNo, int currentTabIndex, List<MenuItem> currentMenuItemList, List<MenuItem> currentItemCategoryList) {
     if (!currentCartOrder.containFoodItem()) {
       for (OrderFoodItemMoreInfo a in orderFoodItemList!) {
         currentCartOrder.addToCartForOrderFoodItemMoreInfo(a);
@@ -1182,7 +1182,7 @@ class _EditOrderDetailsPageState extends State<EditOrderDetailsPage> {
     return voucherApplied;
   }
 
-  void showDeleteLastItemConfirmationDialog(OrderFoodItemMoreInfo orderFoodItemMoreInfo, CartForOrderFoodItemMoreInfo currentCartOrder, Cart currentCart, User currentUser, String currentOrderMode, List<int> currentOrderHistory, int currentTableNo, int currentTabIndex, List<MenuItem> currentMenuItemList, List<MenuItem> currentItemCategoryList) {
+  void showDeleteLastItemConfirmationDialog(OrderFoodItemMoreInfo orderFoodItemMoreInfo, CartForOrderFoodItemMoreInfo currentCartOrder, Cart currentCart, User currentUser, String currentOrderMode, List<int> currentOrderHistory, String currentTableNo, int currentTabIndex, List<MenuItem> currentMenuItemList, List<MenuItem> currentItemCategoryList) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -1414,7 +1414,7 @@ class _EditOrderDetailsPageState extends State<EditOrderDetailsPage> {
     );
   }
 
-  void showConfirmationUpdateDialog(Cart currentCart, User currentUser, CartForOrderFoodItemMoreInfo currentCartOrder, String currentOrderMode, List<int> currentOrderHistory, int currentTableNo, int currentTabIndex, List<MenuItem> currentMenuItemList, List<MenuItem> currentItemCategoryList) {
+  void showConfirmationUpdateDialog(Cart currentCart, User currentUser, CartForOrderFoodItemMoreInfo currentCartOrder, String currentOrderMode, List<int> currentOrderHistory, String currentTableNo, int currentTabIndex, List<MenuItem> currentMenuItemList, List<MenuItem> currentItemCategoryList) {
     showDialog(
       context: context,
       builder: (BuildContext context) {

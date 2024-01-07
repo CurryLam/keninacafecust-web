@@ -47,7 +47,7 @@ class OrderPlacedPage extends StatefulWidget {
   final int? orderID;
   final String? orderMode;
   final List<int>? orderHistory;
-  final int? tableNo;
+  final String? tableNo;
   final int? tabIndex;
   final List<MenuItem>? menuItemList;
   final List<MenuItem>? itemCategoryList;
@@ -78,7 +78,7 @@ class _OrderPlacedPageState extends State<OrderPlacedPage> {
     return widget.orderHistory;
   }
 
-  int? getTableNo() {
+  String? getTableNo() {
     return widget.tableNo;
   }
 
@@ -103,7 +103,7 @@ class _OrderPlacedPageState extends State<OrderPlacedPage> {
     int? currentOrderID = getOrderID();
     String? currentOrderMode = getOrderMode();
     List<int>? currentOrderHistory = getOrderHistory();
-    int? currentTableNo = getTableNo();
+    String? currentTableNo = getTableNo();
     int? currentTabIndex = getTabIndex();
     List<MenuItem>? currentMenuItemList = getMenuItemStoredList();
     List<MenuItem>? currentItemCategoryList = getItemCategory();
@@ -139,7 +139,7 @@ class _OrderPlacedPageState extends State<OrderPlacedPage> {
     );
   }
 
-  Widget buildOrderPlacedDetails(List<FoodOrder>? currentOrder, Cart currentCart, User currentUser, String currentOrderMode, List<int> currentOrderHistory, int currentTableNo, int currentTabIndex, List<MenuItem> currentMenuItemList, List<MenuItem> currentItemCategoryList) {
+  Widget buildOrderPlacedDetails(List<FoodOrder>? currentOrder, Cart currentCart, User currentUser, String currentOrderMode, List<int> currentOrderHistory, String currentTableNo, int currentTabIndex, List<MenuItem> currentMenuItemList, List<MenuItem> currentItemCategoryList) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10.0),
       child: Column(

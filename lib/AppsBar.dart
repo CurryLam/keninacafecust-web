@@ -181,7 +181,7 @@ class AppsBarState extends State<AppsBar> {
   }
 
   @override
-  PreferredSizeWidget buildCartAppBar(BuildContext context, String title, User currentUser, Cart currentCart, String currentOrderMode, List<int>? currentOrderHistory, int? currentTableNo, int currentTabIndex, List<MenuItem> currentMenuItemList, List<MenuItem> currentItemCategoryList) {
+  PreferredSizeWidget buildCartAppBar(BuildContext context, String title, User currentUser, Cart currentCart, String currentOrderMode, List<int>? currentOrderHistory,String? currentTableNo, int currentTabIndex, List<MenuItem> currentMenuItemList, List<MenuItem> currentItemCategoryList) {
 
     return PreferredSize( //wrap with PreferredSize
       preferredSize: const Size.fromHeight(80),
@@ -263,7 +263,7 @@ class AppsBarState extends State<AppsBar> {
   }
 
   @override
-  PreferredSizeWidget buildOrderHistoryDetailsAppBar(BuildContext context, String title, User currentUser, Cart currentCart, String currentOrderMode, List<int> currentOrderHistory, int currentTableNo, int currentTabIndex, List<MenuItem> currentMenuItemList, List<MenuItem> currentItemCategoryList) {
+  PreferredSizeWidget buildOrderHistoryDetailsAppBar(BuildContext context, String title, User currentUser, Cart currentCart, String currentOrderMode, List<int> currentOrderHistory, String currentTableNo, int currentTabIndex, List<MenuItem> currentMenuItemList, List<MenuItem> currentItemCategoryList) {
 
     return PreferredSize(
       preferredSize: const Size.fromHeight(80),
@@ -466,7 +466,7 @@ class AppsBarState extends State<AppsBar> {
     );
   }
 
-  Widget buildDrawer(BuildContext context, User currentUser, Cart currentCart, bool isMenuHomePage, String currentOrderMode, List<int> currentOrderHistory, int currentTableNo, int currentTabIndex, List<MenuItem> currentMenuItemList, List<MenuItem> currentItemCategoryList) {
+  Widget buildDrawer(BuildContext context, User currentUser, Cart currentCart, bool isMenuHomePage, String currentOrderMode, List<int> currentOrderHistory, String currentTableNo, int currentTabIndex, List<MenuItem> currentMenuItemList, List<MenuItem> currentItemCategoryList) {
     enterFullScreen();
     return Drawer(
       child: ListView(
@@ -666,7 +666,7 @@ class AppsBarState extends State<AppsBar> {
     );
   }
 
-  void showConfirmationLogOutDialog(BuildContext context, int currentTableNo) {
+  void showConfirmationLogOutDialog(BuildContext context, String currentTableNo) {
     showDialog(
       context: context,
       builder: (BuildContext context) {

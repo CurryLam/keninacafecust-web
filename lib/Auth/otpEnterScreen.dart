@@ -43,7 +43,7 @@ class OtpEnterScreenPage extends StatefulWidget {
 
   final String? otp_id;
   final String? uid;
-  final int? tableNo;
+  final String? tableNo;
 
   @override
   State<OtpEnterScreenPage> createState() => _OtpEnterScreenPageState();
@@ -68,7 +68,7 @@ class _OtpEnterScreenPageState extends State<OtpEnterScreenPage> {
   String? getUidEncode() {
     return widget.uid;
   }
-  int? getTableNo() {
+  String? getTableNo() {
     return widget.tableNo;
   }
 
@@ -82,7 +82,7 @@ class _OtpEnterScreenPageState extends State<OtpEnterScreenPage> {
     _startResendEmailTimer();
   }
 
-  void _startOTPTimer(int? currentTableNo) {
+  void _startOTPTimer(String? currentTableNo) {
     _otpTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
       setState(() {
         if (_remainingOTPTime > 0) {
@@ -148,7 +148,7 @@ class _OtpEnterScreenPageState extends State<OtpEnterScreenPage> {
     });
   }
 
-  void navigateNewPasswordScreenPage(String uidEncode, int currentTableNo){
+  void navigateNewPasswordScreenPage(String uidEncode, String currentTableNo){
     Route route = MaterialPageRoute(builder: (context) => NewPasswordScreenPage(uid: uidEncode, tableNo: currentTableNo,));
     Navigator.push(context, route).then(onGoBack);
   }
@@ -158,7 +158,7 @@ class _OtpEnterScreenPageState extends State<OtpEnterScreenPage> {
 
     String? currentOtpId = getOTPId();
     String? uidEncode = getUidEncode();
-    int? currentTableNo = getTableNo();
+    String? currentTableNo = getTableNo();
 
     return WillPopScope(
       onWillPop: () async {
