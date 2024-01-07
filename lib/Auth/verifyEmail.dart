@@ -175,9 +175,11 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
             title: const Text(
               'Verify your email',
               style: TextStyle(
+                fontWeight: FontWeight.bold,
                 color: Colors.white,
               ),
             ),
+
             leading: IconButton(
               onPressed: () => {
                 _resendEmailTimer.cancel(),

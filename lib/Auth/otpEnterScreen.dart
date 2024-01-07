@@ -174,6 +174,7 @@ class _OtpEnterScreenPageState extends State<OtpEnterScreenPage> {
             title: const Text(
               'Verify your email',
               style: TextStyle(
+                fontWeight: FontWeight.bold,
                 color: Colors.white,
               ),
             ),

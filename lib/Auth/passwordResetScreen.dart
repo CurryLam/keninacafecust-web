@@ -132,6 +132,7 @@ class _PasswordResetScreenPageState extends State<PasswordResetScreenPage> {
             title: const Text(
               'Forgot Password',
               style: TextStyle(
+                fontWeight: FontWeight.bold,
                 color: Colors.white,
               ),
             ),

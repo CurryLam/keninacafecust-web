@@ -132,6 +132,7 @@ class _EnterEmailToRegisterPageState extends State<EnterEmailToRegisterPage> {
             title: const Text(
               'Sign Up',
               style: TextStyle(
+                fontWeight: FontWeight.bold,
                 color: Colors.white,
               ),
             ),
