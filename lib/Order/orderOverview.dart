@@ -227,7 +227,7 @@ class _OrderOverviewPageState extends State<OrderOverviewPage> {
                   padding: const EdgeInsets.fromLTRB(0, 8, 0, 0),
                   child: Center(
                     child: Text(
-                      "#Table 10",
+                      "#Table $currentTableNo",
                       style: TextStyle(
                         fontSize: 18.0,
                         color: Colors.grey.shade600,

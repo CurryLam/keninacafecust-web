@@ -271,9 +271,10 @@ class AppsBarState extends State<AppsBar> {
       child: AppBar(
         leading: IconButton(
           onPressed: () => {
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => OrderHistoryPage(user: currentUser, cart: currentCart, orderMode: currentOrderMode, orderHistory: currentOrderHistory, tableNo: currentTableNo, tabIndex: currentTabIndex, menuItemList: currentMenuItemList, itemCategoryList: currentItemCategoryList,))
-            ),
+            // Navigator.push(context,
+            //     MaterialPageRoute(builder: (context) => OrderHistoryPage(user: currentUser, cart: currentCart, orderMode: currentOrderMode, orderHistory: currentOrderHistory, tableNo: currentTableNo, tabIndex: currentTabIndex, menuItemList: currentMenuItemList, itemCategoryList: currentItemCategoryList,))
+            // ),
+            Navigator.pop(context),
           },
           icon: const Icon(Icons.arrow_back_ios_rounded, color: Colors.white),
         ),

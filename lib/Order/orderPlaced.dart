@@ -264,7 +264,7 @@ class _OrderPlacedPageState extends State<OrderPlacedPage> {
                 onPressed: () {
                   setState(() {
                     Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => MenuHomePage(user: currentUser, cart: currentCart, orderMode: currentOrderMode, orderHistory: currentOrderHistory, tableNo: currentTableNo, menuItemList: currentMenuItemList, itemCategoryList: currentItemCategoryList,))
+                        MaterialPageRoute(builder: (context) => MenuHomePage(user: currentUser, cart: currentCart, orderMode: currentOrderMode, orderHistory: currentOrderHistory, tableNo: currentTableNo, tabIndex: 0, menuItemList: currentMenuItemList, itemCategoryList: currentItemCategoryList,))
                     );
                   });
                 },

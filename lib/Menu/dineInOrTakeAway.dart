@@ -191,7 +191,7 @@ class _DineInOrTakeAwayPageState extends State<DineInOrTakeAwayPage> with Single
             ),
           ),
           bottomNavigationBar: Container(
-            height: 92, // Set your desired height
+            height: 94, // Set your desired height
             // padding: const EdgeInsets.all(8),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
