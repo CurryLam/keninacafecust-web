@@ -37,7 +37,7 @@ class MyApp extends StatelessWidget {
 class EnterEmailToRegisterPage extends StatefulWidget {
   const EnterEmailToRegisterPage({super.key, this.tableNo,});
 
-  final int? tableNo;
+  final String? tableNo;
 
   @override
   State<EnterEmailToRegisterPage> createState() => _EnterEmailToRegisterPageState();
@@ -48,11 +48,11 @@ class _EnterEmailToRegisterPageState extends State<EnterEmailToRegisterPage> {
   final _formKey = GlobalKey<FormState>();
   bool isLoading = false;
 
-  int? getTableNo() {
+  String? getTableNo() {
     return widget.tableNo;
   }
 
-  Future<void> resetPassword(BuildContext context, int currentTableNo) async {
+  Future<void> resetPassword(BuildContext context, String currentTableNo) async {
     setState(() {
       isLoading = true;
     });
@@ -112,7 +112,7 @@ class _EnterEmailToRegisterPageState extends State<EnterEmailToRegisterPage> {
   @override
   Widget build(BuildContext context) {
 
-    int? currentTableNo = getTableNo();
+    String? currentTableNo = getTableNo();
 
     return WillPopScope(
       onWillPop: () async {

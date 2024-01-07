@@ -48,7 +48,7 @@ class RedeemVoucherPage extends StatefulWidget {
   final Cart? cart;
   final String? orderMode;
   final List<int>? orderHistory;
-  final int? tableNo;
+  final String? tableNo;
   final int? tabIndex;
   final List<MenuItem>? menuItemList;
   final List<MenuItem>? itemCategoryList;
@@ -77,7 +77,7 @@ class _RedeemVoucherPageState extends State<RedeemVoucherPage> {
     return widget.orderHistory;
   }
 
-  int? getTableNo() {
+  String? getTableNo() {
     return widget.tableNo;
   }
 
@@ -101,7 +101,7 @@ class _RedeemVoucherPageState extends State<RedeemVoucherPage> {
     Cart? currentCart = getCart();
     String? currentOrderMode = getOrderMode();
     List<int>? currentOrderHistory = getOrderHistory();
-    int? currentTableNo = getTableNo();
+    String? currentTableNo = getTableNo();
     int? currentTabIndex = getTabIndex();
     List<MenuItem>? currentMenuItemList = getMenuItemStoredList();
     List<MenuItem>? currentItemCategoryList = getItemCategory();

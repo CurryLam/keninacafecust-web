@@ -51,7 +51,7 @@ class OrderOverviewPage extends StatefulWidget {
   final Cart? cart;
   final String? orderMode;
   final List<int>? orderHistory;
-  final int? tableNo;
+  final String? tableNo;
   final int? tabIndex;
   final List<MenuItem>? menuItemList;
   final List<MenuItem>? itemCategoryList;
@@ -79,7 +79,7 @@ class _OrderOverviewPageState extends State<OrderOverviewPage> {
     return widget.orderHistory;
   }
 
-  int? getTableNo() {
+  String? getTableNo() {
     return widget.tableNo;
   }
 
@@ -99,7 +99,7 @@ class _OrderOverviewPageState extends State<OrderOverviewPage> {
     setState(() {});
   }
 
-  void navigateApplyVoucherPage(Cart currentCart, User currentUser, String currentOrderMode, List<int> currentOrderHistory, int currentTableNo, int currentTabIndex, List<MenuItem> currentMenuItemList, List<MenuItem> currentItemCategoryList) {
+  void navigateApplyVoucherPage(Cart currentCart, User currentUser, String currentOrderMode, List<int> currentOrderHistory, String currentTableNo, int currentTabIndex, List<MenuItem> currentMenuItemList, List<MenuItem> currentItemCategoryList) {
     Route route = MaterialPageRoute(builder: (context) => ApplyVoucherPage(cart: currentCart, user: currentUser, orderMode: currentOrderMode, orderHistory: currentOrderHistory, tableNo: currentTableNo, tabIndex: currentTabIndex, menuItemList: currentMenuItemList, itemCategoryList: currentItemCategoryList,));
     Navigator.push(context, route).then(onGoBack);
   }
@@ -111,7 +111,7 @@ class _OrderOverviewPageState extends State<OrderOverviewPage> {
     User? currentUser = getUser();
     Cart? currentCart = getCart();
     String? currentOrderMode = getOrderMode();
-    int? currentTableNo = getTableNo();
+    String? currentTableNo = getTableNo();
     List<MenuItem> menuItemList = currentCart!.getMenuItemList();
     List<int>? currentOrderHistory = getOrderHistory() ?? [];
     int? currentTabIndex = getTabIndex();
@@ -1261,12 +1261,12 @@ class _OrderOverviewPageState extends State<OrderOverviewPage> {
     return voucherApplied;
   }
 
-  Future<(int, String)> _submitOrderDetails(Cart currentCart, User currentUser, String currentOrderMode) async {
+  Future<(int, String)> _submitOrderDetails(Cart currentCart, User currentUser, String currentOrderMode, String currentTableNo) async {
     double gross_total = currentCart.getGrandTotalBeforeDiscount();
     double grand_total = currentCart.getGrandTotalAfterDiscount();
     List<MenuItem> menuItemList = currentCart.getMenuItemList();
     int voucherAppliedID = currentCart.voucherAppliedID;
-    var (currentOrderID, err_code) = await createOrder(gross_total, grand_total, menuItemList, voucherAppliedID, currentUser, currentOrderMode);
+    var (currentOrderID, err_code) = await createOrder(gross_total, grand_total, menuItemList, voucherAppliedID, currentUser, currentOrderMode, currentTableNo);
     if (currentOrderID == 0) {
       if (kDebugMode) {
         print("Failed to create order.");
@@ -1276,7 +1276,7 @@ class _OrderOverviewPageState extends State<OrderOverviewPage> {
     return (currentOrderID, err_code);
   }
 
-  Future<(int, String)> createOrder(double gross_total, double grand_total, List<MenuItem> menuItemList, int voucherAppliedID, User currentUser, String currentOrderMode) async {
+  Future<(int, String)> createOrder(double gross_total, double grand_total, List<MenuItem> menuItemList, int voucherAppliedID, User currentUser, String currentOrderMode, String currentTableNo) async {
     try {
       final response = await http.post(
         // Uri.parse('http://10.0.2.2:8000/order/create_order'),
@@ -1293,6 +1293,7 @@ class _OrderOverviewPageState extends State<OrderOverviewPage> {
           'voucher_applied_id': voucherAppliedID,
           'is_done': false,
           'order_mode': currentOrderMode,
+          'table_num': currentTableNo,
         }),
       );
 
@@ -1358,7 +1359,7 @@ class _OrderOverviewPageState extends State<OrderOverviewPage> {
     }
   }
 
-  void showConfirmationCreateDialog(Cart currentCart, User currentUser, String currentOrderMode, List<int> currentOrderHistory, int currentTableNo, int currentTabIndex, List<MenuItem> currentMenuItemList, List<MenuItem> currentItemCategoryList) {
+  void showConfirmationCreateDialog(Cart currentCart, User currentUser, String currentOrderMode, List<int> currentOrderHistory, String currentTableNo, int currentTabIndex, List<MenuItem> currentMenuItemList, List<MenuItem> currentItemCategoryList) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -1368,7 +1369,7 @@ class _OrderOverviewPageState extends State<OrderOverviewPage> {
           actions: [
             ElevatedButton(
               onPressed: () async {
-                var (currentOrderIDAsync, err_code) = await _submitOrderDetails(currentCart, currentUser, currentOrderMode);
+                var (currentOrderIDAsync, err_code) = await _submitOrderDetails(currentCart, currentUser, currentOrderMode, currentTableNo);
                 setState(() {
                   Navigator.of(context).pop();
                   currentOrderIDGet = currentOrderIDAsync;

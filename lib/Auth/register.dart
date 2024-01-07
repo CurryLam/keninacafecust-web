@@ -42,7 +42,7 @@ class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key, this.email, this.tableNo});
 
   final String? email;
-  final int? tableNo;
+  final String? tableNo;
 
   @override
   State<RegisterPage> createState() => _RegisterPageState();
@@ -85,7 +85,7 @@ class _RegisterPageState extends State<RegisterPage> {
     return widget.email;
   }
 
-  int? getTableNo() {
+  String? getTableNo() {
     return widget.tableNo;
   }
 
@@ -93,7 +93,7 @@ class _RegisterPageState extends State<RegisterPage> {
   Widget build(BuildContext context) {
     enterFullScreen();
 
-    int? currentTableNo = getTableNo();
+    String? currentTableNo = getTableNo();
     emailController.text = getEmail()!;
 
     return WillPopScope(
@@ -529,7 +529,7 @@ class _RegisterPageState extends State<RegisterPage> {
     );
   }
 
-  void showConfirmationSignUpDialog(int currentTableNo) {
+  void showConfirmationSignUpDialog(String currentTableNo) {
     showDialog(
       context: context,
       builder: (BuildContext context) {

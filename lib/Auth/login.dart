@@ -97,7 +97,7 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
     enterFullScreen();
 
     // int? currentTableNo = getTableNo();
-    int? currentTableNo = 12;
+    String? currentTableNo = "12";
 
     return WillPopScope(
       onWillPop: () async => false,

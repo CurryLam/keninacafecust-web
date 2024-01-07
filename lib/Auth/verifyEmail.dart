@@ -43,7 +43,7 @@ class VerifyEmailPage extends StatefulWidget {
 
   final String? otp_id;
   final String? email;
-  final int? tableNo;
+  final String? tableNo;
 
   @override
   State<VerifyEmailPage> createState() => _VerifyEmailPageState();
@@ -69,7 +69,7 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
     return widget.email;
   }
 
-  int? getTableNo() {
+  String? getTableNo() {
     return widget.tableNo;
   }
 
@@ -83,7 +83,7 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
     _startResendEmailTimer();
   }
 
-  void _startOTPTimer(int? currentTableNo) {
+  void _startOTPTimer(String? currentTableNo) {
     _otpTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
       setState(() {
         if (_remainingOTPTime > 0) {
@@ -159,7 +159,7 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
 
     String? currentOtpId = getOTPID();
     String? email = getEmail();
-    int? currentTableNo = getTableNo();
+    String? currentTableNo = getTableNo();
 
     return WillPopScope(
       onWillPop: () async {

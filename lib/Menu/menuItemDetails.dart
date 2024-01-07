@@ -44,7 +44,7 @@ class MenuItemDetailsPage extends StatefulWidget {
   final Cart? cart;
   final String? orderMode;
   final List<int>? orderHistory;
-  final int? tableNo;
+  final String? tableNo;
   final int? tabIndex;
   final List<MenuItem>? menuItemList;
   final List<MenuItem>? itemCategoryList;
@@ -88,7 +88,7 @@ class _MenuItemDetailsPageState extends State<MenuItemDetailsPage> {
     return widget.orderHistory;
   }
 
-  int? getTableNo() {
+  String? getTableNo() {
     return widget.tableNo;
   }
 
@@ -120,7 +120,7 @@ class _MenuItemDetailsPageState extends State<MenuItemDetailsPage> {
     Cart? currentCart = getCart();
     String? currentOrderMode = getOrderMode();
     List<int>? currentOrderHistory = getOrderHistory();
-    int? currentTableNo = getTableNo();
+    String? currentTableNo = getTableNo();
     int? currentTabIndex = getTabIndex();
     List<MenuItem>? currentMenuItemList = getMenuItemStoredList();
     List<MenuItem>? currentItemCategoryList = getItemCategory();
@@ -200,7 +200,7 @@ class _MenuItemDetailsPageState extends State<MenuItemDetailsPage> {
     }
   }
 
-  Widget buildMenuItemDetails (MenuItem currentMenuItem, Cart currentCart, User currentUser, String currentOrderMode, List<int> currentOrderHistory, int currentTableNo, int currentTabIndex, List<MenuItem> currentMenuItemList, List<MenuItem> currentItemCategoryList) {
+  Widget buildMenuItemDetails (MenuItem currentMenuItem, Cart currentCart, User currentUser, String currentOrderMode, List<int> currentOrderHistory, String currentTableNo, int currentTabIndex, List<MenuItem> currentMenuItemList, List<MenuItem> currentItemCategoryList) {
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppsBarState().buildMenuItemDetailsAppBar(context, "Item Details", currentUser!),
@@ -814,7 +814,7 @@ class _MenuItemDetailsPageState extends State<MenuItemDetailsPage> {
     );
   }
 
-  Widget buildMenuItemDetailsOrderBefore (List<OrderFoodItemMoreInfo>? currentMenuItemMoreInfo, MenuItem currentMenuItem, Cart currentCart, User currentUser, String currentOrderMode, List<int> currentOrderHistory, int currentTableNo, int currentTabIndex, List<MenuItem> currentMenuItemList, List<MenuItem> currentItemCategoryList) {
+  Widget buildMenuItemDetailsOrderBefore (List<OrderFoodItemMoreInfo>? currentMenuItemMoreInfo, MenuItem currentMenuItem, Cart currentCart, User currentUser, String currentOrderMode, List<int> currentOrderHistory, String currentTableNo, int currentTabIndex, List<MenuItem> currentMenuItemList, List<MenuItem> currentItemCategoryList) {
     if (!isEditPreviousOrderItemDetails) {
       remarkController.text = currentMenuItemMoreInfo![0].remarks;
       selectedVariant = currentMenuItemMoreInfo[0].variant;

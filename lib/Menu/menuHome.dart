@@ -45,7 +45,7 @@ class MenuHomePage extends StatefulWidget {
   final Cart? cart;
   final String? orderMode;
   final List<int>? orderHistory;
-  final int? tableNo;
+  final String? tableNo;
   final int? tabIndex;
   final List<MenuItem>? menuItemList;
   final List<MenuItem>? itemCategoryList;
@@ -95,7 +95,7 @@ class _MenuHomePageState extends State<MenuHomePage> with SingleTickerProviderSt
     return widget.orderHistory;
   }
 
-  int? getTableNo() {
+  String? getTableNo() {
     return widget.tableNo;
   }
 
@@ -115,7 +115,7 @@ class _MenuHomePageState extends State<MenuHomePage> with SingleTickerProviderSt
     setState(() {});
   }
 
-  void navigateMenuItemDetailsPage(MenuItem currentMenuItem, Cart currentCart, User currentUser, String currentOrderMode, List<int> currentOrderHistory, int currentTableNo, int selectedTabIndex, List<MenuItem> currentMenuItemList, List<MenuItem> currentItemCategoryList){
+  void navigateMenuItemDetailsPage(MenuItem currentMenuItem, Cart currentCart, User currentUser, String currentOrderMode, List<int> currentOrderHistory, String currentTableNo, int selectedTabIndex, List<MenuItem> currentMenuItemList, List<MenuItem> currentItemCategoryList){
     Route route = MaterialPageRoute(builder: (context) => MenuItemDetailsPage(cart: currentCart, user: currentUser, menuItem: currentMenuItem, orderMode: currentOrderMode, orderHistory: currentOrderHistory, tableNo: currentTableNo, tabIndex: selectedTabIndex, menuItemList: currentMenuItemList, itemCategoryList: currentItemCategoryList,));
     Navigator.push(context, route).then(onGoBack);
   }
@@ -131,7 +131,7 @@ class _MenuHomePageState extends State<MenuHomePage> with SingleTickerProviderSt
     Cart? currentCart = getCart();
     String? currentOrderMode = getOrderMode();
     List<int>? currentOrderHistory = getOrderHistory();
-    int? currentTableNo = getTableNo();
+    String? currentTableNo = getTableNo();
     if (menuItemList == null || menuItemList!.isEmpty) {
       menuItemList = getMenuItemStoredList();
     }
@@ -242,14 +242,12 @@ class _MenuHomePageState extends State<MenuHomePage> with SingleTickerProviderSt
                                     print("onTap: (value) " +value.toString());
                                     setState(() {
                                       selectedTabIndex = value;
-                                      print('I am here');
-                                      print(menuItemList);
-                                      print(itemCategoryList);
                                     });
                                     // context.read<MyProvider>().updateSelectedIndex(value);
                                     // });
                                   },
                                   tabs: buildItemCategoryList(itemCategoryList, currentUser),
+                                  tabAlignment: TabAlignment.start,
                                   isScrollable: true,
                                   // indicatorSize: TabBarIndicatorSize.label,
                                   labelPadding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
@@ -555,10 +553,6 @@ class _MenuHomePageState extends State<MenuHomePage> with SingleTickerProviderSt
                 child: FloatingActionButton(
                   backgroundColor: Colors.orange.shade500,
                   onPressed: () async {
-                    print(menuItemList);
-                    // print(bestSellingFoods);
-                    // print(bestSellingDrinks);
-                    print(itemCategoryList);
                     Navigator.push(context,
                         MaterialPageRoute(builder: (context) => ViewCartPage(user: currentUser, cart: currentCart, orderMode: currentOrderMode, orderHistory: currentOrderHistory, tableNo: currentTableNo, tabIndex: selectedTabIndex, menuItemList: menuItemList, itemCategoryList: itemCategoryList))
                     );
@@ -854,7 +848,7 @@ class _MenuHomePageState extends State<MenuHomePage> with SingleTickerProviderSt
     return tabs;
   }
 
-  List<Widget> buildMenuItemList(List<MenuItem>? listMenuItem, User? currentUser, Cart currentCart, String currentOrderMode, List<int> currentOrderHistory, int currentTableNo, int selectedTabIndex) {
+  List<Widget> buildMenuItemList(List<MenuItem>? listMenuItem, User? currentUser, Cart currentCart, String currentOrderMode, List<int> currentOrderHistory, String currentTableNo, int selectedTabIndex) {
     List<Widget> tabBarView = [];
     tabBarView.add(
       FutureBuilder<List<MenuItem>>(
@@ -1090,7 +1084,7 @@ class _MenuHomePageState extends State<MenuHomePage> with SingleTickerProviderSt
     );
   }
 
-  Widget buildMenuItemCard(MenuItem currentMenuItem, User currentUser, Cart currentCart, String currentOrderMode, List<int> currentOrderHistory, int currentTableNo, int selectedTabIndex, List<MenuItem> currentMenuItemList, List<MenuItem> currentItemCategoryList) {
+  Widget buildMenuItemCard(MenuItem currentMenuItem, User currentUser, Cart currentCart, String currentOrderMode, List<int> currentOrderHistory, String currentTableNo, int selectedTabIndex, List<MenuItem> currentMenuItemList, List<MenuItem> currentItemCategoryList) {
     base64Image = currentMenuItem!.image;
     if (!currentMenuItem.hasImageStored) {
       if (base64Image == "") {
@@ -1241,7 +1235,7 @@ class _MenuHomePageState extends State<MenuHomePage> with SingleTickerProviderSt
   //   List
   // }
 
-  Widget _searchListView(User currentUser, Cart currentCart, String currentOrderMode, List<int> currentOrderHistory, int currentTableNo, int selectedTabIndex) {
+  Widget _searchListView(User currentUser, Cart currentCart, String currentOrderMode, List<int> currentOrderHistory, String currentTableNo, int selectedTabIndex) {
     final List<MenuItem> menuItems = _searchIndexList.map((index) {
       // return MenuItem(name: searchMenuItem![index].name, price: searchMenuItem![index].price);
       return searchMenuItem![index];
@@ -1285,7 +1279,7 @@ class _MenuHomePageState extends State<MenuHomePage> with SingleTickerProviderSt
     );
   }
 
-  Widget _defaultListView(User currentUser, Cart currentCart, String currentOrderMode, List<int> currentOrderHistory, int currentTableNo, int selectedTabIndex) {
+  Widget _defaultListView(User currentUser, Cart currentCart, String currentOrderMode, List<int> currentOrderHistory, String currentTableNo, int selectedTabIndex) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 5),
       child: (menuItemList == null || menuItemList!.isEmpty) ? FutureBuilder<List<MenuItem>>(

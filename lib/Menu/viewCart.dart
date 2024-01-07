@@ -45,7 +45,7 @@ class ViewCartPage extends StatefulWidget {
   final Cart? cart;
   final String? orderMode;
   final List<int>? orderHistory;
-  final int? tableNo;
+  final String? tableNo;
   final int? tabIndex;
   final List<MenuItem>? menuItemList;
   final List<MenuItem>? itemCategoryList;
@@ -79,7 +79,7 @@ class _ViewCartPageState extends State<ViewCartPage> {
     return widget.orderHistory;
   }
 
-  int? getTableNo() {
+  String? getTableNo() {
     return widget.tableNo;
   }
 
@@ -157,7 +157,7 @@ class _ViewCartPageState extends State<ViewCartPage> {
     Cart? currentCart = getCart();
     String? currentOrderMode = getOrderMode();
     List<int>? currentOrderHistory = getOrderHistory();
-    int? currentTableNo = getTableNo();
+    String? currentTableNo = getTableNo();
     int? currentTabIndex = getTabIndex();
     List<MenuItem>? currentMenuItemList = getMenuItemList();
     List<MenuItem>? currentItemCategoryList = getItemCategory();
@@ -269,7 +269,7 @@ class _ViewCartPageState extends State<ViewCartPage> {
     );
   }
 
-  List<Widget> buildCartList(List<MenuItem>? listCart, User? currentUser, Cart? currentCart, String currentOrderMode, List<int> currentOrderHistory, int currentTableNo, int currentTabIndex, List<MenuItem> currentMenuItemList, List<MenuItem> currentItemCategoryList) {
+  List<Widget> buildCartList(List<MenuItem>? listCart, User? currentUser, Cart? currentCart, String currentOrderMode, List<int> currentOrderHistory, String currentTableNo, int currentTabIndex, List<MenuItem> currentMenuItemList, List<MenuItem> currentItemCategoryList) {
     List<Widget> cards = [];
     if (listCart!.isEmpty) {
       hasMenuItem = true;
