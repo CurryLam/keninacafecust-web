@@ -172,7 +172,12 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
         appBar: PreferredSize( //wrap with PreferredSize
           preferredSize: const Size.fromHeight(80),
           child: AppBar(
-            title: const Text('Verify your email'),
+            title: const Text(
+              'Verify your email',
+              style: TextStyle(
+                color: Colors.white,
+              ),
+            ),
             leading: IconButton(
               onPressed: () => {
                 _resendEmailTimer.cancel(),

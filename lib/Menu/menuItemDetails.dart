@@ -1395,7 +1395,10 @@ class _MenuItemDetailsPageState extends State<MenuItemDetailsPage> {
                       });
                     } : null,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.orange.shade500, // Set your desired background color here
+                      backgroundColor: Colors.orange.shade500,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(5.0), // Adjust the value as needed
+                      ),
                     ),
                     child: const Text(
                       "Add to cart",

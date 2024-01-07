@@ -528,6 +528,7 @@ class _MenuHomePageState extends State<MenuHomePage> with SingleTickerProviderSt
                       // });
                     },
                     tabs: buildItemCategoryList(itemCategoryList, currentUser),
+                    tabAlignment: TabAlignment.start,
                     isScrollable: true,
                     // indicatorSize: TabBarIndicatorSize.label,
                     labelPadding: const EdgeInsets.fromLTRB(0, 0, 0, 0),

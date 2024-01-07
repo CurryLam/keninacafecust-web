@@ -96,7 +96,7 @@ class _NewPasswordScreenPageState extends State<NewPasswordScreenPage> {
               child: Text(
                 'Set New Password',
                 style: TextStyle(
-                  color: Colors.black,
+                  color: Colors.white,
                   fontWeight: FontWeight.bold,
                 ),
               ),

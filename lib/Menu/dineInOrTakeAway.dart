@@ -191,7 +191,7 @@ class _DineInOrTakeAwayPageState extends State<DineInOrTakeAwayPage> with Single
             ),
           ),
           bottomNavigationBar: Container(
-            height: 95, // Set your desired height
+            height: 92, // Set your desired height
             // padding: const EdgeInsets.all(8),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -199,12 +199,12 @@ class _DineInOrTakeAwayPageState extends State<DineInOrTakeAwayPage> with Single
                 Container(
                   color: Colors.grey.shade600,
                   height: 40.0,
-                  child: const Row(
+                  child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        'Table No: 9',
-                        style: TextStyle(
+                        'Table No: $currentTableNo',
+                        style: const TextStyle(
                           color: Colors.white,
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
@@ -232,6 +232,9 @@ class _DineInOrTakeAwayPageState extends State<DineInOrTakeAwayPage> with Single
                         ),
                         child: const Text(
                           'Dine In',
+                          style: TextStyle(
+                            color: Colors.white,
+                          ),
                         ),
                       ),
                     ),
@@ -249,7 +252,12 @@ class _DineInOrTakeAwayPageState extends State<DineInOrTakeAwayPage> with Single
                           minimumSize: const Size(double.infinity, 60), // Optional: Set the minimum size
                           textStyle: const TextStyle(fontSize: 20), // Optional: Set the text style
                         ),
-                        child: const Text('Take Away'),
+                        child: const Text(
+                          'Take Away',
+                          style: TextStyle(
+                            color: Colors.white,
+                          ),
+                        ),
                       ),
                     ),
                   ],

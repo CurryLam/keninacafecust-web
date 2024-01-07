@@ -129,7 +129,12 @@ class _EnterEmailToRegisterPageState extends State<EnterEmailToRegisterPage> {
         appBar: PreferredSize( //wrap with PreferredSize
           preferredSize: const Size.fromHeight(80),
           child: AppBar(
-            title: const Text('Sign Up'),
+            title: const Text(
+              'Sign Up',
+              style: TextStyle(
+                color: Colors.white,
+              ),
+            ),
             leading: IconButton(
               onPressed: () => {
                 Navigator.push(context,

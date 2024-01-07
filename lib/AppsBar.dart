@@ -70,6 +70,7 @@ class AppsBarState extends State<AppsBar> {
         toolbarHeight: 100,
         title: Text(title,
           style: const TextStyle(
+            color: Colors.white,
             fontWeight: FontWeight.bold,
             fontSize: 25.0,
           ),
