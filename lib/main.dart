@@ -180,8 +180,7 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
                             ),
                             // hintText: 'Please enter your email',
                             // hintStyle: TextStyle(color: Colors.white),
-                            contentPadding: const EdgeInsets.symmetric(vertical: 25, horizontal: 25.0),
-                            filled: true,
+                            contentPadding: const EdgeInsets.symmetric(vertical: 25, horizontal: 35.0),
                           ),
                           style: const TextStyle(color: Colors.black),
                           validator: (value) {
@@ -228,7 +227,7 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
                             ),
                             // hintText: 'Please enter your password',
                             // hintStyle: const TextStyle(color: Colors.white),
-                            contentPadding: const EdgeInsets.symmetric(vertical: 25, horizontal: 25.0),
+                            contentPadding: const EdgeInsets.symmetric(vertical: 25, horizontal: 35.0),
                           ),
                           style: const TextStyle(color: Colors.black),
                           validator: (value) {
