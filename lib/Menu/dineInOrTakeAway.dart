@@ -222,7 +222,7 @@ class _DineInOrTakeAwayPageState extends State<DineInOrTakeAwayPage> with Single
                           Navigator.push(context, MaterialPageRoute(builder: (context) => MenuHomePage(user: currentUser, cart: currentCart, orderMode: "Dine In", orderHistory: currentOrderHistory, tableNo: currentTableNo, tabIndex: 0,)));
                         },
                         style: ElevatedButton.styleFrom(
-                          primary: Colors.blue, // Set your desired color
+                          backgroundColor: Colors.blue, // Set your desired color
                           elevation: 0, // Optional: Set elevation to 0 to remove the shadow
                           shape: const RoundedRectangleBorder(
                             borderRadius: BorderRadius.zero, // Optional: Set borderRadius to 0
@@ -241,7 +241,7 @@ class _DineInOrTakeAwayPageState extends State<DineInOrTakeAwayPage> with Single
                           Navigator.push(context, MaterialPageRoute(builder: (context) => MenuHomePage(user: currentUser, cart: currentCart, orderMode: "Take Away", orderHistory: currentOrderHistory, tableNo: currentTableNo, tabIndex: 0,)));
                         },
                         style: ElevatedButton.styleFrom(
-                          primary: Colors.blue.shade900, // Set your desired color
+                          backgroundColor: Colors.blue.shade900, // Set your desired color
                           elevation: 0, // Optional: Set elevation to 0 to remove the shadow
                           shape: const RoundedRectangleBorder(
                             borderRadius: BorderRadius.zero, // Optional: Set borderRadius to 0
