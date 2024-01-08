@@ -11,6 +11,7 @@ import '../Entity/MenuItem.dart';
 import '../Entity/User.dart';
 import '../Security/Encryptor.dart';
 import '../Utils/error_codes.dart';
+import '../Utils/ip_address.dart';
 
 void main() {
   runApp(const MyApp());
@@ -528,7 +529,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
     try {
       final response = await http.put(
         // Uri.parse('http://10.0.2.2:8000/editProfile/update_user_password/${currentUser.uid}/'),
-        Uri.parse('http://localhost:8000/editProfile/update_user_password/${currentUser.uid}/'),
+        Uri.parse('${IpAddress.ip_addr}/editProfile/update_user_password/${currentUser.uid}/'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },

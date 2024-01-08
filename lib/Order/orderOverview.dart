@@ -17,6 +17,7 @@ import '../Entity/User.dart';
 import '../Entity/Voucher.dart';
 import '../Menu/viewCart.dart';
 import '../Utils/error_codes.dart';
+import '../Utils/ip_address.dart';
 import '../Voucher/applyVoucher.dart';
 
 void main() {
@@ -1280,7 +1281,7 @@ class _OrderOverviewPageState extends State<OrderOverviewPage> {
     try {
       final response = await http.post(
         // Uri.parse('http://10.0.2.2:8000/order/create_order'),
-        Uri.parse('http://localhost:8000/order/create_order'),
+        Uri.parse('${IpAddress.ip_addr}/order/create_order'),
 
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
@@ -1323,7 +1324,7 @@ class _OrderOverviewPageState extends State<OrderOverviewPage> {
     try {
       final response = await http.get(
         // Uri.parse('http://10.0.2.2:8000/order/request_voucher_applied_details/$voucherAppliedID/'),
-        Uri.parse('http://localhost:8000/order/request_voucher_applied_details/$voucherAppliedID/'),
+        Uri.parse('${IpAddress.ip_addr}/order/request_voucher_applied_details/$voucherAppliedID/'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
@@ -1343,7 +1344,7 @@ class _OrderOverviewPageState extends State<OrderOverviewPage> {
     try {
       final response = await http.get(
         // Uri.parse('http://10.0.2.2:8000/order/request_voucher_applied_details/$voucherAppliedID/'),
-        Uri.parse('http://localhost:8000/order/request_specific_order_details/$currentOrderIDGet/'),
+        Uri.parse('${IpAddress.ip_addr}/order/request_specific_order_details/$currentOrderIDGet/'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },

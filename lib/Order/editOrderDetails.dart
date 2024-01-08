@@ -16,6 +16,7 @@ import '../Entity/OrderFoodItemMoreInfo.dart';
 import '../Entity/User.dart';
 import '../Entity/Voucher.dart';
 import '../Utils/error_codes.dart';
+import '../Utils/ip_address.dart';
 import '../Voucher/applyVoucherInEditOrder.dart';
 import 'orderHistory.dart';
 
@@ -1518,7 +1519,7 @@ class _EditOrderDetailsPageState extends State<EditOrderDetailsPage> {
     try {
       final response = await http.get(
         // Uri.parse('http://10.0.2.2:8000/order/request_order_details/${currentOrder.id}/'),
-        Uri.parse('http://localhost:8000/order/request_order_details/${currentOrder.id}/'),
+        Uri.parse('${IpAddress.ip_addr}/order/request_order_details/${currentOrder.id}/'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
@@ -1538,7 +1539,7 @@ class _EditOrderDetailsPageState extends State<EditOrderDetailsPage> {
     try {
       final response = await http.get(
         // Uri.parse('http://10.0.2.2:8000/order/request_specific_order_details/${currentOrder.id}/'),
-        Uri.parse('http://localhost:8000/order/request_specific_order_details/${currentOrder.id}/'),
+        Uri.parse('${IpAddress.ip_addr}/order/request_specific_order_details/${currentOrder.id}/'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
@@ -1558,7 +1559,7 @@ class _EditOrderDetailsPageState extends State<EditOrderDetailsPage> {
     try {
       final response = await http.put(
         // Uri.parse('http://10.0.2.2:8000/order/update_food_item_num_order/${orderFoodItem.id}/'),
-        Uri.parse('http://localhost:8000/order/update_food_item_num_order/${orderFoodItem.id}/'),
+        Uri.parse('${IpAddress.ip_addr}/order/update_food_item_num_order/${orderFoodItem.id}/'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
@@ -1587,7 +1588,7 @@ class _EditOrderDetailsPageState extends State<EditOrderDetailsPage> {
     try {
       final response = await http.put(
         // Uri.parse('http://10.0.2.2:8000/order/update_food_item_num_order/${orderFoodItem.id}/'),
-        Uri.parse('http://localhost:8000/order/update_voucher_available_status'),
+        Uri.parse('${IpAddress.ip_addr}/order/update_voucher_available_status'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
@@ -1617,7 +1618,7 @@ class _EditOrderDetailsPageState extends State<EditOrderDetailsPage> {
     try {
       final response = await http.put(
         // Uri.parse('http://10.0.2.2:8000/order/delete_food_item_order/${orderFoodItem.id}/'),
-        Uri.parse('http://localhost:8000/order/delete_food_order/${orderFoodItem.food_order}/'),
+        Uri.parse('${IpAddress.ip_addr}/order/delete_food_order/${orderFoodItem.food_order}/'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
@@ -1656,7 +1657,7 @@ class _EditOrderDetailsPageState extends State<EditOrderDetailsPage> {
     try {
       final response = await http.put(
         // Uri.parse('http://10.0.2.2:8000/order/update_food_item_order'),
-        Uri.parse('http://localhost:8000/order/update_food_item_order'),
+        Uri.parse('${IpAddress.ip_addr}/order/update_food_item_order'),
 
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
@@ -1694,7 +1695,7 @@ class _EditOrderDetailsPageState extends State<EditOrderDetailsPage> {
     try {
       final response = await http.get(
         // Uri.parse('http://10.0.2.2:8000/order/request_voucher_applied_details/$voucherAppliedID/'),
-        Uri.parse('http://localhost:8000/order/request_voucher_applied_details/$voucherAppliedID/'),
+        Uri.parse('${IpAddress.ip_addr}/order/request_voucher_applied_details/$voucherAppliedID/'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },

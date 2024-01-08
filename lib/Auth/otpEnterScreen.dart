@@ -11,6 +11,7 @@ import 'package:keninacafecust_web/Auth/passwordResetScreen.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 import '../Utils/error_codes.dart';
+import '../Utils/ip_address.dart';
 import 'newPasswordScreen.dart';
 
 void main() {
@@ -468,7 +469,7 @@ class _OtpEnterScreenPageState extends State<OtpEnterScreenPage> {
     });
     try {
       final response = await http.post(
-        Uri.parse('http://localhost:8000/users/resend_email'),
+        Uri.parse('${IpAddress.ip_addr}/users/resend_email'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
@@ -501,7 +502,7 @@ class _OtpEnterScreenPageState extends State<OtpEnterScreenPage> {
     });
     try {
       final response = await http.post(
-        Uri.parse('http://localhost:8000/users/verify_otp_number'),
+        Uri.parse('${IpAddress.ip_addr}/users/verify_otp_number'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },

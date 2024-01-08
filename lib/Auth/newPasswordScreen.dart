@@ -9,6 +9,7 @@ import 'package:http/http.dart' as http;
 
 import '../Security/Encryptor.dart';
 import '../Utils/error_codes.dart';
+import '../Utils/ip_address.dart';
 import '../main.dart';
 
 void main() {
@@ -408,7 +409,7 @@ class _NewPasswordScreenPageState extends State<NewPasswordScreenPage> {
     try {
       final response = await http.post(
         // Uri.parse('http://10.0.2.2:8000/editProfile/update_user_password/${currentUser.uid}/'),
-        Uri.parse('http://localhost:8000/users/password_reset_confirm'),
+        Uri.parse('${IpAddress.ip_addr}/users/password_reset_confirm'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },

@@ -11,6 +11,7 @@ import 'package:keninacafecust_web/Entity/Cart.dart';
 import 'package:keninacafecust_web/Menu/viewCart.dart';
 import '../Entity/MenuItem.dart';
 import '../Entity/User.dart';
+import '../Utils/ip_address.dart';
 import 'menuItemDetails.dart';
 
 void main() {
@@ -1315,7 +1316,7 @@ class _MenuHomePageState extends State<MenuHomePage> with SingleTickerProviderSt
     try {
       final response = await http.get(
         // Uri.parse('http://10.0.2.2:8000/menu/request_menu_item_list'),
-        Uri.parse('http://localhost:8000/menu/request_menu_item_list'),
+        Uri.parse('${IpAddress.ip_addr}/menu/request_menu_item_list'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
@@ -1336,7 +1337,7 @@ class _MenuHomePageState extends State<MenuHomePage> with SingleTickerProviderSt
     try {
       final response = await http.get(
         // Uri.parse('http://10.0.2.2:8000/menu/request_menu_item_list'),
-        Uri.parse('http://localhost:8000/menu/request_best_selling_food_list'),
+        Uri.parse('${IpAddress.ip_addr}/menu/request_best_selling_food_list'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
@@ -1357,7 +1358,7 @@ class _MenuHomePageState extends State<MenuHomePage> with SingleTickerProviderSt
     try {
       final response = await http.get(
         // Uri.parse('http://10.0.2.2:8000/menu/request_menu_item_list'),
-        Uri.parse('http://localhost:8000/menu/request_best_selling_drink_list'),
+        Uri.parse('${IpAddress.ip_addr}/menu/request_best_selling_drink_list'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
@@ -1378,7 +1379,7 @@ class _MenuHomePageState extends State<MenuHomePage> with SingleTickerProviderSt
     try {
       final response = await http.get(
         // Uri.parse('http://10.0.2.2:8000/menu/request_item_category_list'),
-        Uri.parse('http://localhost:8000/menu/request_item_category_list'),
+        Uri.parse('${IpAddress.ip_addr}/menu/request_item_category_list'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },

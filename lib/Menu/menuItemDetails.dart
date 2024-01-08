@@ -11,6 +11,7 @@ import '../AppsBar.dart';
 import '../Entity/Cart.dart';
 import '../Entity/MenuItem.dart';
 import '../Entity/User.dart';
+import '../Utils/ip_address.dart';
 import 'menuHome.dart';
 
 void main() {
@@ -1421,7 +1422,7 @@ class _MenuItemDetailsPageState extends State<MenuItemDetailsPage> {
   Future<List<OrderFoodItemMoreInfo>> getMenuItemOrderDetailsBefore(MenuItem currentMenuItem, User currentUser) async {
     try {
       final response = await http.post(
-        Uri.parse('http://localhost:8000/order/request_menu_item_order_details_before'),
+        Uri.parse('${IpAddress.ip_addr}/order/request_menu_item_order_details_before'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
@@ -1454,7 +1455,7 @@ class _MenuItemDetailsPageState extends State<MenuItemDetailsPage> {
   Future<List<OrderFoodItemMoreInfo>> getMenuItemOrderDetailsBeforeByGuest(int foodOrderID, MenuItem currentMenuItem, User currentUser) async {
     try {
       final response = await http.post(
-        Uri.parse('http://localhost:8000/order/request_menu_item_order_details_before_by_guest'),
+        Uri.parse('${IpAddress.ip_addr}/order/request_menu_item_order_details_before_by_guest'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },

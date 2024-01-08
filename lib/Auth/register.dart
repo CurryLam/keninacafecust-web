@@ -12,6 +12,7 @@ import 'package:keninacafecust_web/Security/Encryptor.dart';
 import 'package:keninacafecust_web/Utils/error_codes.dart';
 
 import '../Entity/User.dart';
+import '../Utils/ip_address.dart';
 import '../main.dart';
 
 void main() {
@@ -661,7 +662,7 @@ class _RegisterPageState extends State<RegisterPage> {
   Future<(User, String)> createUser(String name, String email, String enc_pw, String gender, DateTime dob) async {
     try {
       final response = await http.post(
-        Uri.parse('http://localhost:8000/users/register'),  // For website
+        Uri.parse('${IpAddress.ip_addr}/users/register'),  // For website
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },

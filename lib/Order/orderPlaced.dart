@@ -12,6 +12,7 @@ import '../Entity/Cart.dart';
 import '../Entity/FoodOrder.dart';
 import '../Entity/MenuItem.dart';
 import '../Entity/User.dart';
+import '../Utils/ip_address.dart';
 import 'orderHistoryDetails.dart';
 
 void main() {
@@ -300,7 +301,7 @@ class _OrderPlacedPageState extends State<OrderPlacedPage> {
     try {
       final response = await http.get(
         // Uri.parse('http://10.0.2.2:8000/order/request_voucher_applied_details/$voucherAppliedID/'),
-        Uri.parse('http://localhost:8000/order/request_specific_order_details/$currentOrderIDGet/'),
+        Uri.parse('${IpAddress.ip_addr}/order/request_specific_order_details/$currentOrderIDGet/'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },

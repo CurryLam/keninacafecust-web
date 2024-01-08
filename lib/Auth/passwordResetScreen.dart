@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 
+import '../Utils/ip_address.dart';
 import '../main.dart';
 import 'otpEnterScreen.dart';
 
@@ -58,7 +59,7 @@ class _PasswordResetScreenPageState extends State<PasswordResetScreenPage> {
     });
 
     final String email = emailController.text;
-    const String apiUrl = 'http://localhost:8000/users/password_reset_customer';
+    const String apiUrl = '${IpAddress.ip_addr}/users/password_reset_customer';
 
     final response = await http.post(
       Uri.parse(apiUrl),

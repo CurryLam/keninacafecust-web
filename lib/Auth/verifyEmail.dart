@@ -12,6 +12,7 @@ import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:keninacafecust_web/Auth/passwordResetScreen.dart';
 import 'package:keninacafecust_web/Auth/register.dart';
 import '../Utils/error_codes.dart';
+import '../Utils/ip_address.dart';
 
 void main() {
   runApp(const MyApp());
@@ -470,7 +471,7 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
     });
     try {
       final response = await http.post(
-        Uri.parse('http://localhost:8000/users/email_verification'),
+        Uri.parse('${IpAddress.ip_addr}/users/email_verification'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
@@ -503,7 +504,7 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
     });
     try {
       final response = await http.post(
-        Uri.parse('http://localhost:8000/users/verify_otp_number'),
+        Uri.parse('${IpAddress.ip_addr}/users/verify_otp_number'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },

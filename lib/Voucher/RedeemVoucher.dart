@@ -15,6 +15,7 @@ import '../Entity/MenuItem.dart';
 import '../Entity/User.dart';
 import '../Entity/Voucher.dart';
 import '../Utils/error_codes.dart';
+import '../Utils/ip_address.dart';
 
 void main() {
   runApp(const MyApp());
@@ -944,7 +945,7 @@ class _RedeemVoucherPageState extends State<RedeemVoucherPage> {
     try {
       final response = await http.get(
         // Uri.parse('http://10.0.2.2:8000/order/request_all_available_voucher_to_redeem'),
-        Uri.parse('http://localhost:8000/order/request_all_available_voucher_to_redeem'),
+        Uri.parse('${IpAddress.ip_addr}/order/request_all_available_voucher_to_redeem'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
@@ -975,7 +976,7 @@ class _RedeemVoucherPageState extends State<RedeemVoucherPage> {
     try {
       final response = await http.post(
         // Uri.parse('http://10.0.2.2:8000/order/redeem_voucher/${currentVoucher.id}/'),
-        Uri.parse('http://localhost:8000/order/redeem_voucher/${currentVoucher.id}/'),
+        Uri.parse('${IpAddress.ip_addr}/order/redeem_voucher/${currentVoucher.id}/'),
 
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',

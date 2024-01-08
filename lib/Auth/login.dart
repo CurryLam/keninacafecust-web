@@ -13,6 +13,7 @@ import 'package:keninacafecust_web/Utils/error_codes.dart';
 
 import '../Entity/Cart.dart';
 import '../Entity/User.dart';
+import '../Utils/ip_address.dart';
 import 'enterEmailToRegister.dart';
 
 void main() {
@@ -479,7 +480,7 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
     try {
       final response = await http.post(
         // Uri.parse('http://10.0.2.2:8000/users/login'),  // For phone
-        Uri.parse('http://localhost:8000/users/customer_login'), // For website
+        Uri.parse('${IpAddress.ip_addr}/users/customer_login'), // For website
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },

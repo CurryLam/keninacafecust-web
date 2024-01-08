@@ -15,6 +15,7 @@ import '../Entity/CartForOrderFoodItemMoreInfo.dart';
 import '../Entity/MenuItem.dart';
 import '../Entity/User.dart';
 import '../Entity/VoucherAssignUserMoreInfo.dart';
+import '../Utils/ip_address.dart';
 import 'RedeemVoucher.dart';
 
 void main() {
@@ -874,7 +875,7 @@ class _ApplyVoucherInEditOrderPageState extends State<ApplyVoucherInEditOrderPag
     try {
       final response = await http.post(
         // Uri.parse('http://10.0.2.2:8000/order/request_available_voucher_redeemed'),
-        Uri.parse('http://localhost:8000/order/request_available_voucher_redeemed'),
+        Uri.parse('${IpAddress.ip_addr}/order/request_available_voucher_redeemed'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },

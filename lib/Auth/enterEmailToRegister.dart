@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:keninacafecust_web/Auth/verifyEmail.dart';
 
+import '../Utils/ip_address.dart';
 import '../main.dart';
 
 void main() {
@@ -58,7 +59,7 @@ class _EnterEmailToRegisterPageState extends State<EnterEmailToRegisterPage> {
     });
 
     final String email = emailController.text;
-    const String apiUrl = 'http://localhost:8000/users/email_verification';
+    const String apiUrl = '${IpAddress.ip_addr}/users/email_verification';
 
     final response = await http.post(
       Uri.parse(apiUrl),
