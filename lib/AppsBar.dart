@@ -558,7 +558,7 @@ class AppsBarState extends State<AppsBar> {
               ),
             },
           ),
-          if (currentUser.email != "guestkeninacafe@gmail.com")
+          if (currentUser.uid != 18)
             ListTile(
               leading: Icon(
                   Icons.card_giftcard,
@@ -585,7 +585,7 @@ class AppsBarState extends State<AppsBar> {
               style: TextStyle(color: Colors.grey.shade600, fontSize: 19, fontWeight: FontWeight.bold),
             ),
           ),
-          if (currentUser.email == "guestkeninacafe@gmail.com")
+          if (currentUser.uid == 18)
             ListTile(
               leading: FaIcon(
                 FontAwesomeIcons.user,
@@ -605,7 +605,7 @@ class AppsBarState extends State<AppsBar> {
                 ),
               },
             ),
-          if (currentUser.email != "guestkeninacafe@gmail.com")
+          if (currentUser.uid != 18)
             ListTile(
               leading: FaIcon(
                 FontAwesomeIcons.user,
@@ -625,7 +625,7 @@ class AppsBarState extends State<AppsBar> {
                 ),
               },
             ),
-          if (currentUser.email != "guestkeninacafe@gmail.com")
+          if (currentUser.uid != 18)
             ListTile(
               leading: Icon(
                 Icons.key_outlined,
@@ -645,7 +645,7 @@ class AppsBarState extends State<AppsBar> {
                 ),
               },
             ),
-          if (currentUser.email != "guestkeninacafe@gmail.com")
+          if (currentUser.uid != 18)
             ListTile(
               leading: Icon(
                   Icons.exit_to_app,

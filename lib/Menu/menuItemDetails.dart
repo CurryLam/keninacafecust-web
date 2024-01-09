@@ -154,7 +154,7 @@ class _MenuItemDetailsPageState extends State<MenuItemDetailsPage> {
       }
     });
 
-    if (currentUser?.email != "guestkeninacafe@gmail.com") {
+    if (currentUser?.uid != 18) {
       return FutureBuilder<List<OrderFoodItemMoreInfo>>(
           future: getMenuItemOrderDetailsBefore(currentMenuItem, currentUser!),
           builder: (BuildContext context, AsyncSnapshot<List<OrderFoodItemMoreInfo>> snapshot) {

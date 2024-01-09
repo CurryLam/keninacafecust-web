@@ -115,7 +115,7 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
         child: SingleChildScrollView (
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 13.0, vertical: 20.0),
-            child: currentUser.email != "guestkeninacafe@gmail.com" ? FutureBuilder<List<FoodOrder>>(
+            child: currentUser.uid != 18 ? FutureBuilder<List<FoodOrder>>(
                 future: getOrderHistoryList(currentUser),
                 builder: (BuildContext context, AsyncSnapshot<List<FoodOrder>> snapshot) {
                   if (snapshot.hasData) {

@@ -285,7 +285,7 @@ class _EditOrderDetailsPageState extends State<EditOrderDetailsPage> {
     //     ),
     //   ),
     // );
-    if (currentUser.email != "guestkeninacafe@gmail.com") {
+    if (currentUser.uid != 18) {
       if (currentCartOrder?.voucherAppliedID != 0) {
         bottomNavigationBar.add(
           Padding(

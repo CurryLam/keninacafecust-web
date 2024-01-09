@@ -119,7 +119,7 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                const SizedBox(height: 30,),
+                const SizedBox(height: 60,),
                 AnimatedContainer(
                   duration: const Duration(seconds: 1),
                   curve: Curves.fastOutSlowIn,
@@ -142,7 +142,7 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
                       )
                   ),
                 ),
-                const SizedBox(height: 30),
+                const SizedBox(height: 35),
                 const Text(
                   'Welcome to KE Nina Café !',
                   style: TextStyle(
@@ -151,7 +151,7 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
                     color: Colors.black, // Set text color to white
                   ),
                 ),
-                const SizedBox(height: 30),
+                const SizedBox(height: 35),
                 Form(
                   key: _formKey,
                   child: Column(
@@ -192,7 +192,7 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
                           },
                         ),
                       ),
-                      const SizedBox(height: 20),
+                      const SizedBox(height: 25),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 20.0),
                         child: TextFormField(
@@ -228,7 +228,7 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
                             ),
                             // hintText: 'Please enter your password',
                             // hintStyle: const TextStyle(color: Colors.white),
-                            contentPadding: const EdgeInsets.symmetric(vertical: 25, horizontal: 25.0),
+                            contentPadding: const EdgeInsets.symmetric(vertical: 21.0, horizontal: 25.0),
                           ),
                           style: const TextStyle(color: Colors.black),
                           validator: (value) {
@@ -239,7 +239,7 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
                           },
                         ),
                       ),
-                      const SizedBox(height: 10.0),
+                      const SizedBox(height: 15.0),
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Padding(
@@ -268,7 +268,7 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
                           ),
                         ),
                       ),
-                      const SizedBox(height: 10.0,),
+                      const SizedBox(height: 15.0,),
                       AnimatedOpacity(
                         duration: const Duration(seconds: 1),
                         opacity: 1.0,
@@ -375,7 +375,7 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
                           ),
                         ),
                       ),
-                      const SizedBox(height: 20),
+                      const SizedBox(height: 25),
                       Padding(
                         padding: const EdgeInsets.symmetric(),
                         child: Center(
@@ -415,7 +415,7 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
                           ),
                         ),
                       ),
-                      const SizedBox(height: 5.0,),
+                      const SizedBox(height: 15.0,),
                       Padding(
                         padding: const EdgeInsets.symmetric(),
                         child: Center(

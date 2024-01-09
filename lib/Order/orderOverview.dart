@@ -206,7 +206,7 @@ class _OrderOverviewPageState extends State<OrderOverviewPage> {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    if (currentUser?.email != "guestkeninacafe@gmail.com")
+                    if (currentUser?.uid != 18)
                       Text(
                         currentUser!.email,
                         style: const TextStyle(
@@ -214,7 +214,7 @@ class _OrderOverviewPageState extends State<OrderOverviewPage> {
                           color: Colors.red,
                         ),
                       )
-                    else if (currentUser?.email == "guestkeninacafe@gmail.com")
+                    else if (currentUser?.uid == 18)
                       const Text(
                         "Guest",
                         style: TextStyle(
@@ -480,7 +480,7 @@ class _OrderOverviewPageState extends State<OrderOverviewPage> {
                             ),
                           Divider(color: Colors.grey.shade400,),
                           const SizedBox(height: 10.0,),
-                          if (currentUser?.email != "guestkeninacafe@gmail.com")
+                          if (currentUser?.uid != 18)
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
@@ -504,7 +504,7 @@ class _OrderOverviewPageState extends State<OrderOverviewPage> {
                                 ),
                               ],
                             ),
-                          if (voucherAppliedID == 0 && currentUser?.email != "guestkeninacafe@gmail.com")
+                          if (voucherAppliedID == 0 && currentUser?.uid != 18)
                             Padding(
                               padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 20.0),
                               child: Align(
@@ -572,7 +572,7 @@ class _OrderOverviewPageState extends State<OrderOverviewPage> {
                                 // ),
                               ),
                             )
-                          else if (voucherAppliedID != 0 && currentUser?.email != "guestkeninacafe@gmail.com")
+                          else if (voucherAppliedID != 0 && currentUser?.uid != 18)
                             Padding(
                               padding: const EdgeInsets.fromLTRB(0, 20, 0, 0),
                               child: FutureBuilder<List<Voucher>>(
