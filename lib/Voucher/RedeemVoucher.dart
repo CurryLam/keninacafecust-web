@@ -923,7 +923,7 @@ class _RedeemVoucherPageState extends State<RedeemVoucherPage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Error', style: TextStyle(fontWeight: FontWeight.bold,)),
+          title: const Text('Insufficient Points', style: TextStyle(fontWeight: FontWeight.bold,)),
           content: Text('Your points is not enough to redeem this voucher (${voucherCode})'),
           actions: [
             ElevatedButton(
