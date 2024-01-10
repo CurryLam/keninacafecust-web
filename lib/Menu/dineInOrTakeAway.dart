@@ -133,15 +133,15 @@ class _DineInOrTakeAwayPageState extends State<DineInOrTakeAwayPage> with Single
         return false;
       },
       child: Container(
-        constraints: const BoxConstraints.expand(),
-        decoration: const BoxDecoration(
-            image: DecorationImage(
-                image: AssetImage("images/login_background.png"),
-                fit: BoxFit.cover
-            )
-        ),
+        // constraints: const BoxConstraints.expand(),
+        // decoration: const BoxDecoration(
+        //     image: DecorationImage(
+        //         image: AssetImage("images/login_background.png"),
+        //         fit: BoxFit.cover
+        //     )
+        // ),
         child:Scaffold(
-          backgroundColor: Colors.transparent,
+          backgroundColor: const Color.fromRGBO(245, 245, 220, 1.0),
           body: SingleChildScrollView(
             child: SizedBox(
               height: MediaQuery.of(context).size.height,
