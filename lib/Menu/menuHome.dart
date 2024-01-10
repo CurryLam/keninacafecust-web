@@ -1140,7 +1140,7 @@ class _MenuHomePageState extends State<MenuHomePage> with SingleTickerProviderSt
     // }
 
     return SizedBox(
-      height: 340,
+      height: 350,
       child: Card(
         elevation: 2.0,
         margin: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
@@ -1208,7 +1208,8 @@ class _MenuHomePageState extends State<MenuHomePage> with SingleTickerProviderSt
                   const SizedBox(width: 10.0,),
                 ],
               ),
-              const Spacer(),
+              // const Spacer(),
+              const SizedBox(height: 5.0,),
               Align(
                 alignment: Alignment.center,
                 child: Padding(
