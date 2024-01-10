@@ -1031,7 +1031,7 @@ class _MenuHomePageState extends State<MenuHomePage> with SingleTickerProviderSt
       ),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 3),
-        child: FutureBuilder<List<MenuItem>>(
+        child: (menuItemList == null || menuItemList!.isEmpty) ? FutureBuilder<List<MenuItem>>(
             future: getMenuItemList(),
             builder: (BuildContext context, AsyncSnapshot<List<MenuItem>> snapshot) {
               if (snapshot.hasData) {
@@ -1081,6 +1081,38 @@ class _MenuHomePageState extends State<MenuHomePage> with SingleTickerProviderSt
                 }
               }
             }
+        ) : TextField(
+          onChanged: (String s) {
+            setState(() {
+              _searchIndexList = [];
+              searchMenuItem = buildSearchMenuItemList(menuItemList, currentUser);
+              final String lowercaseSearch = s.toLowerCase();
+              if (lowercaseSearch.isNotEmpty) {
+                for (int i = 0; i < searchMenuItem!.length; i++) {
+                  final String lowercaseName = searchMenuItem![i].name
+                      .toLowerCase();
+                  if (lowercaseName.contains(lowercaseSearch)) {
+                    _searchIndexList.add(i);
+                  }
+                }
+              }
+            });
+          },
+          autofocus: true, //Display the keyboard when TextField is displayed
+          cursorColor: Colors.black54,
+          style: const TextStyle(
+            color: Colors.black54,
+            fontSize: 20,
+          ),
+          textInputAction: TextInputAction.search, //Specify the action button on the keyboard
+          decoration: const InputDecoration( //Style of TextField
+            border: InputBorder.none,
+            hintText: 'Search', //Text that is displayed when nothing is entered.
+            hintStyle: TextStyle( //Style of hintText
+              color: Colors.black54,
+              fontSize: 20,
+            ),
+          ),
         ),
       ),
     );
@@ -1108,7 +1140,7 @@ class _MenuHomePageState extends State<MenuHomePage> with SingleTickerProviderSt
     // }
 
     return SizedBox(
-      height: 320,
+      height: 340,
       child: Card(
         elevation: 2.0,
         margin: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),

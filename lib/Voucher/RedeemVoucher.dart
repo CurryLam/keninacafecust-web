@@ -159,17 +159,47 @@ class _RedeemVoucherPageState extends State<RedeemVoucherPage> {
     }
 
     voucher.add(
-      Align(
-        alignment: Alignment.centerLeft,
-        child: Text(
-          'Points : ${currentUser?.points.toStringAsFixed(2)}',
-          style: const TextStyle(
-            fontWeight: FontWeight.w500,
-            fontSize: 25.0,
-            fontFamily: 'AsapCondensed',
-          ),
-        ),
+      FutureBuilder<double>(
+          future: getCurrentUserRewardPoints(currentUser, currentUser!.uid),
+          builder: (BuildContext context, AsyncSnapshot<double> snapshot) {
+            if (snapshot.hasData) {
+              currentUser.points = snapshot.data!;
+              return Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  'Points : ${snapshot.data?.toStringAsFixed(2)}',
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w500,
+                    fontSize: 25.0,
+                    fontFamily: 'AsapCondensed',
+                  ),
+                ),
+              );
+            } else {
+              if (snapshot.hasError) {
+                return Center(child: Text('Error: ${snapshot.error}'));
+              } else {
+                return Center(
+                  child: LoadingAnimationWidget.threeRotatingDots(
+                    color: Colors.black,
+                    size: 50,
+                  ),
+                );
+              }
+            }
+          }
       ),
+      // Align(
+      //   alignment: Alignment.centerLeft,
+      //   child: Text(
+      //     'Points : ${currentUser?.points.toStringAsFixed(2)}',
+      //     style: const TextStyle(
+      //       fontWeight: FontWeight.w500,
+      //       fontSize: 25.0,
+      //       fontFamily: 'AsapCondensed',
+      //     ),
+      //   ),
+      // ),
     );
     voucher.add(const SizedBox(height: 15.0),);
     if (discountVoucherList.isNotEmpty) {
@@ -1003,6 +1033,26 @@ class _RedeemVoucherPageState extends State<RedeemVoucherPage> {
         print('API Connection Error. $e');
       }
       return (false, (ErrorCodes.REDEEM_VOUCHER_FAIL_API_CONNECTION));
+    }
+  }
+
+  Future<double> getCurrentUserRewardPoints(User? currentUser, int currentUserUid) async {
+    try {
+      final response = await http.get(
+        Uri.parse('${IpAddress.ip_addr}/users/request_user_reward_points/$currentUserUid/'),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+      );
+
+      if (response.statusCode == 201 || response.statusCode == 200) {
+        final responseData = json.decode(response.body);
+        return responseData['points'];
+      } else {
+        throw Exception('Failed to load the item category exist menu item list.');
+      }
+    } on Exception catch (e) {
+      throw Exception('API Connection Error. $e');
     }
   }
 }

@@ -1,9 +1,14 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:http/http.dart' as http;
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import '../AppsBar.dart';
 import '../Entity/Cart.dart';
 import '../Entity/MenuItem.dart';
 import '../Entity/User.dart';
+import '../Utils/ip_address.dart';
 
 void main() {
   runApp(const MyApp());
@@ -55,6 +60,7 @@ class _ViewPersonalProfilePageState extends State<ViewPersonalProfilePage> {
   final pointController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   bool isHomePage = false;
+  int points = 0;
 
   User? getUser() {
     return widget.user;
@@ -88,6 +94,12 @@ class _ViewPersonalProfilePageState extends State<ViewPersonalProfilePage> {
     return widget.itemCategoryList;
   }
 
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   getCurrentUserRewardPoints(getUser(), getUser()!.uid);
+  // }
+
   @override
   Widget build(BuildContext context) {
     enterFullScreen();
@@ -105,7 +117,7 @@ class _ViewPersonalProfilePageState extends State<ViewPersonalProfilePage> {
     // phoneNumberController.text = currentUser.phone;
     genderController.text = currentUser.gender;
     dobController.text = currentUser.dob.toString().substring(0,10);
-    pointController.text = currentUser.points.toString();
+    // pointController.text = currentUser.points.toString();
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -194,19 +206,52 @@ class _ViewPersonalProfilePageState extends State<ViewPersonalProfilePage> {
                             ),
                           ),
                           const SizedBox(height: 13),
-                          TextFormField(
-                            enabled: false,
-                            controller: pointController,
-                            decoration: InputDecoration(
-                                label: Text('Points', style: TextStyle(fontSize: 19, fontWeight: FontWeight.bold, color: Colors.grey.shade500),), prefixIcon: Icon(Icons.stars, color: Colors.grey.shade700,)
-                            ),
-                            style: TextStyle(
-                              fontSize: 18.0,
-                              color: Colors.grey.shade700,
-                              fontWeight: FontWeight.bold,
-                              fontFamily: "Gabarito",
-                            ),
+                          FutureBuilder<double>(
+                              future: getCurrentUserRewardPoints(currentUser, currentUser.uid),
+                              builder: (BuildContext context, AsyncSnapshot<double> snapshot) {
+                                if (snapshot.hasData) {
+                                  pointController.text = snapshot.data.toString();
+                                  currentUser.points = snapshot.data!.toDouble();
+                                  return TextFormField(
+                                    enabled: false,
+                                    controller: pointController,
+                                    decoration: InputDecoration(
+                                        label: Text('Points', style: TextStyle(fontSize: 19, fontWeight: FontWeight.bold, color: Colors.grey.shade500),), prefixIcon: Icon(Icons.stars, color: Colors.grey.shade700,)
+                                    ),
+                                    style: TextStyle(
+                                      fontSize: 18.0,
+                                      color: Colors.grey.shade700,
+                                      fontWeight: FontWeight.bold,
+                                      fontFamily: "Gabarito",
+                                    ),
+                                  );
+                                } else {
+                                  if (snapshot.hasError) {
+                                    return Center(child: Text('Error: ${snapshot.error}'));
+                                  } else {
+                                    return Center(
+                                      child: LoadingAnimationWidget.threeRotatingDots(
+                                        color: Colors.black,
+                                        size: 50,
+                                      ),
+                                    );
+                                  }
+                                }
+                              }
                           ),
+                          // TextFormField(
+                          //   enabled: false,
+                          //   controller: pointController,
+                          //   decoration: InputDecoration(
+                          //       label: Text('Points', style: TextStyle(fontSize: 19, fontWeight: FontWeight.bold, color: Colors.grey.shade500),), prefixIcon: Icon(Icons.stars, color: Colors.grey.shade700,)
+                          //   ),
+                          //   style: TextStyle(
+                          //     fontSize: 18.0,
+                          //     color: Colors.grey.shade700,
+                          //     fontWeight: FontWeight.bold,
+                          //     fontFamily: "Gabarito",
+                          //   ),
+                          // ),
                           const SizedBox(height: 13),
                         ]
                     ),
@@ -218,5 +263,25 @@ class _ViewPersonalProfilePageState extends State<ViewPersonalProfilePage> {
         ),
       ),
     );
+  }
+
+  Future<double> getCurrentUserRewardPoints(User? currentUser, int currentUserUid) async {
+    try {
+      final response = await http.get(
+        Uri.parse('${IpAddress.ip_addr}/users/request_user_reward_points/$currentUserUid/'),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+      );
+
+      if (response.statusCode == 201 || response.statusCode == 200) {
+        final responseData = json.decode(response.body);
+        return responseData['points'];
+      } else {
+        throw Exception('Failed to load the item category exist menu item list.');
+      }
+    } on Exception catch (e) {
+      throw Exception('API Connection Error. $e');
+    }
   }
 }
