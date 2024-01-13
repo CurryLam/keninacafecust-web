@@ -303,25 +303,37 @@ class _OrderHistoryDetailsPageState extends State<OrderHistoryDetailsPage> {
                                 ),
                               ),
                               const Spacer(),
+                              // Expanded(
+                              //   flex: 0,
+                              //   child: orderFoodItemList[i].size == "Standard" || orderFoodItemList[i].size == ""
+                              //       ? Text(
+                              //     "MYR ${(orderFoodItemList[i].numOrder*orderFoodItemList[i].menu_item_price_standard).toStringAsFixed(2)}",
+                              //     style: TextStyle(
+                              //       fontSize: 16.0,
+                              //       color: Colors.grey.shade700,
+                              //       fontFamily: 'BebasNeue',
+                              //       // fontWeight: FontWeight.bold,
+                              //     ),
+                              //   ) : Text(
+                              //       "MYR ${(orderFoodItemList[i].numOrder*orderFoodItemList[i].menu_item_price_large).toStringAsFixed(2)}",
+                              //       style: TextStyle(
+                              //         fontSize: 16.0,
+                              //         color: Colors.grey.shade700,
+                              //         fontFamily: 'BebasNeue',
+                              //         // fontWeight: FontWeight.bold,
+                              //       ),
+                              //   ),
+                              // ),
                               Expanded(
                                 flex: 0,
-                                child: orderFoodItemList[i].size == "Standard" || orderFoodItemList[i].size == ""
-                                    ? Text(
-                                  "MYR ${(orderFoodItemList[i].numOrder*orderFoodItemList[i].menu_item_price_standard).toStringAsFixed(2)}",
+                                child: Text(
+                                  "MYR ${(orderFoodItemList[i].price).toStringAsFixed(2)}",
                                   style: TextStyle(
                                     fontSize: 16.0,
                                     color: Colors.grey.shade700,
                                     fontFamily: 'BebasNeue',
                                     // fontWeight: FontWeight.bold,
                                   ),
-                                ) : Text(
-                                    "MYR ${(orderFoodItemList[i].numOrder*orderFoodItemList[i].menu_item_price_large).toStringAsFixed(2)}",
-                                    style: TextStyle(
-                                      fontSize: 16.0,
-                                      color: Colors.grey.shade700,
-                                      fontFamily: 'BebasNeue',
-                                      // fontWeight: FontWeight.bold,
-                                    ),
                                 ),
                               ),
                             ]

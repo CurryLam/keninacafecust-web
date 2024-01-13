@@ -1441,9 +1441,9 @@ class _MenuItemDetailsPageState extends State<MenuItemDetailsPage> {
           print('Failed to get the menu item details ordered before.');
         }
         if (error == "This menu item is not ordered before by the user.") {
-          return ([OrderFoodItemMoreInfo(id: 0, remarks: "", size: "", variant: "", is_done: false, food_order: 0, menu_item_image: "", menu_item_name: "", menu_item_price_standard: 0, menu_item_price_large: 0, numOrder: 0)]);
+          return ([OrderFoodItemMoreInfo(id: 0, remarks: "", size: "", variant: "", is_done: false, food_order: 0, menu_item_image: "", menu_item_name: "", menu_item_price_standard: 0, menu_item_price_large: 0, numOrder: 0, price: 0)]);
         } else {
-          return ([OrderFoodItemMoreInfo(id: 0, remarks: "", size: "", variant: "", is_done: false, food_order: 0, menu_item_image: "", menu_item_name: "", menu_item_price_standard: 0, menu_item_price_large: 0, numOrder: 0)]);
+          return ([OrderFoodItemMoreInfo(id: 0, remarks: "", size: "", variant: "", is_done: false, food_order: 0, menu_item_image: "", menu_item_name: "", menu_item_price_standard: 0, menu_item_price_large: 0, numOrder: 0, price: 0)]);
         }
         throw Exception('Failed to load the order history list of the current user.');
       }
@@ -1475,9 +1475,9 @@ class _MenuItemDetailsPageState extends State<MenuItemDetailsPage> {
           print('Failed to get the menu item details ordered before.');
         }
         if (error == "This menu item is not ordered before by the user.") {
-          return ([OrderFoodItemMoreInfo(id: 0, remarks: "", size: "", variant: "", is_done: false, food_order: 0, menu_item_image: "", menu_item_name: "", menu_item_price_standard: 0, menu_item_price_large: 0, numOrder: 0)]);
+          return ([OrderFoodItemMoreInfo(id: 0, remarks: "", size: "", variant: "", is_done: false, food_order: 0, menu_item_image: "", menu_item_name: "", menu_item_price_standard: 0, menu_item_price_large: 0, numOrder: 0, price: 0)]);
         } else {
-          return ([OrderFoodItemMoreInfo(id: 0, remarks: "", size: "", variant: "", is_done: false, food_order: 0, menu_item_image: "", menu_item_name: "", menu_item_price_standard: 0, menu_item_price_large: 0, numOrder: 0)]);
+          return ([OrderFoodItemMoreInfo(id: 0, remarks: "", size: "", variant: "", is_done: false, food_order: 0, menu_item_image: "", menu_item_name: "", menu_item_price_standard: 0, menu_item_price_large: 0, numOrder: 0, price: 0)]);
         }
         throw Exception('Failed to load the order history list of the current user.');
       }

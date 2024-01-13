@@ -202,6 +202,7 @@ class CartForOrderFoodItemMoreInfo {
       menu_item_price_standard: orderFoodItemMoreInfo.menu_item_price_standard,
       menu_item_price_large: orderFoodItemMoreInfo.menu_item_price_large,
       numOrder: orderFoodItemMoreInfo.numOrder,
+      price: orderFoodItemMoreInfo.price,
     );
     orderFoodItemMoreInfoList.add(itemAdded);
   }

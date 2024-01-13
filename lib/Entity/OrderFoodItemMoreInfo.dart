@@ -19,6 +19,7 @@ class OrderFoodItemMoreInfo {
   final double menu_item_price_standard;
   final double menu_item_price_large;
   double numOrder;
+  final double price;
 
   OrderFoodItemMoreInfo({
     required this.id,
@@ -32,6 +33,7 @@ class OrderFoodItemMoreInfo {
     required this.menu_item_price_standard,
     required this.menu_item_price_large,
     required this.numOrder,
+    required this.price,
   });
 
   factory OrderFoodItemMoreInfo.fromJson(Map<dynamic, dynamic> json) {
@@ -50,7 +52,7 @@ class OrderFoodItemMoreInfo {
       menu_item_price_standard: json['menu_item_price_standard'] ?? 0,
       menu_item_price_large: json['menu_item_price_large'] ?? 0,
       numOrder: json['num_order'] ?? 0,
-
+      price: json['price'] ?? 0,
     );
   }
 
