@@ -404,7 +404,9 @@ class _RegisterPageState extends State<RegisterPage> {
                                 minWidth: double.infinity,
                                 height:50,
                                 onPressed: () {
-                                  showConfirmationSignUpDialog(currentTableNo!);
+                                  if (_formKey.currentState!.validate()) {
+                                    showConfirmationSignUpDialog(currentTableNo!);
+                                  }
                                   // if (_formKey.currentState!.validate()) {
                                   //   var (userRegisteredAsync, err_code) = await _submitRegisterDetails();
                                   //   setState(() {

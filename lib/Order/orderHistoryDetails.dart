@@ -433,7 +433,7 @@ class _OrderHistoryDetailsPageState extends State<OrderHistoryDetailsPage> {
                           fontFamily: 'BebasNeue',
                         ),
                       ),
-                      if (currentOrder!.voucher_assign_id == 0)
+                      if ((currentOrder!.gross_total - currentOrder.grand_total) == 0 || (currentOrder.gross_total - currentOrder.grand_total) == -0)
                         const Text(
                           " - ",
                           style: TextStyle(
