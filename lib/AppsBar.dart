@@ -5,7 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 
-import '../main.dart';
+import 'main.dart';
 import 'Entity/Cart.dart';
 import 'Entity/MenuItem.dart';
 import 'Entity/User.dart';
