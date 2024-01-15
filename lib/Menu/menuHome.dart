@@ -1214,7 +1214,7 @@ class _MenuHomePageState extends State<MenuHomePage> with SingleTickerProviderSt
                 alignment: Alignment.center,
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 40.0),
-                  child: TextButton(
+                  child: currentMenuItem.isOutOfStock == false ? TextButton(
                     onPressed: () {
                       // Navigator.push(context,
                       //     MaterialPageRoute(builder: (context) => MenuItemDetailsPage(user: currentUser, menuItem: currentMenuItem, cart: currentCart))
@@ -1254,6 +1254,37 @@ class _MenuHomePageState extends State<MenuHomePage> with SingleTickerProviderSt
                           color: Colors.white,
                           size: 16,
                         ),
+                      ],
+                    ),
+                  ) : TextButton(
+                    onPressed: () {
+                    },
+                    style: TextButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 10.0),
+                      minimumSize: const Size(50, 15),
+                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      alignment: Alignment.centerLeft,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      backgroundColor: Colors.grey.shade700,
+                    ),
+                    child: const Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          'Out Of Stock',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        // SizedBox(width: 4),
+                        // Icon(
+                        //   Icons.add,
+                        //   color: Colors.white,
+                        //   size: 16,
+                        // ),
                       ],
                     ),
                   ),
