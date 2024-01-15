@@ -1306,6 +1306,10 @@ class _OrderOverviewPageState extends State<OrderOverviewPage> {
         int currentOrderID = jsonResp['data'];
         return (currentOrderID, ErrorCodes.OPERATION_OK);
       } else {
+        final responseData = json.decode(response.body);
+        if (responseData['error'] == "This voucher is not found.") {
+          return (0, (ErrorCodes.VOUCHER_NOT_FOUND));
+        }
         if (kDebugMode) {
           print(response.body);
           print('Failed to create order.');
@@ -1376,11 +1380,28 @@ class _OrderOverviewPageState extends State<OrderOverviewPage> {
                   currentOrderIDGet = currentOrderIDAsync;
                   if (currentOrderIDGet == 0) {
                     if (err_code == ErrorCodes.CREATE_ORDER_FAIL_BACKEND) {
-                      showDialog(context: context, builder: (
-                          BuildContext context) =>
+                      showDialog(
+                        context: context, builder: (BuildContext context) =>
                           AlertDialog(
-                            title: const Text('Error', style: TextStyle(fontWeight: FontWeight.bold,)),
-                            content: Text('An Error occurred while trying to create a new order.\n\nError Code: $err_code'),
+                            title: const Text('Error',
+                                style: TextStyle(fontWeight: FontWeight.bold,)),
+                            content: Text(
+                                'An Error occurred while trying to create a new order.\n\nError Code: $err_code'),
+                            actions: <Widget>[
+                              TextButton(onPressed: () =>
+                                  Navigator.pop(context, 'Ok'),
+                                  child: const Text('Ok')),
+                            ],
+                          ),
+                      );
+                    } else if (err_code == ErrorCodes.VOUCHER_NOT_FOUND) {
+                      showDialog(
+                        context: context, builder: (BuildContext context) =>
+                          AlertDialog(
+                            title: const Text('Voucher Not Found',
+                                style: TextStyle(fontWeight: FontWeight.bold,)),
+                            content: Text(
+                                'Please check the voucher list whether it is expired.\n\nError Code: $err_code'),
                             actions: <Widget>[
                               TextButton(onPressed: () =>
                                   Navigator.pop(context, 'Ok'),

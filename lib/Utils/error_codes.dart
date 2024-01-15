@@ -6,6 +6,7 @@ class ErrorCodes {
   static final String LOGIN_FAIL_API_CONNECTION = 'E-004';
   static final String REGISTER_FAIL_USER_EXISTS = 'E-005';
   static final String REGISTER_FAIL_API_CONNECTION = 'E-006';
+  static final String VOUCHER_NOT_FOUND = 'E-027';
   static final String CREATE_ORDER_FAIL_BACKEND = 'E-007';
   static final String CREATE_ORDER_FAIL_API_CONNECTION = 'E-008';
   static final String UPDATE_NUM_ORDER_FOOD_ITEM_FAIL_BACKEND = 'E-009';
