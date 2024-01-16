@@ -1654,6 +1654,13 @@ class _EditOrderDetailsPageState extends State<EditOrderDetailsPage> {
   }
 
   Future<(bool, String)> updateOrderFoodItemDetails(List<OrderFoodItemMoreInfo> orderFoodItemUpdateList, CartForOrderFoodItemMoreInfo currentCartOrder) async {
+    bool voucherAppliedSuccessfullySubmit = false;
+    if (currentCartOrder.voucherAppliedID != 0) {
+      var verifyResultSubmit = currentCartOrder.verifyVoucher();
+      voucherAppliedSuccessfullySubmit = verifyResultSubmit.item1;
+    } else {
+      voucherAppliedSuccessfullySubmit = false;
+    }
     try {
       final response = await http.put(
         // Uri.parse('http://10.0.2.2:8000/order/update_food_item_order'),
@@ -1668,6 +1675,7 @@ class _EditOrderDetailsPageState extends State<EditOrderDetailsPage> {
           'grand_total': currentCartOrder.order_grand_total,
           'gross_total': currentCartOrder.order_grand_total_before_discount,
           'voucher_assign_id': currentCartOrder.voucherAppliedID,
+          'voucher_applied_successfully': voucherAppliedSuccessfullySubmit,
         }),
       );
 

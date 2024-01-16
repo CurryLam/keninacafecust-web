@@ -1307,6 +1307,7 @@ class _OrderOverviewPageState extends State<OrderOverviewPage> {
         return (currentOrderID, ErrorCodes.OPERATION_OK);
       } else {
         final responseData = json.decode(response.body);
+        print(responseData['error']);
         if (responseData['error'] == "This voucher is not found.") {
           return (0, (ErrorCodes.VOUCHER_NOT_FOUND));
         }
