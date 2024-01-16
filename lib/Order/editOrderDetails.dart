@@ -68,6 +68,7 @@ class _EditOrderDetailsPageState extends State<EditOrderDetailsPage> {
   String base64Image = "";
   bool orderEdited = false;
   bool orderDeleted = false;
+  String tempVoucherAppliedSuccessfully = "";
 
   User? getUser() {
     return widget.user;
@@ -696,6 +697,7 @@ class _EditOrderDetailsPageState extends State<EditOrderDetailsPage> {
         );
       }
     }
+
     return cards;
   }
 
@@ -709,6 +711,10 @@ class _EditOrderDetailsPageState extends State<EditOrderDetailsPage> {
     var verifyResult = currentCartOrder.verifyVoucher();
     bool voucherAppliedSuccessfully = verifyResult.item1;
     String requirement = verifyResult.item2;
+    if (tempVoucherAppliedSuccessfully == "") {
+      voucherAppliedSuccessfully = true;
+      tempVoucherAppliedSuccessfully = "Set";
+    }
 
     if (voucherAppliedSuccessfully == true) {
       voucherApplied.add(
