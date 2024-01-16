@@ -117,7 +117,7 @@ class CartForOrderFoodItemMoreInfo {
     if (voucherApplied_type_name == "Discount") {
       if (order_grand_total_before_discount < voucherApplied_min_spending) {
         requirementsToFulfill = voucherApplied_min_spending - order_grand_total_before_discount;
-        return Tuple2(voucherApplied, "Add MYR $requirementsToFulfill more to use this voucher");
+        return Tuple2(voucherApplied, "Add MYR ${requirementsToFulfill.toStringAsFixed(2)} more to use this voucher");
       }
       voucherApplied = true;
       // order_grand_total -= price_discount_voucher;
@@ -277,7 +277,7 @@ class CartForOrderFoodItemMoreInfo {
       if (orderFoodItemMoreInfoList[i] == orderFoodItemMoreInfo) {
         orderFoodItemMoreInfoList[i].numOrder -= numOrder;
         deductOrderGrandTotal (orderFoodItemMoreInfoList[i], numOrder);
-        if (voucherApplied_type_name == "Discount" && order_grand_total < voucherApplied_min_spending) {
+        if (voucherApplied_type_name == "Discount" && order_grand_total_before_discount < voucherApplied_min_spending) {
           order_grand_total = order_grand_total_before_discount;
         } else if (voucherApplied_type_name == "FreeItem" && voucherApplied_free_menu_item_name == orderFoodItemMoreInfo.menu_item_name) {
           var calculateResult = calculatePriceDiscountAndNumItemOrder(orderFoodItemMoreInfo);
